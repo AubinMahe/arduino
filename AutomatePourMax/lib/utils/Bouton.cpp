@@ -1,6 +1,10 @@
 #include "Bouton.hpp"
 
-#include <Arduino.h>
+#include <Arduino.h> // millis(), digitalRead()
+
+unsigned long millis(void);
+
+using namespace utils;
 
 static const unsigned int DUREE_MINIMALE_D_UN_APPUI  = 40; // ms
 

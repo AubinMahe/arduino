@@ -1,28 +1,32 @@
 #pragma once
 
-struct Automate_Transition;
-class Automate_impl {
-public:
+#include <Acteur.hpp>
 
-   typedef void ( * Action_t )( void );
+namespace fsm {
 
-protected:
+  struct Automate_Transition;
+  class Automate_impl {
+  protected:
 
-   Automate_impl( int etat_courant );
+     Automate_impl( int etat_courant );
 
-   void transition_( int courant, int evenement, int futur, Action_t action );
+     void transition_( int courant, int evenement, int futur, utils::action_t action );
 
-public:
+  public:
 
-   bool evenement_( int evenement );
+     bool evenement_( utils::Acteur & acteur, int evenement );
 
-   void debug() const;
+     void debug() const;
 
-private:
+     bool _traceEvenement;
+     bool _traceEtat;
 
-   int                   _etat_courant;
-   Automate_Transition * _transitions;
+  private:
 
-   Automate_impl( const Automate_impl & );
-   Automate_impl & operator = ( const Automate_impl & );
-};
+     int                   _etat_courant;
+     Automate_Transition * _transitions;
+
+     Automate_impl( const Automate_impl & );
+     Automate_impl & operator = ( const Automate_impl & );
+  };
+}

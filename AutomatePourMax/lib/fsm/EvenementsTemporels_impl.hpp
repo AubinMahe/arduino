@@ -1,33 +1,35 @@
 #pragma once
 
-#include <Arduino.h>
-#include <Automate_impl.hpp>
+#include "Automate_impl.hpp"
 
-struct EvenementTemporel;
-class EvenementsTemporels_impl {
-public:
+namespace fsm {
 
-   EvenementsTemporels_impl( Automate_impl & automate );
+  struct EvenementTemporel;
+  class EvenementsTemporels_impl {
+  public:
 
-   void desactive( void );
+     EvenementsTemporels_impl( Automate_impl & automate );
 
-   void arme( void );
+     void desarme( void );
 
-   bool evalue( void );
+     void arme( void );
 
-   void debug( void ) const;
+     void evalue( utils::Acteur & acteur );
 
-protected:
+     void debug( void ) const;
 
-   void ajoute_( unsigned long delai, int evenement );
+  protected:
 
-private:
+     void ajoute_( unsigned long delai, int evenement );
 
-   Automate_impl &     _automate;
-   EvenementTemporel * _evenementsTemporels;
-   unsigned long       _t0;
+  private:
 
-private:
-   EvenementsTemporels_impl( const EvenementsTemporels_impl & );
-   EvenementsTemporels_impl & operator = ( const EvenementsTemporels_impl & );
-};
+     Automate_impl &     _automate;
+     EvenementTemporel * _evenementsTemporels;
+     unsigned long       _t0;
+
+  private:
+     EvenementsTemporels_impl( const EvenementsTemporels_impl & );
+     EvenementsTemporels_impl & operator = ( const EvenementsTemporels_impl & );
+  };
+}

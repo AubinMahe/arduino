@@ -1,33 +1,21 @@
 #pragma once
 
-#include <Arduino.h>
-#include <Automate_impl.hpp>
-#include <EvenementsTemporels_impl.hpp>
+#include "Automate_impl.hpp"
 
-template<class S, class E>
-class Automate : public Automate_impl {
-public:
+namespace fsm {
 
-   Automate( S etat_courant ) : Automate_impl((int)etat_courant ) {}
+  template<class S, class E>
+  class Automate : public Automate_impl {
+  public:
 
-   void transition( S courant, E evenement, S futur, Action_t action = 0 ) {
-      transition_((int)courant, (int)evenement, (int)futur, action );
-   }
+     Automate( S etat_courant ) : Automate_impl((int)etat_courant ) {}
 
-   bool evenement( E evenement ) {
-      return evenement_((int)evenement );
-   }
-};
+     void transition( S courant, E evenement, S futur, utils::action_t action = 0 ) {
+        transition_((int)courant, (int)evenement, (int)futur, action );
+     }
 
-template<class S, class E>
-class EvenementsTemporels : public EvenementsTemporels_impl {
-public:
-
-   EvenementsTemporels( Automate<S, E> & automate ) :
-      EvenementsTemporels_impl( automate )
-   {}
-
-   void ajoute( unsigned long delai, E evenement ) {
-      ajoute_( delai, (int)evenement );
-   }
-};
+     bool evenement( utils::Acteur & acteur, E evenement ) {
+        return evenement_( acteur, (int)evenement );
+     }
+  };
+}

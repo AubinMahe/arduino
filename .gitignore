@@ -30,3 +30,12 @@
 *.exe
 *.out
 *.app
+
+# cmake files
+AutomatePourMax/CMakeCache.txt
+AutomatePourMax/CMakeFiles/
+AutomatePourMax/cmake_install.cmake
+AutomatePourMax/Makefile
+
+# clang files
+AutomatePourMax/compile_commands.json

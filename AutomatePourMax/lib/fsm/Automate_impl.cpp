@@ -1,66 +1,80 @@
-#include <Automate_impl.hpp>
+#include "Automate_impl.hpp"
+
 #include <Arduino.h>
 
-struct Automate_Transition {
+#ifndef HAVE_HWSERIAL0
+extern HardwareSerial Serial;
+#endif
 
-   Automate_Transition(
-      int                     courant,
-      int                     evenement,
-      int                     futur,
-      Automate_impl::Action_t action,
-      Automate_Transition *   suivante )
-    :
-      _etat_courant( courant   ),
-      _evenement   ( evenement ),
-      _futur_etat  ( futur     ),
-      _action      ( action    ),
-      _suivante    ( suivante  )
-   {}
+namespace fsm {
 
-   int                     _etat_courant;
-   int                     _evenement;
-   int                     _futur_etat;
-   Automate_impl::Action_t _action;
-   Automate_Transition *   _suivante;
-};
+   struct Automate_Transition {
+      Automate_Transition( int                  courant,
+                           int                  evenement,
+                           int                  futur,
+                           utils::action_t      action,
+                           Automate_Transition* suivante )
+         : _etat_courant( courant )
+         , _evenement( evenement )
+         , _futur_etat( futur )
+         , _action( action )
+         , _suivante( suivante ) {}
 
-Automate_impl::Automate_impl( int etat_courant ) {
-   _etat_courant = etat_courant;
-   _transitions  = 0;
-}
+      int                  _etat_courant;
+      int                  _evenement;
+      int                  _futur_etat;
+      utils::action_t      _action;
+      Automate_Transition* _suivante;
+   };
+} // namespace fsm
 
-void Automate_impl::transition_( int courant, int evenement, int futur, Action_t action ) {
+using namespace fsm;
+
+Automate_impl::Automate_impl( int etat_courant )
+   : _traceEvenement( false )
+   , _traceEtat( false )
+   , _etat_courant( etat_courant )
+   , _transitions( 0 ) {}
+
+void Automate_impl::transition_( int courant, int evenement, int futur, utils::action_t action ) {
    _transitions = new Automate_Transition( courant, evenement, futur, action, _transitions );
 }
 
-bool Automate_impl::evenement_( int evenement ) {
-//      Serial.print("evenement reçu ");
-//      Serial.println( evenement );
-//      Serial.flush();
-   Automate_Transition * t = _transitions;
+bool Automate_impl::evenement_( utils::Acteur& acteur, int evenement ) {
+   if( _traceEvenement ) {
+      Serial.print( "Automate_impl::evenement_|evenement: " );
+      Serial.println( evenement );
+   }
+   Automate_Transition* t = _transitions;
    while( t ) {
-      if( t -> _etat_courant == _etat_courant && t -> _evenement == evenement ) {
-         _etat_courant = t -> _futur_etat;
-         Serial.print("passage dans l'état ");
+      if( t->_etat_courant == _etat_courant && t->_evenement == evenement ) {
+         _etat_courant = t->_futur_etat;
+         Serial.print( "passage dans l'état " );
          Serial.println( _etat_courant );
          Serial.flush();
-         if( t -> _action ) {
-            t -> _action();
+         if( t->_action ) {
+            ( acteur.*( t->_action ) )();
          }
          return true;
       }
-      t = t -> _suivante;
+      t = t->_suivante;
+   }
+   if( _traceEvenement ) {
+      Serial.println( "Automate_impl::evenement_|evenement ignore." );
    }
    return false;
 }
 
 void Automate_impl::debug() const {
-   for( Automate_Transition * t = _transitions; t; t = t -> _suivante ) {
-      Serial.print( "Automate.debug|etat_courant: " );
-      Serial.print( t -> _etat_courant );
-      Serial.print( ", evenement: " );
-      Serial.print( t -> _evenement );
-      Serial.print( ", futur_etat: " );
-      Serial.println( t -> _futur_etat );
+   for( Automate_Transition* t = _transitions; t; t = t->_suivante ) {
+      Serial.print( "Automate.debug|" );
+      Serial.print( t->_etat_courant );
+      Serial.print( " + " );
+      Serial.print( t->_evenement );
+      Serial.print( " ==> " );
+      Serial.println( t->_futur_etat );
    }
+   Serial.print( "Automate.debug|etat courant: " );
+   Serial.println( _etat_courant );
+   Serial.flush();
 }

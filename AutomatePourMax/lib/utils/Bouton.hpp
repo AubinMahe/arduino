@@ -1,15 +1,18 @@
 #pragma once
 
-class Bouton {
-public:
+namespace utils {
 
-   Bouton( int port );
+  class Bouton {
+  public:
 
-   bool est_relache( void );
+     Bouton( int port );
 
-private:
+     bool est_relache( void );
 
-   int           _port;
-   bool          _est_presse;
-   unsigned long _date_de_l_appui;
-};
+  private:
+
+     int           _port;
+     bool          _est_presse;
+     unsigned long _date_de_l_appui;
+  };
+}
