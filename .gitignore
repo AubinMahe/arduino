@@ -32,10 +32,10 @@
 *.app
 
 # cmake files
-AutomatePourMax/CMakeCache.txt
-AutomatePourMax/CMakeFiles/
-AutomatePourMax/cmake_install.cmake
-AutomatePourMax/Makefile
+*/CMakeCache.txt
+*/CMakeFiles/
+*/cmake_install.cmake
+*/Makefile
 
 # clang files
-AutomatePourMax/compile_commands.json
+*/compile_commands.json
