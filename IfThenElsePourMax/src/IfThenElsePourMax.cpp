@@ -40,7 +40,7 @@ static void desactive_le_buzzer() {
 
 static void active_le_buzzer() {
    // Serial.println( "active_le_buzzer" );
-   // tone( BUZZER_PIN, FREQUENCE_DU_BUZZER );
+   tone( BUZZER_PIN, FREQUENCE_DU_BUZZER );
    buzzer_t0 = millis();
 }
 
@@ -49,8 +49,8 @@ static void demarre() {
    t0 = millis();
 }
 
-static void eteintTout() {
-   Serial.println( "eteintTout" );
+static void eteint_tout() {
+   Serial.println( "eteint_tout" );
    t0           = 0;
    buzzer_t0    = 0UL;
    buzzer_cycle = 0UL;
@@ -102,7 +102,7 @@ static void actif( unsigned long temps_ecoule ) {
    } else if( enfonce ) { // on vient de relâcher le bouton
       enfonce = false;
       etat    = ETA_VEILLE;
-      eteintTout();
+      eteint_tout();
    } else if( temps_ecoule >= DEBUT_DE_FENETRE_1 ) {
       etat = ETA_ATTENTE_1;
       Serial.println( "Appui attendu" );
@@ -122,7 +122,7 @@ static void attente( unsigned long temps_ecoule,
       action();
    } else if( temps_ecoule >= echeance ) {
       etat = ETA_VEILLE;
-      eteintTout();
+      eteint_tout();
    }
 }
 
@@ -132,7 +132,7 @@ static void led( unsigned long temps_ecoule, Etat_t suivant, unsigned long echea
    } else if( enfonce ) { // on vient de relâcher le bouton
       enfonce = false;
       etat    = ETA_VEILLE;
-      eteintTout();
+      eteint_tout();
    } else if( temps_ecoule >= echeance ) {
       etat = suivant;
       Serial.println( "Appui attendu" );
@@ -145,7 +145,7 @@ static void led_3() {
    } else if( enfonce ) { // on vient de relâcher le bouton
       enfonce = false;
       etat    = ETA_VEILLE;
-      eteintTout();
+      eteint_tout();
    } else if( led_3_a_faire ) {
       led_3_a_faire = false;
       allume_trois_LED();

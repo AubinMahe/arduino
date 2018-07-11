@@ -1,12 +1,14 @@
 #include "ActionsAsynchrones.hpp"
 
-#include <Arduino.h> // millis()
+#include <Arduino.h> // millis(), Serial
 
 namespace utils {
 
    struct Action {
 
-      Action( void ) : _consigne( 0UL ), _t0( 0UL ), _action( 0 ), _cycle( 0UL ) {}
+      Action( void ) : _consigne( 0UL ), _t0( 0UL ), _cycle( 0UL ), _action( 0 ) {}
+
+      virtual ~ Action( void ) {}
 
       inline bool estDisponible( action_t action ) const {
          return _action == 0 || _action == action;

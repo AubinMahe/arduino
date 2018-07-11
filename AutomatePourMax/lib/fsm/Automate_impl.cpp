@@ -2,10 +2,6 @@
 
 #include <Arduino.h>
 
-#ifndef HAVE_HWSERIAL0
-extern HardwareSerial Serial;
-#endif
-
 namespace fsm {
 
    struct Automate_Transition {
@@ -26,7 +22,7 @@ namespace fsm {
       utils::action_t      _action;
       Automate_Transition* _suivante;
    };
-} // namespace fsm
+}
 
 using namespace fsm;
 

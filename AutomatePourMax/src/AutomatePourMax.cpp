@@ -2,10 +2,7 @@
 #include <Bouton.hpp>
 #include <EvenementsTemporels.hpp>
 
-#include <Arduino.h>
-#ifndef HAVE_HWSERIAL0
-extern HardwareSerial Serial;
-#endif
+#include <Arduino.h> // millis(), Serial, pinMode(), noTone(), tone(), digitalWrite()...
 
 namespace max {
 
@@ -60,7 +57,6 @@ namespace max {
 
       void initialise_la_liaison_serie() {
          Serial.begin( 115200 );
-         Serial.println( "setup" );
       }
 
       void initialise_les_entrees_sorties() {
@@ -190,11 +186,12 @@ namespace max {
       fsm::EvenementsTemporels< Etat_t, Evenement_t > _evenementsTemporels;
       utils::ActionsAsynchrones                       _actionsAsynchrones;
    };
-} // namespace max
+}
 
 static max::Jeu* jeu = 0;
 
 void setup() {
+   Serial.println( "setup" );
    jeu = new max::Jeu();
 }
 
