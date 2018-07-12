@@ -1,4 +1,0 @@
-<map id="setup" name="setup">
-<area shape="rect" id="node2" href="$d8/d84/a00001.html#ab21b1ff35920277890d6f83e712dafd0" title="Initialise la liaison série au moyen de l&#39;API Arduino Serial.begin(). " alt="" coords="114,5,245,47"/>
-<area shape="rect" id="node3" href="$d8/d84/a00001.html#aefc4bfc5133e36b48e4c89f61d06a2d3" title="Configure les entrées/sorties au moyen de l&#39;API Arduino pinMode(). " alt="" coords="108,71,251,112"/>
-</map>
