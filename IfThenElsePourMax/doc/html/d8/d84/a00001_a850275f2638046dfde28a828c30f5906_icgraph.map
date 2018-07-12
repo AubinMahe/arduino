@@ -1,0 +1,4 @@
+<map id="desactive_le_buzzer" name="desactive_le_buzzer">
+<area shape="rect" id="node2" href="$d8/d84/a00001.html#ac7d7b30fcc3f4469d3a6b4d6e6c0ddaf" title="Remet le système en attente, éteint les DEL, le buzzer, réinitialise l&#39;état interne. " alt="" coords="195,5,277,32"/>
+<area shape="rect" id="node3" href="$d8/d84/a00001.html#afe461d27b9c48d5921c00d521181f12f" title="L&#39;évolution de l&#39;état du système est confiné ici sous la forme d&#39;un automate état/transition. " alt="" coords="325,31,372,57"/>
+</map>

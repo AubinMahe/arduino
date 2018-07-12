@@ -1,0 +1,1230 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=9"/>
+<meta name="generator" content="Doxygen 1.8.11"/>
+<title>If-then-else pour Max: Référence du fichier src/IfThenElsePourMax.cpp</title>
+<link href="../../tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="../../jquery.js"></script>
+<script type="text/javascript" src="../../dynsections.js"></script>
+<link href="../../search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="../../search/searchdata.js"></script>
+<script type="text/javascript" src="../../search/search.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() { init_search(); });
+</script>
+<link href="../../doxygen.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr style="height: 56px;">
+  <td id="projectalign" style="padding-left: 0.5em;">
+   <div id="projectname">If-then-else pour Max
+   </div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Généré par Doxygen 1.8.11 -->
+<script type="text/javascript">
+var searchBox = new SearchBox("searchBox", "../../search",false,'Recherche');
+</script>
+  <div id="navrow1" class="tabs">
+    <ul class="tablist">
+      <li><a href="../../index.html"><span>Page&#160;principale</span></a></li>
+      <li class="current"><a href="../../files.html"><span>Fichiers</span></a></li>
+      <li>
+        <div id="MSearchBox" class="MSearchBoxInactive">
+        <span class="left">
+          <img id="MSearchSelect" src="../../search/mag_sel.png"
+               onmouseover="return searchBox.OnSearchSelectShow()"
+               onmouseout="return searchBox.OnSearchSelectHide()"
+               alt=""/>
+          <input type="text" id="MSearchField" value="Recherche" accesskey="S"
+               onfocus="searchBox.OnSearchFieldFocus(true)" 
+               onblur="searchBox.OnSearchFieldFocus(false)" 
+               onkeyup="searchBox.OnSearchFieldChange(event)"/>
+          </span><span class="right">
+            <a id="MSearchClose" href="javascript:searchBox.CloseResultsWindow()"><img id="MSearchCloseImg" border="0" src="../../search/close.png" alt=""/></a>
+          </span>
+        </div>
+      </li>
+    </ul>
+  </div>
+  <div id="navrow2" class="tabs2">
+    <ul class="tablist">
+      <li><a href="../../files.html"><span>Liste&#160;des&#160;fichiers</span></a></li>
+      <li><a href="../../globals.html"><span>Variables&#160;globale</span></a></li>
+    </ul>
+  </div>
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<iframe src="javascript:void(0)" frameborder="0" 
+        name="MSearchResults" id="MSearchResults">
+</iframe>
+</div>
+
+<div id="nav-path" class="navpath">
+  <ul>
+<li class="navelem"><a class="el" href="../../dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li>  </ul>
+</div>
+</div><!-- top -->
+<div class="header">
+  <div class="summary">
+<a href="#enum-members">Énumérations</a> &#124;
+<a href="#func-members">Fonctions</a> &#124;
+<a href="#var-members">Variables</a>  </div>
+  <div class="headertitle">
+<div class="title">Référence du fichier IfThenElsePourMax.cpp</div>  </div>
+</div><!--header-->
+<div class="contents">
+<div class="textblock"><code>#include &lt;Arduino.h&gt;</code><br />
+</div><div class="textblock"><div class="dynheader">
+Graphe des dépendances par inclusion de IfThenElsePourMax.cpp:</div>
+<div class="dyncontent">
+<div class="center"><img src="../../d1/d7c/a00003.png" border="0" usemap="#src_2_if_then_else_pour_max_8cpp" alt=""/></div>
+<map name="src_2_if_then_else_pour_max_8cpp" id="src_2_if_then_else_pour_max_8cpp">
+</map>
+</div>
+</div>
+<p><a href="../../d8/d84/a00001_source.html">Aller au code source de ce fichier.</a></p>
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="enum-members"></a>
+Énumérations</h2></td></tr>
+<tr class="memitem:a0753690b45a091cda92b046fcd3edb4e"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/d84/a00001.html#a0753690b45a091cda92b046fcd3edb4e">Etat_t</a> { <br />
+&#160;&#160;<a class="el" href="../../d8/d84/a00001.html#a0753690b45a091cda92b046fcd3edb4ead1c07daa654c2e4ab2237c8d73192961">ETA_VEILLE</a>, 
+<a class="el" href="../../d8/d84/a00001.html#a0753690b45a091cda92b046fcd3edb4eac7d38fb789ac5a73f09a36621dc460dc">ETA_ACTIF</a>, 
+<a class="el" href="../../d8/d84/a00001.html#a0753690b45a091cda92b046fcd3edb4ea2d0fac97f3f163ef140355c18478e5dd">ETA_ATTENTE_1</a>, 
+<a class="el" href="../../d8/d84/a00001.html#a0753690b45a091cda92b046fcd3edb4ea9313045eaf8e13d72b3de5ce75d6cbcc">ETA_LED_1</a>, 
+<br />
+&#160;&#160;<a class="el" href="../../d8/d84/a00001.html#a0753690b45a091cda92b046fcd3edb4eaa65b9fad926a870f5763173364e0d50a">ETA_ATTENTE_2</a>, 
+<a class="el" href="../../d8/d84/a00001.html#a0753690b45a091cda92b046fcd3edb4ea6c0b7b286f9dbd0f6ce3e1a19f3e7538">ETA_LED_2</a>, 
+<a class="el" href="../../d8/d84/a00001.html#a0753690b45a091cda92b046fcd3edb4eae78b1f14a6dfc11b6eee9603e4184df2">ETA_ATTENTE_3</a>, 
+<a class="el" href="../../d8/d84/a00001.html#a0753690b45a091cda92b046fcd3edb4ea21505fe2900ae8d30435823b556909c2">ETA_LED_3</a>
+<br />
+ }<tr class="memdesc:a0753690b45a091cda92b046fcd3edb4e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Etats du système.  <a href="../../d8/d84/a00001.html#a0753690b45a091cda92b046fcd3edb4e">Plus de détails...</a><br /></td></tr>
+</td></tr>
+<tr class="separator:a0753690b45a091cda92b046fcd3edb4e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
+Fonctions</h2></td></tr>
+<tr class="memitem:a0473eb52e9f0932460412452b7c9067e"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/d84/a00001.html#a0473eb52e9f0932460412452b7c9067e">active_le_buzzer</a> ()</td></tr>
+<tr class="memdesc:a0473eb52e9f0932460412452b7c9067e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Allume le buzzer et effectue l'horodatage pour gérer son extinction prochaine.  <a href="#a0473eb52e9f0932460412452b7c9067e">Plus de détails...</a><br /></td></tr>
+<tr class="separator:a0473eb52e9f0932460412452b7c9067e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae07989acf4bffd608b03f61532fddf51"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/d84/a00001.html#ae07989acf4bffd608b03f61532fddf51">affiche_l_indice</a> ()</td></tr>
+<tr class="memdesc:ae07989acf4bffd608b03f61532fddf51"><td class="mdescLeft">&#160;</td><td class="mdescRight">Cette fonction ne fait rien, à terme elle devra contrôler un afficheur pour diffuser un message constituant un indice pour résoudre la quête.  <a href="#ae07989acf4bffd608b03f61532fddf51">Plus de détails...</a><br /></td></tr>
+<tr class="separator:ae07989acf4bffd608b03f61532fddf51"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af5016232deae83d338453879a46489d6"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/d84/a00001.html#af5016232deae83d338453879a46489d6">allume_deux_LED</a> ()</td></tr>
+<tr class="memdesc:af5016232deae83d338453879a46489d6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Utilise l'API Arduino pour allumer les DEL n°1 et n°2.  <a href="#af5016232deae83d338453879a46489d6">Plus de détails...</a><br /></td></tr>
+<tr class="separator:af5016232deae83d338453879a46489d6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4fac0448487379a273d00320ce664bd7"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/d84/a00001.html#a4fac0448487379a273d00320ce664bd7">allume_trois_LED</a> ()</td></tr>
+<tr class="memdesc:a4fac0448487379a273d00320ce664bd7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Utilise l'API Arduino pour allumer les DEL n°1, n°2 et n°3.  <a href="#a4fac0448487379a273d00320ce664bd7">Plus de détails...</a><br /></td></tr>
+<tr class="separator:a4fac0448487379a273d00320ce664bd7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae7bc60cc6f30cfeb2aec48d7ed2ed9b4"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/d84/a00001.html#ae7bc60cc6f30cfeb2aec48d7ed2ed9b4">allume_une_LED</a> ()</td></tr>
+<tr class="memdesc:ae7bc60cc6f30cfeb2aec48d7ed2ed9b4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Utilise l'API Arduino pour allumer la DEL n°1.  <a href="#ae7bc60cc6f30cfeb2aec48d7ed2ed9b4">Plus de détails...</a><br /></td></tr>
+<tr class="separator:ae7bc60cc6f30cfeb2aec48d7ed2ed9b4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaa6fd446b77da85ce3eda50281c99edf"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/d84/a00001.html#aaa6fd446b77da85ce3eda50281c99edf">bouton_est_relache</a> ()</td></tr>
+<tr class="memdesc:aaa6fd446b77da85ce3eda50281c99edf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retourne 'vrai' quand le bouton a été enfoncé puis relâché.  <a href="#aaa6fd446b77da85ce3eda50281c99edf">Plus de détails...</a><br /></td></tr>
+<tr class="separator:aaa6fd446b77da85ce3eda50281c99edf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adbfc11cdf0c7c1bd86cdec47f449c8b3"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/d84/a00001.html#adbfc11cdf0c7c1bd86cdec47f449c8b3">demarre</a> ()</td></tr>
+<tr class="memdesc:adbfc11cdf0c7c1bd86cdec47f449c8b3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Effectue l'horodatage pour gérer les événements temporels.  <a href="#adbfc11cdf0c7c1bd86cdec47f449c8b3">Plus de détails...</a><br /></td></tr>
+<tr class="separator:adbfc11cdf0c7c1bd86cdec47f449c8b3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a850275f2638046dfde28a828c30f5906"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/d84/a00001.html#a850275f2638046dfde28a828c30f5906">desactive_le_buzzer</a> ()</td></tr>
+<tr class="memdesc:a850275f2638046dfde28a828c30f5906"><td class="mdescLeft">&#160;</td><td class="mdescRight">Eteint le buzzer.  <a href="#a850275f2638046dfde28a828c30f5906">Plus de détails...</a><br /></td></tr>
+<tr class="separator:a850275f2638046dfde28a828c30f5906"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac7d7b30fcc3f4469d3a6b4d6e6c0ddaf"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/d84/a00001.html#ac7d7b30fcc3f4469d3a6b4d6e6c0ddaf">eteint_tout</a> ()</td></tr>
+<tr class="memdesc:ac7d7b30fcc3f4469d3a6b4d6e6c0ddaf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Remet le système en attente, éteint les DEL, le buzzer, réinitialise l'état interne.  <a href="#ac7d7b30fcc3f4469d3a6b4d6e6c0ddaf">Plus de détails...</a><br /></td></tr>
+<tr class="separator:ac7d7b30fcc3f4469d3a6b4d6e6c0ddaf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab21b1ff35920277890d6f83e712dafd0"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/d84/a00001.html#ab21b1ff35920277890d6f83e712dafd0">initialise_la_liaison_serie</a> ()</td></tr>
+<tr class="memdesc:ab21b1ff35920277890d6f83e712dafd0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialise la liaison série au moyen de l'API Arduino <a href="https://www.arduino.cc/reference/en/language/functions/communication/serial/begin/" target="_blank">Serial.begin()</a>.  <a href="#ab21b1ff35920277890d6f83e712dafd0">Plus de détails...</a><br /></td></tr>
+<tr class="separator:ab21b1ff35920277890d6f83e712dafd0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aefc4bfc5133e36b48e4c89f61d06a2d3"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/d84/a00001.html#aefc4bfc5133e36b48e4c89f61d06a2d3">initialise_les_entrees_sorties</a> ()</td></tr>
+<tr class="memdesc:aefc4bfc5133e36b48e4c89f61d06a2d3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Configure les entrées/sorties au moyen de l'API Arduino <a href="https://www.arduino.cc/reference/en/language/functions/digital-io/pinmode/" target="_blank">pinMode()</a>.  <a href="#aefc4bfc5133e36b48e4c89f61d06a2d3">Plus de détails...</a><br /></td></tr>
+<tr class="separator:aefc4bfc5133e36b48e4c89f61d06a2d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afe461d27b9c48d5921c00d521181f12f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/d84/a00001.html#afe461d27b9c48d5921c00d521181f12f">loop</a> ()</td></tr>
+<tr class="memdesc:afe461d27b9c48d5921c00d521181f12f"><td class="mdescLeft">&#160;</td><td class="mdescRight">L'évolution de l'état du système est confiné ici sous la forme d'un automate état/transition.  <a href="#afe461d27b9c48d5921c00d521181f12f">Plus de détails...</a><br /></td></tr>
+<tr class="separator:afe461d27b9c48d5921c00d521181f12f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4fc01d736fe50cf5b977f755b675f11d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/d84/a00001.html#a4fc01d736fe50cf5b977f755b675f11d">setup</a> ()</td></tr>
+<tr class="memdesc:a4fc01d736fe50cf5b977f755b675f11d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialise le hardware.  <a href="#a4fc01d736fe50cf5b977f755b675f11d">Plus de détails...</a><br /></td></tr>
+<tr class="separator:a4fc01d736fe50cf5b977f755b675f11d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
+Variables</h2></td></tr>
+<tr class="memitem:a7337a18ed95e3dbc44953d2e8d65ba9e"><td class="memItemLeft" align="right" valign="top">static const uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/d84/a00001.html#a7337a18ed95e3dbc44953d2e8d65ba9e">BOUTON_PIN</a> = 2</td></tr>
+<tr class="memdesc:a7337a18ed95e3dbc44953d2e8d65ba9e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bouton branché sur le port n°2.  <a href="#a7337a18ed95e3dbc44953d2e8d65ba9e">Plus de détails...</a><br /></td></tr>
+<tr class="separator:a7337a18ed95e3dbc44953d2e8d65ba9e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad779ede00a2d89839f661e8ea2e041a9"><td class="memItemLeft" align="right" valign="top">static unsigned long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/d84/a00001.html#ad779ede00a2d89839f661e8ea2e041a9">buzzer_cycle</a> = 0UL</td></tr>
+<tr class="memdesc:ad779ede00a2d89839f661e8ea2e041a9"><td class="mdescLeft">&#160;</td><td class="mdescRight">N° de la période du buzzer.  <a href="#ad779ede00a2d89839f661e8ea2e041a9">Plus de détails...</a><br /></td></tr>
+<tr class="separator:ad779ede00a2d89839f661e8ea2e041a9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abed7f98572aa6d1eb041f967fcd65021"><td class="memItemLeft" align="right" valign="top">static const uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/d84/a00001.html#abed7f98572aa6d1eb041f967fcd65021">BUZZER_PIN</a> = 7</td></tr>
+<tr class="memdesc:abed7f98572aa6d1eb041f967fcd65021"><td class="mdescLeft">&#160;</td><td class="mdescRight">Buzzer branché sur le port n°7.  <a href="#abed7f98572aa6d1eb041f967fcd65021">Plus de détails...</a><br /></td></tr>
+<tr class="separator:abed7f98572aa6d1eb041f967fcd65021"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa7a79b056b6735192d7d6580a6dac5bf"><td class="memItemLeft" align="right" valign="top">static unsigned long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/d84/a00001.html#aa7a79b056b6735192d7d6580a6dac5bf">buzzer_t0</a> = 0UL</td></tr>
+<tr class="memdesc:aa7a79b056b6735192d7d6580a6dac5bf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Horodatage du déclenchement du buzzer.  <a href="#aa7a79b056b6735192d7d6580a6dac5bf">Plus de détails...</a><br /></td></tr>
+<tr class="separator:aa7a79b056b6735192d7d6580a6dac5bf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afad4fded6a762ff0eea20bf1aa3a1557"><td class="memItemLeft" align="right" valign="top">static const unsigned long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/d84/a00001.html#afad4fded6a762ff0eea20bf1aa3a1557">DEBUT_DE_FENETRE_1</a> = 3000UL</td></tr>
+<tr class="memdesc:afad4fded6a762ff0eea20bf1aa3a1557"><td class="mdescLeft">&#160;</td><td class="mdescRight">s On doit presser le bouton  <a href="#afad4fded6a762ff0eea20bf1aa3a1557">Plus de détails...</a><br /></td></tr>
+<tr class="separator:afad4fded6a762ff0eea20bf1aa3a1557"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa582bca61afb069f8e1a0669314c3c13"><td class="memItemLeft" align="right" valign="top">static const unsigned long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/d84/a00001.html#aa582bca61afb069f8e1a0669314c3c13">DEBUT_DE_FENETRE_2</a> = 7000UL</td></tr>
+<tr class="memdesc:aa582bca61afb069f8e1a0669314c3c13"><td class="mdescLeft">&#160;</td><td class="mdescRight">s On doit presser le bouton  <a href="#aa582bca61afb069f8e1a0669314c3c13">Plus de détails...</a><br /></td></tr>
+<tr class="separator:aa582bca61afb069f8e1a0669314c3c13"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a54e5504a11c93736606ed6b1ca8e3514"><td class="memItemLeft" align="right" valign="top">static const unsigned long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/d84/a00001.html#a54e5504a11c93736606ed6b1ca8e3514">DEBUT_DE_FENETRE_3</a> = 12000UL</td></tr>
+<tr class="memdesc:a54e5504a11c93736606ed6b1ca8e3514"><td class="mdescLeft">&#160;</td><td class="mdescRight">s On doit presser le bouton  <a href="#a54e5504a11c93736606ed6b1ca8e3514">Plus de détails...</a><br /></td></tr>
+<tr class="separator:a54e5504a11c93736606ed6b1ca8e3514"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3d995e416901085562cefe8cea623d24"><td class="memItemLeft" align="right" valign="top">static const unsigned long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/d84/a00001.html#a3d995e416901085562cefe8cea623d24">DUREE_DU_BUZZER</a> = 160UL</td></tr>
+<tr class="memdesc:a3d995e416901085562cefe8cea623d24"><td class="mdescLeft">&#160;</td><td class="mdescRight">ms Durée du bip  <a href="#a3d995e416901085562cefe8cea623d24">Plus de détails...</a><br /></td></tr>
+<tr class="separator:a3d995e416901085562cefe8cea623d24"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abb013d98e3527e445a799d4639d468df"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/d84/a00001.html#abb013d98e3527e445a799d4639d468df">enfonce</a> = false</td></tr>
+<tr class="memdesc:abb013d98e3527e445a799d4639d468df"><td class="mdescLeft">&#160;</td><td class="mdescRight">Le bouton a été perçu enfoncé.  <a href="#abb013d98e3527e445a799d4639d468df">Plus de détails...</a><br /></td></tr>
+<tr class="separator:abb013d98e3527e445a799d4639d468df"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a31596e70fef19dcec60cd2cb415433e4"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="../../d8/d84/a00001.html#a0753690b45a091cda92b046fcd3edb4e">Etat_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/d84/a00001.html#a31596e70fef19dcec60cd2cb415433e4">etat</a> = <a class="el" href="../../d8/d84/a00001.html#a0753690b45a091cda92b046fcd3edb4ead1c07daa654c2e4ab2237c8d73192961">ETA_VEILLE</a></td></tr>
+<tr class="memdesc:a31596e70fef19dcec60cd2cb415433e4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Etat du système.  <a href="#a31596e70fef19dcec60cd2cb415433e4">Plus de détails...</a><br /></td></tr>
+<tr class="separator:a31596e70fef19dcec60cd2cb415433e4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af5a0af52c14cf60c2ad5f219470f0f97"><td class="memItemLeft" align="right" valign="top">static const unsigned long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/d84/a00001.html#af5a0af52c14cf60c2ad5f219470f0f97">FIN_DE_FENETRE_1</a> = 5000UL</td></tr>
+<tr class="memdesc:af5a0af52c14cf60c2ad5f219470f0f97"><td class="mdescLeft">&#160;</td><td class="mdescRight">s On doit attendre  <a href="#af5a0af52c14cf60c2ad5f219470f0f97">Plus de détails...</a><br /></td></tr>
+<tr class="separator:af5a0af52c14cf60c2ad5f219470f0f97"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae87ebdf85c0fc9e93324f7a433a16198"><td class="memItemLeft" align="right" valign="top">static const unsigned long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/d84/a00001.html#ae87ebdf85c0fc9e93324f7a433a16198">FIN_DE_FENETRE_2</a> = 9000UL</td></tr>
+<tr class="memdesc:ae87ebdf85c0fc9e93324f7a433a16198"><td class="mdescLeft">&#160;</td><td class="mdescRight">s On doit attendre  <a href="#ae87ebdf85c0fc9e93324f7a433a16198">Plus de détails...</a><br /></td></tr>
+<tr class="separator:ae87ebdf85c0fc9e93324f7a433a16198"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aad3851a830c96b19c7f94fd9cbfcd949"><td class="memItemLeft" align="right" valign="top">static const unsigned long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/d84/a00001.html#aad3851a830c96b19c7f94fd9cbfcd949">FIN_DE_FENETRE_3</a> = 14000UL</td></tr>
+<tr class="memdesc:aad3851a830c96b19c7f94fd9cbfcd949"><td class="mdescLeft">&#160;</td><td class="mdescRight">s On doit attendre  <a href="#aad3851a830c96b19c7f94fd9cbfcd949">Plus de détails...</a><br /></td></tr>
+<tr class="separator:aad3851a830c96b19c7f94fd9cbfcd949"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af5acdbff150849aa48c3cad1adf4246b"><td class="memItemLeft" align="right" valign="top">static const unsigned long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/d84/a00001.html#af5acdbff150849aa48c3cad1adf4246b">FREQUENCE_DU_BUZZER</a> = 220UL</td></tr>
+<tr class="memdesc:af5acdbff150849aa48c3cad1adf4246b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Hz Note "La" octave 3.  <a href="#af5acdbff150849aa48c3cad1adf4246b">Plus de détails...</a><br /></td></tr>
+<tr class="separator:af5acdbff150849aa48c3cad1adf4246b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a62f65993e1798ff202fe960872ee3af9"><td class="memItemLeft" align="right" valign="top">static const uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/d84/a00001.html#a62f65993e1798ff202fe960872ee3af9">LED1_PIN</a> = 3</td></tr>
+<tr class="memdesc:a62f65993e1798ff202fe960872ee3af9"><td class="mdescLeft">&#160;</td><td class="mdescRight">DEL branchée sur le port n°3.  <a href="#a62f65993e1798ff202fe960872ee3af9">Plus de détails...</a><br /></td></tr>
+<tr class="separator:a62f65993e1798ff202fe960872ee3af9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abe4f8edaa98ea210d93013224f462059"><td class="memItemLeft" align="right" valign="top">static const uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/d84/a00001.html#abe4f8edaa98ea210d93013224f462059">LED2_PIN</a> = 4</td></tr>
+<tr class="memdesc:abe4f8edaa98ea210d93013224f462059"><td class="mdescLeft">&#160;</td><td class="mdescRight">DEL branchée sur le port n°4.  <a href="#abe4f8edaa98ea210d93013224f462059">Plus de détails...</a><br /></td></tr>
+<tr class="separator:abe4f8edaa98ea210d93013224f462059"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3fa7270b5c0f7b4042db3b4b7acf959b"><td class="memItemLeft" align="right" valign="top">static const uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/d84/a00001.html#a3fa7270b5c0f7b4042db3b4b7acf959b">LED3_PIN</a> = 5</td></tr>
+<tr class="memdesc:a3fa7270b5c0f7b4042db3b4b7acf959b"><td class="mdescLeft">&#160;</td><td class="mdescRight">DEL branchée sur le port n°5.  <a href="#a3fa7270b5c0f7b4042db3b4b7acf959b">Plus de détails...</a><br /></td></tr>
+<tr class="separator:a3fa7270b5c0f7b4042db3b4b7acf959b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab4773757a01be0f5685b5f56879b8628"><td class="memItemLeft" align="right" valign="top">static const unsigned long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/d84/a00001.html#ab4773757a01be0f5685b5f56879b8628">PERIODE_D_ACTIVATION_DU_BUZZER</a> = 500UL</td></tr>
+<tr class="memdesc:ab4773757a01be0f5685b5f56879b8628"><td class="mdescLeft">&#160;</td><td class="mdescRight">ms Intervalle entre deux bips  <a href="#ab4773757a01be0f5685b5f56879b8628">Plus de détails...</a><br /></td></tr>
+<tr class="separator:ab4773757a01be0f5685b5f56879b8628"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7bb1ec7dd618711e249eb99af044e53a"><td class="memItemLeft" align="right" valign="top">static unsigned long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/d84/a00001.html#a7bb1ec7dd618711e249eb99af044e53a">t0</a> = 0UL</td></tr>
+<tr class="memdesc:a7bb1ec7dd618711e249eb99af044e53a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Horodatage des événements : temps de départ.  <a href="#a7bb1ec7dd618711e249eb99af044e53a">Plus de détails...</a><br /></td></tr>
+<tr class="separator:a7bb1ec7dd618711e249eb99af044e53a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table>
+<h2 class="groupheader">Documentation du type de l'énumération</h2>
+<a class="anchor" id="a0753690b45a091cda92b046fcd3edb4e"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="../../d8/d84/a00001.html#a0753690b45a091cda92b046fcd3edb4e">Etat_t</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Etats du système. </p>
+<table class="fieldtable">
+<tr><th colspan="2">Valeurs énumérées</th></tr><tr><td class="fieldname"><a class="anchor" id="a0753690b45a091cda92b046fcd3edb4ead1c07daa654c2e4ab2237c8d73192961"></a>ETA_VEILLE&#160;</td><td class="fielddoc">
+</td></tr>
+<tr><td class="fieldname"><a class="anchor" id="a0753690b45a091cda92b046fcd3edb4eac7d38fb789ac5a73f09a36621dc460dc"></a>ETA_ACTIF&#160;</td><td class="fielddoc">
+</td></tr>
+<tr><td class="fieldname"><a class="anchor" id="a0753690b45a091cda92b046fcd3edb4ea2d0fac97f3f163ef140355c18478e5dd"></a>ETA_ATTENTE_1&#160;</td><td class="fielddoc">
+</td></tr>
+<tr><td class="fieldname"><a class="anchor" id="a0753690b45a091cda92b046fcd3edb4ea9313045eaf8e13d72b3de5ce75d6cbcc"></a>ETA_LED_1&#160;</td><td class="fielddoc">
+</td></tr>
+<tr><td class="fieldname"><a class="anchor" id="a0753690b45a091cda92b046fcd3edb4eaa65b9fad926a870f5763173364e0d50a"></a>ETA_ATTENTE_2&#160;</td><td class="fielddoc">
+</td></tr>
+<tr><td class="fieldname"><a class="anchor" id="a0753690b45a091cda92b046fcd3edb4ea6c0b7b286f9dbd0f6ce3e1a19f3e7538"></a>ETA_LED_2&#160;</td><td class="fielddoc">
+</td></tr>
+<tr><td class="fieldname"><a class="anchor" id="a0753690b45a091cda92b046fcd3edb4eae78b1f14a6dfc11b6eee9603e4184df2"></a>ETA_ATTENTE_3&#160;</td><td class="fielddoc">
+</td></tr>
+<tr><td class="fieldname"><a class="anchor" id="a0753690b45a091cda92b046fcd3edb4ea21505fe2900ae8d30435823b556909c2"></a>ETA_LED_3&#160;</td><td class="fielddoc">
+</td></tr>
+</table>
+
+<p>Définition à la ligne <a class="el" href="../../d8/d84/a00001_source.html#l00006">6</a> du fichier <a class="el" href="../../d8/d84/a00001_source.html">IfThenElsePourMax.cpp</a>.</p>
+
+</div>
+</div>
+<h2 class="groupheader">Documentation des fonctions</h2>
+<a class="anchor" id="a0473eb52e9f0932460412452b7c9067e"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static void active_le_buzzer </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Allume le buzzer et effectue l'horodatage pour gérer son extinction prochaine. </p>
+<dl class="section see"><dt>Voir également</dt><dd><a class="el" href="../../d8/d84/a00001.html#a3d995e416901085562cefe8cea623d24" title="ms Durée du bip ">DUREE_DU_BUZZER</a> </dd></dl>
+
+<p>Définition à la ligne <a class="el" href="../../d8/d84/a00001_source.html#l00060">60</a> du fichier <a class="el" href="../../d8/d84/a00001_source.html">IfThenElsePourMax.cpp</a>.</p>
+
+<p><div class="dynheader">
+Voici le graphe des appelants de cette fonction :</div>
+<div class="dyncontent">
+<div class="center"><img src="../../d8/d84/a00001_a0473eb52e9f0932460412452b7c9067e_icgraph.png" border="0" usemap="#d8/d84/a00001_a0473eb52e9f0932460412452b7c9067e_icgraph" alt=""/></div>
+<map name="d8/d84/a00001_a0473eb52e9f0932460412452b7c9067e_icgraph" id="d8/d84/a00001_a0473eb52e9f0932460412452b7c9067e_icgraph">
+<area shape="rect" id="node2" href="../../d8/d84/a00001.html#afe461d27b9c48d5921c00d521181f12f" title="L&#39;évolution de l&#39;état du système est confiné ici sous la forme d&#39;un automate état/transition. " alt="" coords="173,5,220,32"/>
+</map>
+</div>
+</p>
+
+</div>
+</div>
+<a class="anchor" id="ae07989acf4bffd608b03f61532fddf51"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static void affiche_l_indice </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Cette fonction ne fait rien, à terme elle devra contrôler un afficheur pour diffuser un message constituant un indice pour résoudre la quête. </p>
+
+<p>Définition à la ligne <a class="el" href="../../d8/d84/a00001_source.html#l00126">126</a> du fichier <a class="el" href="../../d8/d84/a00001_source.html">IfThenElsePourMax.cpp</a>.</p>
+
+<p><div class="dynheader">
+Voici le graphe des appelants de cette fonction :</div>
+<div class="dyncontent">
+<div class="center"><img src="../../d8/d84/a00001_ae07989acf4bffd608b03f61532fddf51_icgraph.png" border="0" usemap="#d8/d84/a00001_ae07989acf4bffd608b03f61532fddf51_icgraph" alt=""/></div>
+<map name="d8/d84/a00001_ae07989acf4bffd608b03f61532fddf51_icgraph" id="d8/d84/a00001_ae07989acf4bffd608b03f61532fddf51_icgraph">
+<area shape="rect" id="node2" href="../../d8/d84/a00001.html#a4fac0448487379a273d00320ce664bd7" title="Utilise l&#39;API Arduino pour allumer les DEL n°1, n°2 et n°3. " alt="" coords="165,5,291,32"/>
+<area shape="rect" id="node3" href="../../d8/d84/a00001.html#afe461d27b9c48d5921c00d521181f12f" title="L&#39;évolution de l&#39;état du système est confiné ici sous la forme d&#39;un automate état/transition. " alt="" coords="339,5,385,32"/>
+</map>
+</div>
+</p>
+
+</div>
+</div>
+<a class="anchor" id="af5016232deae83d338453879a46489d6"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static void allume_deux_LED </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Utilise l'API Arduino pour allumer les DEL n°1 et n°2. </p>
+<p>Met en oeuvre l'API Arduino <a href="https://www.arduino.cc/reference/en/language/functions/digital-io/digitalwrite/" target="_blank">digitalWrite()</a> </p>
+
+<p>Définition à la ligne <a class="el" href="../../d8/d84/a00001_source.html#l00115">115</a> du fichier <a class="el" href="../../d8/d84/a00001_source.html">IfThenElsePourMax.cpp</a>.</p>
+
+<p><div class="dynheader">
+Voici le graphe des appelants de cette fonction :</div>
+<div class="dyncontent">
+<div class="center"><img src="../../d8/d84/a00001_af5016232deae83d338453879a46489d6_icgraph.png" border="0" usemap="#d8/d84/a00001_af5016232deae83d338453879a46489d6_icgraph" alt=""/></div>
+<map name="d8/d84/a00001_af5016232deae83d338453879a46489d6_icgraph" id="d8/d84/a00001_af5016232deae83d338453879a46489d6_icgraph">
+<area shape="rect" id="node2" href="../../d8/d84/a00001.html#afe461d27b9c48d5921c00d521181f12f" title="L&#39;évolution de l&#39;état du système est confiné ici sous la forme d&#39;un automate état/transition. " alt="" coords="181,5,228,32"/>
+</map>
+</div>
+</p>
+
+</div>
+</div>
+<a class="anchor" id="a4fac0448487379a273d00320ce664bd7"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static void allume_trois_LED </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Utilise l'API Arduino pour allumer les DEL n°1, n°2 et n°3. </p>
+<p>Met en oeuvre l'API Arduino <a href="https://www.arduino.cc/reference/en/language/functions/digital-io/digitalwrite/" target="_blank">digitalWrite()</a> </p>
+
+<p>Définition à la ligne <a class="el" href="../../d8/d84/a00001_source.html#l00136">136</a> du fichier <a class="el" href="../../d8/d84/a00001_source.html">IfThenElsePourMax.cpp</a>.</p>
+
+<p><div class="dynheader">
+Voici le graphe d'appel pour cette fonction :</div>
+<div class="dyncontent">
+<div class="center"><img src="../../d8/d84/a00001_a4fac0448487379a273d00320ce664bd7_cgraph.png" border="0" usemap="#d8/d84/a00001_a4fac0448487379a273d00320ce664bd7_cgraph" alt=""/></div>
+<map name="d8/d84/a00001_a4fac0448487379a273d00320ce664bd7_cgraph" id="d8/d84/a00001_a4fac0448487379a273d00320ce664bd7_cgraph">
+<area shape="rect" id="node2" href="../../d8/d84/a00001.html#ae07989acf4bffd608b03f61532fddf51" title="Cette fonction ne fait rien, à terme elle devra contrôler un afficheur pour diffuser un message const..." alt="" coords="179,5,291,32"/>
+</map>
+</div>
+</p>
+
+<p><div class="dynheader">
+Voici le graphe des appelants de cette fonction :</div>
+<div class="dyncontent">
+<div class="center"><img src="../../d8/d84/a00001_a4fac0448487379a273d00320ce664bd7_icgraph.png" border="0" usemap="#d8/d84/a00001_a4fac0448487379a273d00320ce664bd7_icgraph" alt=""/></div>
+<map name="d8/d84/a00001_a4fac0448487379a273d00320ce664bd7_icgraph" id="d8/d84/a00001_a4fac0448487379a273d00320ce664bd7_icgraph">
+<area shape="rect" id="node2" href="../../d8/d84/a00001.html#afe461d27b9c48d5921c00d521181f12f" title="L&#39;évolution de l&#39;état du système est confiné ici sous la forme d&#39;un automate état/transition. " alt="" coords="179,5,225,32"/>
+</map>
+</div>
+</p>
+
+</div>
+</div>
+<a class="anchor" id="ae7bc60cc6f30cfeb2aec48d7ed2ed9b4"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static void allume_une_LED </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Utilise l'API Arduino pour allumer la DEL n°1. </p>
+<p>Met en oeuvre l'API Arduino <a href="https://www.arduino.cc/reference/en/language/functions/digital-io/digitalwrite/" target="_blank">digitalWrite()</a> </p>
+
+<p>Définition à la ligne <a class="el" href="../../d8/d84/a00001_source.html#l00102">102</a> du fichier <a class="el" href="../../d8/d84/a00001_source.html">IfThenElsePourMax.cpp</a>.</p>
+
+<p><div class="dynheader">
+Voici le graphe des appelants de cette fonction :</div>
+<div class="dyncontent">
+<div class="center"><img src="../../d8/d84/a00001_ae7bc60cc6f30cfeb2aec48d7ed2ed9b4_icgraph.png" border="0" usemap="#d8/d84/a00001_ae7bc60cc6f30cfeb2aec48d7ed2ed9b4_icgraph" alt=""/></div>
+<map name="d8/d84/a00001_ae7bc60cc6f30cfeb2aec48d7ed2ed9b4_icgraph" id="d8/d84/a00001_ae7bc60cc6f30cfeb2aec48d7ed2ed9b4_icgraph">
+<area shape="rect" id="node2" href="../../d8/d84/a00001.html#afe461d27b9c48d5921c00d521181f12f" title="L&#39;évolution de l&#39;état du système est confiné ici sous la forme d&#39;un automate état/transition. " alt="" coords="175,5,221,32"/>
+</map>
+</div>
+</p>
+
+</div>
+</div>
+<a class="anchor" id="aaa6fd446b77da85ce3eda50281c99edf"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static bool bouton_est_relache </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Retourne 'vrai' quand le bouton a été enfoncé puis relâché. </p>
+<p>Met en oeuvre l'API Arduino <a href="https://www.arduino.cc/reference/en/language/functions/digital-io/digitalread/" target="_blank">digitalRead()</a> pour acquérir l'état du bouton. </p><dl class="section return"><dt>Renvoie</dt><dd>true quand le bouton a été enfoncé puis relâché. </dd></dl>
+
+<p>Définition à la ligne <a class="el" href="../../d8/d84/a00001_source.html#l00151">151</a> du fichier <a class="el" href="../../d8/d84/a00001_source.html">IfThenElsePourMax.cpp</a>.</p>
+
+<p><div class="dynheader">
+Voici le graphe des appelants de cette fonction :</div>
+<div class="dyncontent">
+<div class="center"><img src="../../d8/d84/a00001_aaa6fd446b77da85ce3eda50281c99edf_icgraph.png" border="0" usemap="#d8/d84/a00001_aaa6fd446b77da85ce3eda50281c99edf_icgraph" alt=""/></div>
+<map name="d8/d84/a00001_aaa6fd446b77da85ce3eda50281c99edf_icgraph" id="d8/d84/a00001_aaa6fd446b77da85ce3eda50281c99edf_icgraph">
+<area shape="rect" id="node2" href="../../d8/d84/a00001.html#afe461d27b9c48d5921c00d521181f12f" title="L&#39;évolution de l&#39;état du système est confiné ici sous la forme d&#39;un automate état/transition. " alt="" coords="188,5,235,32"/>
+</map>
+</div>
+</p>
+
+</div>
+</div>
+<a class="anchor" id="adbfc11cdf0c7c1bd86cdec47f449c8b3"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static void demarre </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Effectue l'horodatage pour gérer les événements temporels. </p>
+<dl class="section see"><dt>Voir également</dt><dd><a class="el" href="../../d8/d84/a00001.html#a3d995e416901085562cefe8cea623d24" title="ms Durée du bip ">DUREE_DU_BUZZER</a> Met en oeuvre l'API Arduino <a href="https://www.arduino.cc/reference/en/language/functions/time/millis/" target="_blank">millis()</a> </dd></dl>
+
+<p>Définition à la ligne <a class="el" href="../../d8/d84/a00001_source.html#l00073">73</a> du fichier <a class="el" href="../../d8/d84/a00001_source.html">IfThenElsePourMax.cpp</a>.</p>
+
+<p><div class="dynheader">
+Voici le graphe des appelants de cette fonction :</div>
+<div class="dyncontent">
+<div class="center"><img src="../../d8/d84/a00001_adbfc11cdf0c7c1bd86cdec47f449c8b3_icgraph.png" border="0" usemap="#d8/d84/a00001_adbfc11cdf0c7c1bd86cdec47f449c8b3_icgraph" alt=""/></div>
+<map name="d8/d84/a00001_adbfc11cdf0c7c1bd86cdec47f449c8b3_icgraph" id="d8/d84/a00001_adbfc11cdf0c7c1bd86cdec47f449c8b3_icgraph">
+<area shape="rect" id="node2" href="../../d8/d84/a00001.html#afe461d27b9c48d5921c00d521181f12f" title="L&#39;évolution de l&#39;état du système est confiné ici sous la forme d&#39;un automate état/transition. " alt="" coords="123,5,169,32"/>
+</map>
+</div>
+</p>
+
+</div>
+</div>
+<a class="anchor" id="a850275f2638046dfde28a828c30f5906"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static void desactive_le_buzzer </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Eteint le buzzer. </p>
+
+<p>Définition à la ligne <a class="el" href="../../d8/d84/a00001_source.html#l00051">51</a> du fichier <a class="el" href="../../d8/d84/a00001_source.html">IfThenElsePourMax.cpp</a>.</p>
+
+<p><div class="dynheader">
+Voici le graphe des appelants de cette fonction :</div>
+<div class="dyncontent">
+<div class="center"><img src="../../d8/d84/a00001_a850275f2638046dfde28a828c30f5906_icgraph.png" border="0" usemap="#d8/d84/a00001_a850275f2638046dfde28a828c30f5906_icgraph" alt=""/></div>
+<map name="d8/d84/a00001_a850275f2638046dfde28a828c30f5906_icgraph" id="d8/d84/a00001_a850275f2638046dfde28a828c30f5906_icgraph">
+<area shape="rect" id="node2" href="../../d8/d84/a00001.html#ac7d7b30fcc3f4469d3a6b4d6e6c0ddaf" title="Remet le système en attente, éteint les DEL, le buzzer, réinitialise l&#39;état interne. " alt="" coords="195,5,277,32"/>
+<area shape="rect" id="node3" href="../../d8/d84/a00001.html#afe461d27b9c48d5921c00d521181f12f" title="L&#39;évolution de l&#39;état du système est confiné ici sous la forme d&#39;un automate état/transition. " alt="" coords="325,31,372,57"/>
+</map>
+</div>
+</p>
+
+</div>
+</div>
+<a class="anchor" id="ac7d7b30fcc3f4469d3a6b4d6e6c0ddaf"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static void eteint_tout </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Remet le système en attente, éteint les DEL, le buzzer, réinitialise l'état interne. </p>
+<dl class="section see"><dt>Voir également</dt><dd><a class="el" href="../../d8/d84/a00001.html#a31596e70fef19dcec60cd2cb415433e4" title="Etat du système. ">etat</a>, <a class="el" href="../../d8/d84/a00001.html#a0753690b45a091cda92b046fcd3edb4e" title="Etats du système. ">Etat_t</a>. </dd></dl>
+
+<p>Définition à la ligne <a class="el" href="../../d8/d84/a00001_source.html#l00083">83</a> du fichier <a class="el" href="../../d8/d84/a00001_source.html">IfThenElsePourMax.cpp</a>.</p>
+
+<p><div class="dynheader">
+Voici le graphe d'appel pour cette fonction :</div>
+<div class="dyncontent">
+<div class="center"><img src="../../d8/d84/a00001_ac7d7b30fcc3f4469d3a6b4d6e6c0ddaf_cgraph.png" border="0" usemap="#d8/d84/a00001_ac7d7b30fcc3f4469d3a6b4d6e6c0ddaf_cgraph" alt=""/></div>
+<map name="d8/d84/a00001_ac7d7b30fcc3f4469d3a6b4d6e6c0ddaf_cgraph" id="d8/d84/a00001_ac7d7b30fcc3f4469d3a6b4d6e6c0ddaf_cgraph">
+<area shape="rect" id="node2" href="../../d8/d84/a00001.html#a850275f2638046dfde28a828c30f5906" title="Eteint le buzzer. " alt="" coords="136,5,277,32"/>
+</map>
+</div>
+</p>
+
+<p><div class="dynheader">
+Voici le graphe des appelants de cette fonction :</div>
+<div class="dyncontent">
+<div class="center"><img src="../../d8/d84/a00001_ac7d7b30fcc3f4469d3a6b4d6e6c0ddaf_icgraph.png" border="0" usemap="#d8/d84/a00001_ac7d7b30fcc3f4469d3a6b4d6e6c0ddaf_icgraph" alt=""/></div>
+<map name="d8/d84/a00001_ac7d7b30fcc3f4469d3a6b4d6e6c0ddaf_icgraph" id="d8/d84/a00001_ac7d7b30fcc3f4469d3a6b4d6e6c0ddaf_icgraph">
+<area shape="rect" id="node2" href="../../d8/d84/a00001.html#afe461d27b9c48d5921c00d521181f12f" title="L&#39;évolution de l&#39;état du système est confiné ici sous la forme d&#39;un automate état/transition. " alt="" coords="136,5,183,32"/>
+</map>
+</div>
+</p>
+
+</div>
+</div>
+<a class="anchor" id="ab21b1ff35920277890d6f83e712dafd0"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static void initialise_la_liaison_serie </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Initialise la liaison série au moyen de l'API Arduino <a href="https://www.arduino.cc/reference/en/language/functions/communication/serial/begin/" target="_blank">Serial.begin()</a>. </p>
+
+<p>Définition à la ligne <a class="el" href="../../d8/d84/a00001_source.html#l00167">167</a> du fichier <a class="el" href="../../d8/d84/a00001_source.html">IfThenElsePourMax.cpp</a>.</p>
+
+<p><div class="dynheader">
+Voici le graphe des appelants de cette fonction :</div>
+<div class="dyncontent">
+<div class="center"><img src="../../d8/d84/a00001_ab21b1ff35920277890d6f83e712dafd0_icgraph.png" border="0" usemap="#d8/d84/a00001_ab21b1ff35920277890d6f83e712dafd0_icgraph" alt=""/></div>
+<map name="d8/d84/a00001_ab21b1ff35920277890d6f83e712dafd0_icgraph" id="d8/d84/a00001_ab21b1ff35920277890d6f83e712dafd0_icgraph">
+<area shape="rect" id="node2" href="../../d8/d84/a00001.html#a4fc01d736fe50cf5b977f755b675f11d" title="Initialise le hardware. " alt="" coords="184,13,239,39"/>
+</map>
+</div>
+</p>
+
+</div>
+</div>
+<a class="anchor" id="aefc4bfc5133e36b48e4c89f61d06a2d3"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static void initialise_les_entrees_sorties </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Configure les entrées/sorties au moyen de l'API Arduino <a href="https://www.arduino.cc/reference/en/language/functions/digital-io/pinmode/" target="_blank">pinMode()</a>. </p>
+
+<p>Définition à la ligne <a class="el" href="../../d8/d84/a00001_source.html#l00176">176</a> du fichier <a class="el" href="../../d8/d84/a00001_source.html">IfThenElsePourMax.cpp</a>.</p>
+
+<p><div class="dynheader">
+Voici le graphe des appelants de cette fonction :</div>
+<div class="dyncontent">
+<div class="center"><img src="../../d8/d84/a00001_aefc4bfc5133e36b48e4c89f61d06a2d3_icgraph.png" border="0" usemap="#d8/d84/a00001_aefc4bfc5133e36b48e4c89f61d06a2d3_icgraph" alt=""/></div>
+<map name="d8/d84/a00001_aefc4bfc5133e36b48e4c89f61d06a2d3_icgraph" id="d8/d84/a00001_aefc4bfc5133e36b48e4c89f61d06a2d3_icgraph">
+<area shape="rect" id="node2" href="../../d8/d84/a00001.html#a4fc01d736fe50cf5b977f755b675f11d" title="Initialise le hardware. " alt="" coords="196,13,251,39"/>
+</map>
+</div>
+</p>
+
+</div>
+</div>
+<a class="anchor" id="afe461d27b9c48d5921c00d521181f12f"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void loop </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>L'évolution de l'état du système est confiné ici sous la forme d'un automate état/transition. </p>
+<p>La gestion du bip périodique est effectuée également ici Voir aussi la documentation Arduino <a href="https://www.arduino.cc/reference/en/language/structure/sketch/loop/" target="_blank">loop()</a>. </p>
+
+<p>Définition à la ligne <a class="el" href="../../d8/d84/a00001_source.html#l00204">204</a> du fichier <a class="el" href="../../d8/d84/a00001_source.html">IfThenElsePourMax.cpp</a>.</p>
+
+<p><div class="dynheader">
+Voici le graphe d'appel pour cette fonction :</div>
+<div class="dyncontent">
+<div class="center"><img src="../../d8/d84/a00001_afe461d27b9c48d5921c00d521181f12f_cgraph.png" border="0" usemap="#d8/d84/a00001_afe461d27b9c48d5921c00d521181f12f_cgraph" alt=""/></div>
+<map name="d8/d84/a00001_afe461d27b9c48d5921c00d521181f12f_cgraph" id="d8/d84/a00001_afe461d27b9c48d5921c00d521181f12f_cgraph">
+<area shape="rect" id="node2" href="../../d8/d84/a00001.html#a850275f2638046dfde28a828c30f5906" title="Eteint le buzzer. " alt="" coords="283,87,424,114"/>
+<area shape="rect" id="node3" href="../../d8/d84/a00001.html#a0473eb52e9f0932460412452b7c9067e" title="Allume le buzzer et effectue l&#39;horodatage pour gérer son extinction prochaine. " alt="" coords="107,37,227,63"/>
+<area shape="rect" id="node4" href="../../d8/d84/a00001.html#aaa6fd446b77da85ce3eda50281c99edf" title="Retourne &#39;vrai&#39; quand le bouton a été enfoncé puis relâché. " alt="" coords="100,87,235,114"/>
+<area shape="rect" id="node5" href="../../d8/d84/a00001.html#adbfc11cdf0c7c1bd86cdec47f449c8b3" title="Effectue l&#39;horodatage pour gérer les événements temporels. " alt="" coords="133,138,202,165"/>
+<area shape="rect" id="node6" href="../../d8/d84/a00001.html#ac7d7b30fcc3f4469d3a6b4d6e6c0ddaf" title="Remet le système en attente, éteint les DEL, le buzzer, réinitialise l&#39;état interne. " alt="" coords="126,189,209,215"/>
+<area shape="rect" id="node7" href="../../d8/d84/a00001.html#ae7bc60cc6f30cfeb2aec48d7ed2ed9b4" title="Utilise l&#39;API Arduino pour allumer la DEL n°1. " alt="" coords="107,239,228,266"/>
+<area shape="rect" id="node8" href="../../d8/d84/a00001.html#af5016232deae83d338453879a46489d6" title="Utilise l&#39;API Arduino pour allumer les DEL n°1 et n°2. " alt="" coords="103,290,231,317"/>
+<area shape="rect" id="node9" href="../../d8/d84/a00001.html#a4fac0448487379a273d00320ce664bd7" title="Utilise l&#39;API Arduino pour allumer les DEL n°1, n°2 et n°3. " alt="" coords="105,341,230,367"/>
+<area shape="rect" id="node10" href="../../d8/d84/a00001.html#ae07989acf4bffd608b03f61532fddf51" title="Cette fonction ne fait rien, à terme elle devra contrôler un afficheur pour diffuser un message const..." alt="" coords="297,341,409,367"/>
+</map>
+</div>
+</p>
+
+</div>
+</div>
+<a class="anchor" id="a4fc01d736fe50cf5b977f755b675f11d"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void setup </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Initialise le hardware. </p>
+<p>Voir aussi la documentation Arduino <a href="https://www.arduino.cc/reference/en/language/structure/sketch/setup/" target="_blank">setup()</a>. </p>
+
+<p>Définition à la ligne <a class="el" href="../../d8/d84/a00001_source.html#l00190">190</a> du fichier <a class="el" href="../../d8/d84/a00001_source.html">IfThenElsePourMax.cpp</a>.</p>
+
+<p><div class="dynheader">
+Voici le graphe d'appel pour cette fonction :</div>
+<div class="dyncontent">
+<div class="center"><img src="../../d8/d84/a00001_a4fc01d736fe50cf5b977f755b675f11d_cgraph.png" border="0" usemap="#d8/d84/a00001_a4fc01d736fe50cf5b977f755b675f11d_cgraph" alt=""/></div>
+<map name="d8/d84/a00001_a4fc01d736fe50cf5b977f755b675f11d_cgraph" id="d8/d84/a00001_a4fc01d736fe50cf5b977f755b675f11d_cgraph">
+<area shape="rect" id="node2" href="../../d8/d84/a00001.html#ab21b1ff35920277890d6f83e712dafd0" title="Initialise la liaison série au moyen de l&#39;API Arduino Serial.begin(). " alt="" coords="114,5,245,47"/>
+<area shape="rect" id="node3" href="../../d8/d84/a00001.html#aefc4bfc5133e36b48e4c89f61d06a2d3" title="Configure les entrées/sorties au moyen de l&#39;API Arduino pinMode(). " alt="" coords="108,71,251,112"/>
+</map>
+</div>
+</p>
+
+</div>
+</div>
+<h2 class="groupheader">Documentation des variables</h2>
+<a class="anchor" id="a7337a18ed95e3dbc44953d2e8d65ba9e"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const uint8_t BOUTON_PIN = 2</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Bouton branché sur le port n°2. </p>
+
+<p>Définition à la ligne <a class="el" href="../../d8/d84/a00001_source.html#l00020">20</a> du fichier <a class="el" href="../../d8/d84/a00001_source.html">IfThenElsePourMax.cpp</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="ad779ede00a2d89839f661e8ea2e041a9"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">unsigned long buzzer_cycle = 0UL</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>N° de la période du buzzer. </p>
+
+<p>Définition à la ligne <a class="el" href="../../d8/d84/a00001_source.html#l00046">46</a> du fichier <a class="el" href="../../d8/d84/a00001_source.html">IfThenElsePourMax.cpp</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="abed7f98572aa6d1eb041f967fcd65021"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const uint8_t BUZZER_PIN = 7</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Buzzer branché sur le port n°7. </p>
+
+<p>Définition à la ligne <a class="el" href="../../d8/d84/a00001_source.html#l00024">24</a> du fichier <a class="el" href="../../d8/d84/a00001_source.html">IfThenElsePourMax.cpp</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="aa7a79b056b6735192d7d6580a6dac5bf"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">unsigned long buzzer_t0 = 0UL</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Horodatage du déclenchement du buzzer. </p>
+
+<p>Définition à la ligne <a class="el" href="../../d8/d84/a00001_source.html#l00045">45</a> du fichier <a class="el" href="../../d8/d84/a00001_source.html">IfThenElsePourMax.cpp</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="afad4fded6a762ff0eea20bf1aa3a1557"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const unsigned long DEBUT_DE_FENETRE_1 = 3000UL</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>s On doit presser le bouton </p>
+
+<p>Définition à la ligne <a class="el" href="../../d8/d84/a00001_source.html#l00032">32</a> du fichier <a class="el" href="../../d8/d84/a00001_source.html">IfThenElsePourMax.cpp</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="aa582bca61afb069f8e1a0669314c3c13"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const unsigned long DEBUT_DE_FENETRE_2 = 7000UL</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>s On doit presser le bouton </p>
+
+<p>Définition à la ligne <a class="el" href="../../d8/d84/a00001_source.html#l00034">34</a> du fichier <a class="el" href="../../d8/d84/a00001_source.html">IfThenElsePourMax.cpp</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a54e5504a11c93736606ed6b1ca8e3514"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const unsigned long DEBUT_DE_FENETRE_3 = 12000UL</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>s On doit presser le bouton </p>
+
+<p>Définition à la ligne <a class="el" href="../../d8/d84/a00001_source.html#l00036">36</a> du fichier <a class="el" href="../../d8/d84/a00001_source.html">IfThenElsePourMax.cpp</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a3d995e416901085562cefe8cea623d24"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const unsigned long DUREE_DU_BUZZER = 160UL</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>ms Durée du bip </p>
+
+<p>Définition à la ligne <a class="el" href="../../d8/d84/a00001_source.html#l00030">30</a> du fichier <a class="el" href="../../d8/d84/a00001_source.html">IfThenElsePourMax.cpp</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="abb013d98e3527e445a799d4639d468df"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool enfonce = false</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Le bouton a été perçu enfoncé. </p>
+
+<p>Définition à la ligne <a class="el" href="../../d8/d84/a00001_source.html#l00043">43</a> du fichier <a class="el" href="../../d8/d84/a00001_source.html">IfThenElsePourMax.cpp</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a31596e70fef19dcec60cd2cb415433e4"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="../../d8/d84/a00001.html#a0753690b45a091cda92b046fcd3edb4e">Etat_t</a> etat = <a class="el" href="../../d8/d84/a00001.html#a0753690b45a091cda92b046fcd3edb4ead1c07daa654c2e4ab2237c8d73192961">ETA_VEILLE</a></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Etat du système. </p>
+
+<p>Définition à la ligne <a class="el" href="../../d8/d84/a00001_source.html#l00042">42</a> du fichier <a class="el" href="../../d8/d84/a00001_source.html">IfThenElsePourMax.cpp</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="af5a0af52c14cf60c2ad5f219470f0f97"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const unsigned long FIN_DE_FENETRE_1 = 5000UL</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>s On doit attendre </p>
+
+<p>Définition à la ligne <a class="el" href="../../d8/d84/a00001_source.html#l00033">33</a> du fichier <a class="el" href="../../d8/d84/a00001_source.html">IfThenElsePourMax.cpp</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="ae87ebdf85c0fc9e93324f7a433a16198"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const unsigned long FIN_DE_FENETRE_2 = 9000UL</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>s On doit attendre </p>
+
+<p>Définition à la ligne <a class="el" href="../../d8/d84/a00001_source.html#l00035">35</a> du fichier <a class="el" href="../../d8/d84/a00001_source.html">IfThenElsePourMax.cpp</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="aad3851a830c96b19c7f94fd9cbfcd949"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const unsigned long FIN_DE_FENETRE_3 = 14000UL</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>s On doit attendre </p>
+
+<p>Définition à la ligne <a class="el" href="../../d8/d84/a00001_source.html#l00037">37</a> du fichier <a class="el" href="../../d8/d84/a00001_source.html">IfThenElsePourMax.cpp</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="af5acdbff150849aa48c3cad1adf4246b"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const unsigned long FREQUENCE_DU_BUZZER = 220UL</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Hz Note "La" octave 3. </p>
+
+<p>Définition à la ligne <a class="el" href="../../d8/d84/a00001_source.html#l00029">29</a> du fichier <a class="el" href="../../d8/d84/a00001_source.html">IfThenElsePourMax.cpp</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a62f65993e1798ff202fe960872ee3af9"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const uint8_t LED1_PIN = 3</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>DEL branchée sur le port n°3. </p>
+
+<p>Définition à la ligne <a class="el" href="../../d8/d84/a00001_source.html#l00021">21</a> du fichier <a class="el" href="../../d8/d84/a00001_source.html">IfThenElsePourMax.cpp</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="abe4f8edaa98ea210d93013224f462059"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const uint8_t LED2_PIN = 4</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>DEL branchée sur le port n°4. </p>
+
+<p>Définition à la ligne <a class="el" href="../../d8/d84/a00001_source.html#l00022">22</a> du fichier <a class="el" href="../../d8/d84/a00001_source.html">IfThenElsePourMax.cpp</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a3fa7270b5c0f7b4042db3b4b7acf959b"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const uint8_t LED3_PIN = 5</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>DEL branchée sur le port n°5. </p>
+
+<p>Définition à la ligne <a class="el" href="../../d8/d84/a00001_source.html#l00023">23</a> du fichier <a class="el" href="../../d8/d84/a00001_source.html">IfThenElsePourMax.cpp</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="ab4773757a01be0f5685b5f56879b8628"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const unsigned long PERIODE_D_ACTIVATION_DU_BUZZER = 500UL</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>ms Intervalle entre deux bips </p>
+
+<p>Définition à la ligne <a class="el" href="../../d8/d84/a00001_source.html#l00031">31</a> du fichier <a class="el" href="../../d8/d84/a00001_source.html">IfThenElsePourMax.cpp</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a7bb1ec7dd618711e249eb99af044e53a"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">unsigned long t0 = 0UL</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Horodatage des événements : temps de départ. </p>
+
+<p>Définition à la ligne <a class="el" href="../../d8/d84/a00001_source.html#l00044">44</a> du fichier <a class="el" href="../../d8/d84/a00001_source.html">IfThenElsePourMax.cpp</a>.</p>
+
+</div>
+</div>
+</div><!-- contents -->
+<!-- start footer part -->
+<hr class="footer"/><address class="footer"><small>
+Généré par &#160;<a href="http://www.doxygen.org/index.html">
+<img class="footer" src="../../doxygen.png" alt="doxygen"/>
+</a> 1.8.11
+</small></address>
+</body>
+</html>
