@@ -120,7 +120,7 @@ static void allume_deux_LED() {
 }
 
 /**
- * Cette fonction ne fait rien, à terme elle devra contrôler un afficheur pour
+ * Cette fonction devra, à terme, contrôler un afficheur pour
  * diffuser un message constituant un indice pour résoudre la quête.
  */
 static void affiche_l_indice() {
@@ -196,7 +196,7 @@ void setup() {
 /**
  * L'évolution de l'état du système est confiné ici sous la forme d'un automate
  * état/transition.
- * La gestion du bip périodique est effectuée également ici
+ * La gestion du bip périodique est également effectuée ici.
  * Voir aussi la documentation Arduino <a target="_blank"
  * href="https://www.arduino.cc/reference/en/language/structure/sketch/loop/"
  * >loop()</a>.

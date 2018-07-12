@@ -7,5 +7,5 @@
 <area shape="rect" id="node7" href="$d8/d84/a00001.html#ae7bc60cc6f30cfeb2aec48d7ed2ed9b4" title="Utilise l&#39;API Arduino pour allumer la DEL n°1. " alt="" coords="107,239,228,266"/>
 <area shape="rect" id="node8" href="$d8/d84/a00001.html#af5016232deae83d338453879a46489d6" title="Utilise l&#39;API Arduino pour allumer les DEL n°1 et n°2. " alt="" coords="103,290,231,317"/>
 <area shape="rect" id="node9" href="$d8/d84/a00001.html#a4fac0448487379a273d00320ce664bd7" title="Utilise l&#39;API Arduino pour allumer les DEL n°1, n°2 et n°3. " alt="" coords="105,341,230,367"/>
-<area shape="rect" id="node10" href="$d8/d84/a00001.html#ae07989acf4bffd608b03f61532fddf51" title="Cette fonction ne fait rien, à terme elle devra contrôler un afficheur pour diffuser un message const..." alt="" coords="297,341,409,367"/>
+<area shape="rect" id="node10" href="$d8/d84/a00001.html#ae07989acf4bffd608b03f61532fddf51" title="Cette fonction devra, à terme, contrôler un afficheur pour diffuser un message constituant un indice ..." alt="" coords="297,341,409,367"/>
 </map>
