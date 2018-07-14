@@ -66,7 +66,7 @@ static void active_le_buzzer() {
 /**
  * Effectue l'horodatage pour gérer les événements temporels.
  * @see DUREE_DU_BUZZER
- * Met en oeuvre l'API Arduino <a target="_blank"
+ * Met en oeuvre l'API Arduino <a target="arduino-page"
  * href="https://www.arduino.cc/reference/en/language/functions/time/millis/"
  * >millis()</a>
  */
@@ -95,7 +95,7 @@ static void eteint_tout() {
 
 /**
  * Utilise l'API Arduino pour allumer la DEL n°1.
- * Met en oeuvre l'API Arduino <a target="_blank"
+ * Met en oeuvre l'API Arduino <a target="arduino-page"
  * href="https://www.arduino.cc/reference/en/language/functions/digital-io/digitalwrite/"
  * >digitalWrite()</a>
  */
@@ -108,7 +108,7 @@ static void allume_une_LED() {
 
 /**
  * Utilise l'API Arduino pour allumer les DEL n°1 et n°2.
- * Met en oeuvre l'API Arduino <a target="_blank"
+ * Met en oeuvre l'API Arduino <a target="arduino-page"
  * href="https://www.arduino.cc/reference/en/language/functions/digital-io/digitalwrite/"
  * >digitalWrite()</a>
  */
@@ -129,7 +129,7 @@ static void affiche_l_indice() {
 
 /**
  * Utilise l'API Arduino pour allumer les DEL n°1, n°2 et n°3.
- * Met en oeuvre l'API Arduino <a target="_blank"
+ * Met en oeuvre l'API Arduino <a target="arduino-page"
  * href="https://www.arduino.cc/reference/en/language/functions/digital-io/digitalwrite/"
  * >digitalWrite()</a>
  */
@@ -143,7 +143,7 @@ static void allume_trois_LED() {
 
 /**
  * Retourne 'vrai' quand le bouton a été enfoncé puis relâché.
- * Met en oeuvre l'API Arduino <a target="_blank"
+ * Met en oeuvre l'API Arduino <a target="arduino-page"
  * href="https://www.arduino.cc/reference/en/language/functions/digital-io/digitalread/"
  * >digitalRead()</a> pour acquérir l'état du bouton.
  * @return true quand le bouton a été enfoncé puis relâché.
@@ -160,7 +160,7 @@ static bool bouton_est_relache() {
 }
 
 /**
- * Initialise la liaison série au moyen de l'API Arduino <a target="_blank"
+ * Initialise la liaison série au moyen de l'API Arduino <a target="arduino-page"
  * href="https://www.arduino.cc/reference/en/language/functions/communication/serial/begin/"
  * >Serial.begin()</a>.
  */
@@ -169,7 +169,7 @@ static void initialise_la_liaison_serie() {
 }
 
 /**
- * Configure les entrées/sorties au moyen de l'API Arduino <a target="_blank"
+ * Configure les entrées/sorties au moyen de l'API Arduino <a target="arduino-page"
  * href="https://www.arduino.cc/reference/en/language/functions/digital-io/pinmode/"
  * >pinMode()</a>.
  */
@@ -183,7 +183,7 @@ static void initialise_les_entrees_sorties() {
 
 /**
  * Initialise le hardware.
- * Voir aussi la documentation Arduino <a target="_blank"
+ * Voir aussi la documentation Arduino <a target="arduino-page"
  * href="https://www.arduino.cc/reference/en/language/structure/sketch/setup/"
  * >setup()</a>.
  */
@@ -197,7 +197,7 @@ void setup() {
  * L'évolution de l'état du système est confiné ici sous la forme d'un automate
  * état/transition.
  * La gestion du bip périodique est également effectuée ici.
- * Voir aussi la documentation Arduino <a target="_blank"
+ * Voir aussi la documentation Arduino <a target="arduino-page"
  * href="https://www.arduino.cc/reference/en/language/structure/sketch/loop/"
  * >loop()</a>.
  */
