@@ -7,13 +7,21 @@
 namespace max {
 
    class Jeu : public utils::Acteur {
-   public:
+   public:// Méthodes publiques statiques
+
+      static void initialise_la_liaison_serie() {
+         Serial.begin( 115200 );
+      }
+
+   public:// Constructeur
+
       Jeu() : _bouton( BOUTON_PIN ), _automate( ETA_VEILLE ), _evenementsTemporels( _automate ) {
          initialise_les_entrees_sorties();
-         initialise_la_liaison_serie();
          initialise_l_automate();
          initialise_les_evenements_temporels();
       }
+
+   public:// Méthode publiques
 
       void boucle() {
          utils::Acteur& acteur = *this;
@@ -24,15 +32,7 @@ namespace max {
          }
       }
 
-   private:
-      static const uint8_t       BOUTON_PIN                     = 2;
-      static const uint8_t       LED1_PIN                       = 3;
-      static const uint8_t       LED2_PIN                       = 4;
-      static const uint8_t       LED3_PIN                       = 5;
-      static const uint8_t       BUZZER_PIN                     = 7;
-      static const unsigned long FREQUENCE_DU_BUZZER            = 220;
-      static const unsigned long DUREE_DU_BUZZER                = 160;
-      static const unsigned long PERIODE_D_ACTIVATION_DU_BUZZER = 500UL;
+   private:// Types privés
 
       enum Etat_t {
          ETA_VEILLE,
@@ -55,17 +55,28 @@ namespace max {
          EVT_FIN_DE_FENETRE_3,
       };
 
-      void initialise_la_liaison_serie() {
-         Serial.begin( 115200 );
-      }
+   private:// Constantes
 
-      void initialise_les_entrees_sorties() {
+      static const uint8_t       BOUTON_PIN                     = 2;
+      static const uint8_t       LED1_PIN                       = 3;
+      static const uint8_t       LED2_PIN                       = 4;
+      static const uint8_t       LED3_PIN                       = 5;
+      static const uint8_t       BUZZER_PIN                     = 7;
+      static const unsigned long FREQUENCE_DU_BUZZER            = 220;
+      static const unsigned long DUREE_DU_BUZZER                = 160;
+      static const unsigned long PERIODE_D_ACTIVATION_DU_BUZZER = 500UL;
+
+   private:// Méthodes privées statiques
+
+      static void initialise_les_entrees_sorties() {
          pinMode( BOUTON_PIN, INPUT );
          pinMode( LED1_PIN, OUTPUT );
          pinMode( LED2_PIN, OUTPUT );
          pinMode( LED3_PIN, OUTPUT );
          pinMode( BUZZER_PIN, OUTPUT );
       }
+
+   private:// Méthodes privées
 
       void initialise_l_automate() {
          _automate.transition(
@@ -180,7 +191,8 @@ namespace max {
          affiche_l_indice();
       }
 
-   private:
+   private:// Attributs d'instance privées
+
       utils::Bouton                                   _bouton;
       fsm::Automate< Etat_t, Evenement_t >            _automate;
       fsm::EvenementsTemporels< Etat_t, Evenement_t > _evenementsTemporels;
@@ -191,6 +203,7 @@ namespace max {
 static max::Jeu* jeu = 0;
 
 void setup() {
+   max::Jeu::initialise_la_liaison_serie();
    Serial.println( "setup" );
    jeu = new max::Jeu();
 }
