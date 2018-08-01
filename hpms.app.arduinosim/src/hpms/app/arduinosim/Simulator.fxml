@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.net.*?>
+<?import javafx.collections.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<SplitPane xmlns:fx="http://javafx.com/fxml"
+   fx:controller="hpms.app.arduinosim.SimulatorController"
+   orientation="HORIZONTAL" dividerPositions="0.2">
+   <padding>
+      <Insets topRightBottomLeft="4" />
+   </padding>
+   <items>
+      <GridPane hgap="4.0" vgap="4.0">
+         <Label fx:id="_direction_1" text="---" GridPane.columnIndex="0" GridPane.rowIndex= "0" />
+         <Label fx:id="_direction_2" text="---" GridPane.columnIndex="0" GridPane.rowIndex= "1" />
+         <Label fx:id="_direction_3" text="---" GridPane.columnIndex="0" GridPane.rowIndex= "2" />
+         <Label fx:id="_direction_4" text="---" GridPane.columnIndex="0" GridPane.rowIndex= "3" />
+         <Label fx:id="_direction_5" text="---" GridPane.columnIndex="0" GridPane.rowIndex= "4" />
+         <Label fx:id="_direction_6" text="---" GridPane.columnIndex="0" GridPane.rowIndex= "5" />
+         <Label fx:id="_direction_7" text="---" GridPane.columnIndex="0" GridPane.rowIndex= "6" />
+         <Label fx:id="_direction_8" text="---" GridPane.columnIndex="0" GridPane.rowIndex= "7" />
+         <CheckBox fx:id="_digital_1" text="Digital n°1" onAction="#digital" indeterminate="true" disable="true" GridPane.columnIndex="1" GridPane.rowIndex= "0" />
+         <CheckBox fx:id="_digital_2" text="Digital n°2" onAction="#digital" indeterminate="true" disable="true" GridPane.columnIndex="1" GridPane.rowIndex= "1" />
+         <CheckBox fx:id="_digital_3" text="Digital n°3" onAction="#digital" indeterminate="true" disable="true" GridPane.columnIndex="1" GridPane.rowIndex= "2" />
+         <CheckBox fx:id="_digital_4" text="Digital n°4" onAction="#digital" indeterminate="true" disable="true" GridPane.columnIndex="1" GridPane.rowIndex= "3" />
+         <CheckBox fx:id="_digital_5" text="Digital n°5" onAction="#digital" indeterminate="true" disable="true" GridPane.columnIndex="1" GridPane.rowIndex= "4" />
+         <CheckBox fx:id="_digital_6" text="Digital n°6" onAction="#digital" indeterminate="true" disable="true" GridPane.columnIndex="1" GridPane.rowIndex= "5" />
+         <CheckBox fx:id="_digital_7" text="Digital n°7" onAction="#digital" indeterminate="true" disable="true" GridPane.columnIndex="1" GridPane.rowIndex= "6" />
+         <CheckBox fx:id="_digital_8" text="Digital n°8" onAction="#digital" indeterminate="true" disable="true" GridPane.columnIndex="1" GridPane.rowIndex= "7" />
+         <!--
+         <Button text="La 440 Hz ON"  onAction="#noteOn"  GridPane.columnIndex="0" GridPane.rowIndex= "8" GridPane.columnSpan="2" />
+         <Button text="La 440 Hz OFF" onAction="#noteOff" GridPane.columnIndex="0" GridPane.rowIndex= "9" GridPane.columnSpan="2" />
+         -->
+      </GridPane>
+      <TextArea fx:id="_serial" />
+   </items>
+</SplitPane>

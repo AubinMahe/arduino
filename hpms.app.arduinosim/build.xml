@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="jar" name="hpms.app.arduinosim">
+   
+   <property name="BUILD" value="build" />
+   
+   <target name="clean">
+      <delete dir="${BUILD}" />
+      <delete file="hpms.app.arduinosim.jar" />
+   </target>
+   
+   <target name="javac">
+      <mkdir dir="${BUILD}" />
+      <javac
+         debug            ="true"
+         debuglevel       ="lines,vars,source"
+         destdir          ="${BUILD}"
+         srcdir           ="src"
+         includeantruntime="false" />
+   </target>
+   
+   <target name="jar" depends="javac">
+      <copy todir="${BUILD}">
+         <fileset
+            dir     ="src"
+            includes="**/*.fxml,**/*.css,**/*.jpg" />
+      </copy>
+      <jar basedir="build" destfile="hpms.app.arduinosim.jar">
+         <manifest>
+            <attribute name="Main-Class" value="hpms.app.arduinosim.Main"/>
+         </manifest>
+      </jar>
+   </target>
+
+</project>
