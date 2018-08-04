@@ -1,27 +1,42 @@
 #include <Arduino.h>
 
-#include <sys/time.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
 #include <stdio.h>
 #include <errno.h>
 #include <stdlib.h>
 #include <string.h>
 #include <pthread.h>
+#include <time.h>
+#include <sys/time.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
 
 enum verb_t {
 
    E_NONE,
 
+   //-- Digital I/O -------------------------------------------------------------
+
+   E_DIGITAL_READ,
+   E_DIGITAL_WRITE,
+   E_PIN_MODE,
+
+   //-- Analog I/O --------------------------------------------------------------
+
+   E_ANALOG_READ,
+   E_ANALOG_REFERENCE,
+   E_ANALOG_WRITE,
+
+   //-- Advanced I/O ------------------------------------------------------------
+
+   E_NO_TONE,
+   E_TONE,
+
+   //-- Communication -----------------------------------------------------------
+
    E_PRINT,
    E_PRINTLN,
-   E_TONE,
-   E_NO_TONE,
-   E_PIN_MODE,
-   E_DIGITAL_WRITE,
-   E_DIGITAL_READ,
 
    E_EXIT
 };
@@ -54,12 +69,69 @@ public:
 
 public:
 
-   void print( const char * s ) {
-      send( E_PRINT, s );
+   //-- Digital I/O -------------------------------------------------------------
+
+   int digitalRead ( uint8_t pin ) {
+      return _digital[pin];
    }
 
-   void println( const char * s ) {
-      send( E_PRINTLN, s );
+   void digitalWrite( uint8_t pin, uint8_t hiOrLo ) {
+      char buffer[1+1+1];
+      char * p = buffer;
+      *p = E_DIGITAL_WRITE;
+      p += 1;
+      *((uint8_t*)p) = pin;
+      p += 1;
+      *((uint8_t*)p) = hiOrLo;
+      send( buffer, sizeof( buffer ));
+   }
+
+   void pinMode( uint8_t pin, uint8_t inOrOut ) {
+      char buffer[1+1+1];
+      char * p = buffer;
+      *p = E_PIN_MODE;
+      p += 1;
+      *((uint8_t*)p) = pin;
+      p += 1;
+      *((uint8_t*)p) = inOrOut;
+      send( buffer, sizeof( buffer ));
+   }
+
+   //-- Analog I/O --------------------------------------------------------------
+
+   int analogRead( uint8_t pin ) {
+      return _analog[pin];
+   }
+
+   void analogReference( uint8_t mode ) {
+      char buffer[1+1];
+      char * p = buffer;
+      *p = E_ANALOG_REFERENCE;
+      p += 1;
+      *((uint8_t*)p) = mode;
+      send( buffer, sizeof( buffer ));
+   }
+
+   void analogWrite( uint8_t pin, int value ) {
+      char buffer[1+1+4];
+      char * p = buffer;
+      *p = E_ANALOG_WRITE;
+      p += 1;
+      *((uint8_t*)p) = pin;
+      p += 1;
+      *((int*)p) = value;
+      send( buffer, sizeof( buffer ));
+   }
+
+   //-- Advanced I/O ------------------------------------------------------------
+
+   void noTone( uint8_t pin ) {
+      char buffer[1+1];
+      char * p = buffer;
+      *p = E_NO_TONE;
+      p += 1;
+      *((uint8_t*)p) = pin;
+      send( buffer, sizeof( buffer ));
    }
 
    void tone( uint8_t pin, unsigned int frequency, unsigned long duration ) {
@@ -75,39 +147,14 @@ public:
       send( buffer, sizeof( buffer ));
    }
 
-   void noTone( uint8_t pin ) {
-      char buffer[1+1];
-      char * p = buffer;
-      *p = E_NO_TONE;
-      p += 1;
-      *((uint8_t*)p) = pin;
-      send( buffer, sizeof( buffer ));
+   //-- Communication -----------------------------------------------------------
+
+   void print( const char * s ) {
+      send( E_PRINT, s );
    }
 
-   void pinMode( uint8_t pin, uint8_t inOrOut ) {
-      char buffer[1+1+1];
-      char * p = buffer;
-      *p = E_PIN_MODE;
-      p += 1;
-      *((uint8_t*)p) = pin;
-      p += 1;
-      *((uint8_t*)p) = inOrOut;
-      send( buffer, sizeof( buffer ));
-   }
-
-   void digitalWrite( uint8_t pin, uint8_t hiOrLo ) {
-      char buffer[1+1+1];
-      char * p = buffer;
-      *p = E_DIGITAL_WRITE;
-      p += 1;
-      *((uint8_t*)p) = pin;
-      p += 1;
-      *((uint8_t*)p) = hiOrLo;
-      send( buffer, sizeof( buffer ));
-   }
-
-   int digitalRead ( uint8_t pin ) {
-      return _digital[pin];
+   void println( const char * s ) {
+      send( E_PRINTLN, s );
    }
 
 private:
@@ -164,9 +211,117 @@ private:
    sockaddr_in _addr;
    pthread_t   _thread;
    uint8_t     _digital[16];
+   int         _analog [16];
 };
 
 UI ui( 2416 );
+
+//-- Digital I/O -------------------------------------------------------------
+
+int digitalRead ( uint8_t pin ) {
+   return ui.digitalRead( pin );
+}
+
+void digitalWrite( uint8_t pin, uint8_t hiOrLo ) {
+   ui.digitalWrite( pin, hiOrLo );
+}
+
+void pinMode( uint8_t pin, uint8_t inOrOut ) {
+   ui.pinMode( pin, inOrOut );
+}
+
+//-- Analog I/O --------------------------------------------------------------
+
+int analogRead( uint8_t pin ) {
+   return ui.analogRead( pin );
+}
+
+void analogReference( uint8_t mode) {
+   ui.analogReference( mode );
+}
+
+void analogWrite( uint8_t pin, int value ) {
+   ui.analogWrite( pin, value );
+}
+
+//-- Advanced I/O ------------------------------------------------------------
+
+void noTone( uint8_t pin ) {
+   ui.noTone( pin );
+}
+
+unsigned long pulseIn( uint8_t pin, uint8_t state, unsigned long timeout ) {
+   // TODO
+}
+
+unsigned long pulseInLong( uint8_t pin, uint8_t state, unsigned long timeout ) {
+   // TODO
+}
+
+uint8_t shiftIn( uint8_t dataPin, uint8_t clockPin, uint8_t bitOrder ) {
+   // TODO
+   return 0;
+}
+
+void shiftOut( uint8_t dataPin, uint8_t clockPin, uint8_t bitOrder, uint8_t val ) {
+   // TODO
+}
+
+void tone( uint8_t pin, unsigned int frequency, unsigned long duration ) {
+   ui.tone( pin, frequency, duration );
+}
+
+//-- Time --------------------------------------------------------------------
+
+void delay( unsigned long ms ) {
+   timespec spec;
+   spec.tv_sec  = ms / 1000;
+   spec.tv_nsec = 1000 * 1000 * ( ms - spec.tv_sec * 1000 );
+   nanosleep( &spec, 0 );
+}
+
+void delayMicroseconds( unsigned int us ) {
+   timespec spec;
+   spec.tv_sec  = us / (1000 * 1000);
+   spec.tv_nsec = 1000 * ( us - spec.tv_sec * 1000 * 1000 );
+   nanosleep( &spec, 0 );
+}
+
+unsigned long micros( void ) {
+   timeval tv;
+   gettimeofday( &tv, 0 );
+   return tv.tv_sec * 1000 * 1000 + tv.tv_usec;
+}
+
+unsigned long millis( void ) {
+   timeval tv;
+   gettimeofday( &tv, 0 );
+   return tv.tv_sec * 1000 + tv.tv_usec / 1000 ;
+}
+
+//-- Math --------------------------------------------------------------------
+
+//-- Trigonometry ------------------------------------------------------------
+
+//-- Characters --------------------------------------------------------------
+
+//-- Random Numbers ----------------------------------------------------------
+
+//-- Bits and Bytes ----------------------------------------------------------
+
+//-- External Interrupts -----------------------------------------------------
+
+void attachInterrupt( uint8_t interrupt, void (* ISR )(void), int mode ) {
+   // TODO
+}
+
+void detachInterrupt( uint8_t interrupt ) {
+   // TODO
+}
+
+//-- Interrupts --------------------------------------------------------------
+
+//-- Communication -----------------------------------------------------------
 
 void Print::print( const char * s ) {
    ui.print( s );
@@ -181,34 +336,7 @@ void HardwareSerial::begin( unsigned long, uint8_t ) {
 
 HardwareSerial Serial;
 
-void tone( uint8_t pin, unsigned int frequency, unsigned long duration ) {
-   ui.tone( pin, frequency, duration );
-}
-
-void noTone( uint8_t pin ) {
-   ui.noTone( pin );
-}
-
-unsigned long millis( void ) {
-   timeval tv;
-   gettimeofday( &tv, 0 );
-   return tv.tv_sec*1000 + tv.tv_usec / 1000;
-}
-
-void pinMode( uint8_t pin, uint8_t inOrOut ) {
-   ui.pinMode( pin, inOrOut );
-}
-
-void digitalWrite( uint8_t pin, uint8_t hiOrLo ) {
-   ui.digitalWrite( pin, hiOrLo );
-}
-
-int digitalRead ( uint8_t pin ) {
-   return ui.digitalRead( pin );
-}
-
-extern void setup();
-extern void loop();
+//-- Main --------------------------------------------------------------------
 
 int main( int argc, char * argv[] ) {
    setup();

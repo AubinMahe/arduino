@@ -21,13 +21,27 @@ public class ArduinoProxy extends Thread {
 
       E_NONE,
 
+      //-- Digital I/O -------------------------------------------------------
+
+      E_DIGITAL_READ,
+      E_DIGITAL_WRITE,
+      E_PIN_MODE,
+
+      //-- Analog I/O --------------------------------------------------------
+
+      E_ANALOG_READ,
+      E_ANALOG_REFERENCE,
+      E_ANALOG_WRITE,
+
+      //-- Advanced I/O ------------------------------------------------------
+
+      E_NO_TONE,
+      E_TONE,
+
+      //-- Communication -----------------------------------------------------
+
       E_PRINT,
       E_PRINTLN,
-      E_TONE,
-      E_NO_TONE,
-      E_PIN_MODE,
-      E_DIGITAL_WRITE,
-      E_DIGITAL_READ,
 
       E_EXIT
    }
@@ -43,7 +57,7 @@ public class ArduinoProxy extends Thread {
 
    private final Sequencer           _midi = MidiSystem.getSequencer();
    private final ByteBuffer          _recv = ByteBuffer.allocate( 64*1024 );
-   private final ByteBuffer          _sent = ByteBuffer.allocate( 5 );
+   private final ByteBuffer          _sent = ByteBuffer.allocate( 6 );
    private final SimulatorController _ctrl;
    private /* */ SocketAddress       _arduino;
    private /* */ DatagramChannel     _channel;
@@ -52,6 +66,71 @@ public class ArduinoProxy extends Thread {
       _ctrl = ctrl;
       _midi.open();
    }
+
+   //-- Digital I/O ----------------------------------------------------------
+
+   void digitalChanged( int pin, boolean selected ) throws IOException {
+      _sent.clear();
+      _sent.put((byte)verb_t.E_DIGITAL_READ.ordinal());
+      _sent.put((byte)pin );
+      _sent.put( selected ? HIGH : LOW );
+      _sent.flip();
+      if( _arduino != null ) {
+         _channel.send( _sent, _arduino );
+      }
+   }
+
+   private void digitalWrite() {
+      final byte pin     = _recv.get();
+      final byte hiOrLo  = _recv.get();
+      _ctrl.digitalWrite( pin, hiOrLo == HIGH );
+   }
+
+   private void pinMode() {
+      final byte    pin     = _recv.get();
+      final byte    inOrOut = _recv.get();
+      final boolean output  = ( inOrOut == OUTPUT );
+      _ctrl.pinMode( pin, output );
+   }
+
+   //-- Analog I/O -----------------------------------------------------------
+
+   void analogChanged( int pin, int value ) throws IOException {
+      _sent.clear();
+      _sent.put((byte)verb_t.E_ANALOG_READ.ordinal());
+      _sent.put((byte)pin );
+      _sent.putInt( value );
+      _sent.flip();
+      if( _arduino != null ) {
+         _channel.send( _sent, _arduino );
+      }
+   }
+
+   void analogReference( @SuppressWarnings("unused") byte mode ) {
+      // TODO
+   }
+
+   void analogWrite() {
+      final byte pin   = _recv.get();
+      final int  value = _recv.getInt();
+      _ctrl.analogWrite( pin, value );
+   }
+
+   //-- Advanced I/O ---------------------------------------------------------
+
+   private void noTone() {
+      /*final byte pin =*/_recv.get();
+      _midi.stop();
+   }
+
+   private void tone() {
+      /*final byte pin    =*/_recv.get();
+      final int  frequency = _recv.getInt();
+      final int  duration  = _recv.getInt();
+      new Thread(() -> playMidi( frequency, duration )).start();
+   }
+
+   //-- Communication --------------------------------------------------------
 
    private void print() {
       final int    len   = _recv.getShort();
@@ -114,18 +193,6 @@ public class ArduinoProxy extends Thread {
       }
    }
 
-   private void tone() {
-      /*final byte pin    =*/_recv.get();
-      final int  frequency = _recv.getInt();
-      final int  duration  = _recv.getInt();
-      new Thread(() -> playMidi( frequency, duration )).start();
-   }
-
-   private void noTone() {
-      /*final byte pin =*/_recv.get();
-      _midi.stop();
-   }
-
    void noteOn( int frequency ) {
       new Thread(() -> playMidi( frequency, 0 )).start();
    }
@@ -134,31 +201,9 @@ public class ArduinoProxy extends Thread {
       _midi.stop();
    }
 
-   private void pinMode() {
-      final byte    pin     = _recv.get();
-      final byte    inOrOut = _recv.get();
-      final boolean output  = ( inOrOut == OUTPUT );
-      _ctrl.pinMode( pin, output );
-   }
-
-   private void digitalWrite() {
-      final byte pin     = _recv.get();
-      final byte hiOrLo  = _recv.get();
-      _ctrl.digitalWrite( pin, hiOrLo == HIGH );
-   }
-
    private void exit() {
       final int exitCode = _recv.getInt();
       System.exit( exitCode );
-   }
-
-   void digitalChanged( int pin, boolean selected ) throws IOException {
-      _sent.clear();
-      _sent.put((byte)verb_t.E_DIGITAL_READ.ordinal());
-      _sent.put((byte)pin );
-      _sent.put( selected ? HIGH : LOW );
-      _sent.flip();
-      _channel.send( _sent, _arduino );
    }
 
    void exit( int exitCode ) {
@@ -192,13 +237,28 @@ public class ArduinoProxy extends Thread {
                final verb_t v = verb_t.values()[verb];
                switch( v ) {
                case E_NONE: break;
+
+               //-- Digital I/O ----------------------------------------------
+
+               case E_DIGITAL_READ : break;
+               case E_DIGITAL_WRITE: digitalWrite(); break;
+               case E_PIN_MODE     : pinMode     (); break;
+
+               //-- Analog I/O -----------------------------------------------
+
+               case E_ANALOG_READ     :
+               case E_ANALOG_REFERENCE:
+               case E_ANALOG_WRITE    :
+
+               //-- Advanced I/O ---------------------------------------------
+
+               case E_NO_TONE      : noTone      (); break;
+               case E_TONE         : tone        (); break;
+
+               //-- Communication --------------------------------------------
+
                case E_PRINT        : print       (); break;
                case E_PRINTLN      : println     (); break;
-               case E_TONE         : tone        (); break;
-               case E_NO_TONE      : noTone      (); break;
-               case E_PIN_MODE     : pinMode     (); break;
-               case E_DIGITAL_WRITE: digitalWrite(); break;
-               case E_DIGITAL_READ : break;
                case E_EXIT         : exit(); break;
                }
             }
