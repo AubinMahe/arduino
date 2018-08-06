@@ -43,6 +43,14 @@ public class ArduinoProxy extends Thread {
       E_PRINT,
       E_PRINTLN,
 
+      //-- Servo ----------------------------------------------------------------
+
+      E_SERVO_ATTACH,
+      E_SERVO_WRITE,
+      E_SERVO_DETACH,
+
+      //-- Exit -----------------------------------------------------------------
+
       E_EXIT
    }
 
@@ -106,7 +114,8 @@ public class ArduinoProxy extends Thread {
       }
    }
 
-   void analogReference( @SuppressWarnings("unused") byte mode ) {
+   void analogReference() {
+      /*final byte type = */_recv.get();
       // TODO
    }
 
@@ -144,6 +153,26 @@ public class ArduinoProxy extends Thread {
       print();
       _ctrl.serial( "\n" );
    }
+
+   //-- Servo ----------------------------------------------------------------
+
+   private void servoAttach() {
+      final byte pin = _recv.get();
+      _ctrl.servoAttach( pin );
+   }
+
+   private void servoWrite() {
+      final byte pin   = _recv.get();
+      final int  value = _recv.getInt();
+      _ctrl.servoWrite( pin, value );
+   }
+
+   private void servoDetach() {
+      final byte pin = _recv.get();
+      _ctrl.servoDetach( pin );
+   }
+
+   //-- Utils ----------------------------------------------------------------
 
    private static double ln2( double x ) {
       return Math.log(x) / Math.log( 2.0 );
@@ -201,6 +230,8 @@ public class ArduinoProxy extends Thread {
       _midi.stop();
    }
 
+   //-- Exit -----------------------------------------------------------------
+
    private void exit() {
       final int exitCode = _recv.getInt();
       System.exit( exitCode );
@@ -218,7 +249,7 @@ public class ArduinoProxy extends Thread {
          }
       }
       catch( final Throwable t ) {
-         t.printStackTrace();
+//         t.printStackTrace();
       }
       System.exit( exitCode );
    }
@@ -246,26 +277,35 @@ public class ArduinoProxy extends Thread {
 
                //-- Analog I/O -----------------------------------------------
 
-               case E_ANALOG_READ     :
-               case E_ANALOG_REFERENCE:
-               case E_ANALOG_WRITE    :
+               case E_ANALOG_READ     : break;
+               case E_ANALOG_REFERENCE: analogReference(); break;
+               case E_ANALOG_WRITE    : analogWrite    (); break;
 
                //-- Advanced I/O ---------------------------------------------
 
-               case E_NO_TONE      : noTone      (); break;
-               case E_TONE         : tone        (); break;
+               case E_NO_TONE: noTone(); break;
+               case E_TONE   : tone  (); break;
 
                //-- Communication --------------------------------------------
 
-               case E_PRINT        : print       (); break;
-               case E_PRINTLN      : println     (); break;
-               case E_EXIT         : exit(); break;
+               case E_PRINT  : print  (); break;
+               case E_PRINTLN: println(); break;
+
+               //-- Servo ----------------------------------------------------------------
+
+               case E_SERVO_ATTACH: servoAttach(); break;
+               case E_SERVO_WRITE : servoWrite (); break;
+               case E_SERVO_DETACH: servoDetach(); break;
+
+               //-- Exit -----------------------------------------------------------------
+
+               case E_EXIT: exit(); break;
                }
             }
          }
       }
       catch( final IOException | InterruptedException x ) {
-         x.printStackTrace();
+//         x.printStackTrace();
          System.exit( 1 );
       }
    }

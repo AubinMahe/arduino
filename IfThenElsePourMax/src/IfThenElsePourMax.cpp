@@ -1,4 +1,5 @@
 #include <Arduino.h>
+#include <Servo.h>
 
 /**
  * Etats du système.
@@ -21,6 +22,7 @@ static const uint8_t BOUTON_PIN = 2; //!< Bouton branché sur le port n°2
 static const uint8_t LED1_PIN   = 3; //!< DEL branchée sur le port n°3
 static const uint8_t LED2_PIN   = 4; //!< DEL branchée sur le port n°4
 static const uint8_t LED3_PIN   = 5; //!< DEL branchée sur le port n°5
+static const uint8_t MOTEUR_PIN = 6; //!< Moteur branché sur le port n°6 (PWM)
 static const uint8_t BUZZER_PIN = 7; //!< Buzzer branché sur le port n°7
 
 //-----------------------------------
@@ -44,6 +46,7 @@ static bool          enfonce       = false;      //!< Le bouton a été perçu e
 static unsigned long t0            = 0UL;        //!< Horodatage des événements : temps de départ.
 static unsigned long buzzer_t0     = 0UL;        //!< Horodatage du déclenchement du buzzer.
 static unsigned long buzzer_cycle  = 0UL;        //!< N° de la période du buzzer.
+static Servo         temps_restant;
 
 /**
  * Eteint le buzzer.
@@ -91,6 +94,7 @@ static void eteint_tout() {
    digitalWrite( LED1_PIN, LOW );
    digitalWrite( LED2_PIN, LOW );
    digitalWrite( LED3_PIN, LOW );
+   temps_restant.write( 0 );
 }
 
 /**
@@ -104,6 +108,7 @@ static void allume_une_LED() {
    digitalWrite( LED1_PIN, HIGH );
    digitalWrite( LED2_PIN, LOW );
    digitalWrite( LED3_PIN, LOW );
+   temps_restant.write( 0 );
 }
 
 /**
@@ -117,6 +122,7 @@ static void allume_deux_LED() {
    digitalWrite( LED1_PIN, HIGH );
    digitalWrite( LED2_PIN, HIGH );
    digitalWrite( LED3_PIN, LOW );
+   temps_restant.write( 0 );
 }
 
 /**
@@ -138,6 +144,7 @@ static void allume_trois_LED() {
    digitalWrite( LED1_PIN, HIGH );
    digitalWrite( LED2_PIN, HIGH );
    digitalWrite( LED3_PIN, HIGH );
+   temps_restant.write( 0 );
    affiche_l_indice();
 }
 
@@ -160,6 +167,17 @@ static bool bouton_est_relache() {
 }
 
 /**
+ * Utilise le servo moteur pour montrer qu'il faut presser le bouton.
+ */
+static void montre_le_temps_restant(
+   unsigned long temps_ecoule,
+   unsigned long debut,
+   unsigned long fin )
+{
+   temps_restant.write( map( temps_ecoule, debut, fin, 0, 179 ));
+}
+
+/**
  * Initialise la liaison série au moyen de l'API Arduino <a target="arduino-page"
  * href="https://www.arduino.cc/reference/en/language/functions/communication/serial/begin/"
  * >Serial.begin()</a>.
@@ -174,10 +192,11 @@ static void initialise_la_liaison_serie() {
  * >pinMode()</a>.
  */
 static void initialise_les_entrees_sorties() {
-   pinMode( BOUTON_PIN, INPUT );
-   pinMode( LED1_PIN, OUTPUT );
-   pinMode( LED2_PIN, OUTPUT );
-   pinMode( LED3_PIN, OUTPUT );
+   pinMode( BOUTON_PIN, INPUT  );
+   pinMode( LED1_PIN  , OUTPUT );
+   pinMode( LED2_PIN  , OUTPUT );
+   pinMode( LED3_PIN  , OUTPUT );
+   temps_restant.attach( MOTEUR_PIN );
    pinMode( BUZZER_PIN, OUTPUT );
 }
 
@@ -188,8 +207,8 @@ static void initialise_les_entrees_sorties() {
  * >setup()</a>.
  */
 void setup() {
-   Serial.println( "setup" );
    initialise_la_liaison_serie();
+   Serial.println( "setup" );
    initialise_les_entrees_sorties();
 }
 
@@ -240,6 +259,9 @@ void loop() {
          eteint_tout();
          etat = ETA_VEILLE;
       }
+      else {
+         montre_le_temps_restant( temps_ecoule, DEBUT_DE_FENETRE_1, FIN_DE_FENETRE_1 );
+      }
       break;
    case ETA_LED_1:
       if( bouton_est_relache()) {
@@ -260,6 +282,9 @@ void loop() {
          eteint_tout();
          etat = ETA_VEILLE;
       }
+      else {
+         montre_le_temps_restant( temps_ecoule, DEBUT_DE_FENETRE_2, FIN_DE_FENETRE_2 );
+      }
       break;
    case ETA_LED_2:
       if( bouton_est_relache()) {
@@ -279,6 +304,9 @@ void loop() {
       else if( temps_ecoule >= FIN_DE_FENETRE_3 ) {
          eteint_tout();
          etat = ETA_VEILLE;
+      }
+      else {
+         montre_le_temps_restant( temps_ecoule, DEBUT_DE_FENETRE_3, FIN_DE_FENETRE_3 );
       }
       break;
    case ETA_LED_3:

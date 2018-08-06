@@ -1,4 +1,5 @@
 #include <Arduino.h>
+#include <Servo.h>
 
 #include <stdio.h>
 #include <errno.h>
@@ -12,39 +13,49 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
+#define UI_PROXY_PORT 2416
+
 enum verb_t {
 
    E_NONE,
 
-   //-- Digital I/O -------------------------------------------------------------
+   //-- Digital I/O ----------------------------------------------------------
 
    E_DIGITAL_READ,
    E_DIGITAL_WRITE,
    E_PIN_MODE,
 
-   //-- Analog I/O --------------------------------------------------------------
+   //-- Analog I/O -----------------------------------------------------------
 
    E_ANALOG_READ,
    E_ANALOG_REFERENCE,
    E_ANALOG_WRITE,
 
-   //-- Advanced I/O ------------------------------------------------------------
+   //-- Advanced I/O ---------------------------------------------------------
 
    E_NO_TONE,
    E_TONE,
 
-   //-- Communication -----------------------------------------------------------
+   //-- Communication --------------------------------------------------------
 
    E_PRINT,
    E_PRINTLN,
 
+   //-- Servo ----------------------------------------------------------------
+
+   E_SERVO_ATTACH,
+   E_SERVO_WRITE,
+   E_SERVO_DETACH,
+
+   //-- Exit -----------------------------------------------------------------
+
    E_EXIT
 };
 
-class UI {
+class UI_proxy {
 public:
 
-   UI( unsigned short port ) {
+   UI_proxy( unsigned short port ) {
       memset( _digital, 0, sizeof( _digital ));
       _socket = ::socket( AF_INET, SOCK_DGRAM, 0 );
       if( _socket < 0 ) {
@@ -61,7 +72,7 @@ public:
          ::exit( EXIT_FAILURE );
       }
       _addr.sin_port = htons( port );
-      if( ::pthread_create( &_thread, 0, UI::recv, this )) {
+      if( ::pthread_create( &_thread, 0, UI_proxy::recv, this )) {
          perror("pthread_create()");
          ::exit( EXIT_FAILURE );
       }
@@ -71,7 +82,7 @@ public:
 
    //-- Digital I/O -------------------------------------------------------------
 
-   int digitalRead ( uint8_t pin ) {
+   int digitalRead( uint8_t pin ) {
       return _digital[pin];
    }
 
@@ -157,10 +168,41 @@ public:
       send( E_PRINTLN, s );
    }
 
+   //-- Servo -------------------------------------------------------------------
+
+   void servoAttach( uint8_t pin ) {
+      char buffer[1+1];
+      char * p = buffer;
+      *p = E_SERVO_ATTACH;
+      p += 1;
+      *((uint8_t*)p) = pin;
+      send( buffer, sizeof( buffer ));
+   }
+
+   void servoWrite( uint8_t pin, int value ) {
+      char buffer[1+1+4];
+      char * p = buffer;
+      *p = E_SERVO_WRITE;
+      p += 1;
+      *((uint8_t*)p) = pin;
+      p += 1;
+      *((int*)p) = value;
+      send( buffer, sizeof( buffer ));
+   }
+
+   void servoDetach( uint8_t pin ) {
+      char buffer[1+1];
+      char * p = buffer;
+      *p = E_SERVO_DETACH;
+      p += 1;
+      *((uint8_t*)p) = pin;
+      send( buffer, sizeof( buffer ));
+   }
+
 private:
 
    static void * recv( void * arg ) {
-      UI * ui = (UI *)arg;
+      UI_proxy * ui = (UI_proxy *)arg;
       for(;;) {
          char buffer[1024];
          socklen_t len = sizeof( ui->_addr );
@@ -214,40 +256,40 @@ private:
    int         _analog [16];
 };
 
-UI ui( 2416 );
+UI_proxy proxy( UI_PROXY_PORT );
 
 //-- Digital I/O -------------------------------------------------------------
 
 int digitalRead ( uint8_t pin ) {
-   return ui.digitalRead( pin );
+   return proxy.digitalRead( pin );
 }
 
 void digitalWrite( uint8_t pin, uint8_t hiOrLo ) {
-   ui.digitalWrite( pin, hiOrLo );
+   proxy.digitalWrite( pin, hiOrLo );
 }
 
 void pinMode( uint8_t pin, uint8_t inOrOut ) {
-   ui.pinMode( pin, inOrOut );
+   proxy.pinMode( pin, inOrOut );
 }
 
 //-- Analog I/O --------------------------------------------------------------
 
 int analogRead( uint8_t pin ) {
-   return ui.analogRead( pin );
+   return proxy.analogRead( pin );
 }
 
 void analogReference( uint8_t mode) {
-   ui.analogReference( mode );
+   proxy.analogReference( mode );
 }
 
 void analogWrite( uint8_t pin, int value ) {
-   ui.analogWrite( pin, value );
+   proxy.analogWrite( pin, value );
 }
 
 //-- Advanced I/O ------------------------------------------------------------
 
 void noTone( uint8_t pin ) {
-   ui.noTone( pin );
+   proxy.noTone( pin );
 }
 
 unsigned long pulseIn( uint8_t pin, uint8_t state, unsigned long timeout ) {
@@ -268,7 +310,7 @@ void shiftOut( uint8_t dataPin, uint8_t clockPin, uint8_t bitOrder, uint8_t val 
 }
 
 void tone( uint8_t pin, unsigned int frequency, unsigned long duration ) {
-   ui.tone( pin, frequency, duration );
+   proxy.tone( pin, frequency, duration );
 }
 
 //-- Time --------------------------------------------------------------------
@@ -324,17 +366,57 @@ void detachInterrupt( uint8_t interrupt ) {
 //-- Communication -----------------------------------------------------------
 
 void Print::print( const char * s ) {
-   ui.print( s );
+   proxy.print( s );
 }
 
 void Print::println( const char * s ) {
-   ui.println( s );
+   proxy.println( s );
 }
 
 void HardwareSerial::begin( unsigned long, uint8_t ) {
 }
 
 HardwareSerial Serial;
+
+//-- Servo -------------------------------------------------------------------
+
+Servo::Servo() {
+   _pin = -1;
+}
+
+uint8_t Servo::attach( int pin ) {
+   proxy.servoAttach( pin );
+   _pin = pin;
+   return 1;
+}
+
+uint8_t Servo::attach( int pin, int min, int max ) {
+   return attach( pin );
+}
+
+void Servo::detach() {
+   proxy.servoDetach( _pin );
+   _pin = -1;
+}
+
+void Servo::write( int value ) {
+   proxy.servoWrite( _pin, value );
+}
+
+void Servo::writeMicroseconds( int value ) {
+}
+
+int Servo::read() {
+   return 0;
+}
+
+int Servo::readMicroseconds() {
+   return 0;
+}
+
+bool Servo::attached() {
+   return _pin != -1;
+}
 
 //-- Main --------------------------------------------------------------------
 

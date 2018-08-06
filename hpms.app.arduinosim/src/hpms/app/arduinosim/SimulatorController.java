@@ -12,6 +12,7 @@ import javafx.scene.control.TextArea;
 
 public class SimulatorController {
 
+   @FXML private Label    _direction_0;
    @FXML private Label    _direction_1;
    @FXML private Label    _direction_2;
    @FXML private Label    _direction_3;
@@ -20,27 +21,43 @@ public class SimulatorController {
    @FXML private Label    _direction_6;
    @FXML private Label    _direction_7;
    @FXML private Label    _direction_8;
+   @FXML private Label    _direction_9;
+   @FXML private Label    _direction_10;
+   @FXML private Label    _direction_11;
+   @FXML private Label    _direction_12;
+   @FXML private Label    _direction_13;
+   @FXML private CheckBox _digital_0;
    @FXML private CheckBox _digital_1;
    @FXML private CheckBox _digital_2;
    @FXML private CheckBox _digital_3;
+   @FXML private Slider   _analogOut_3;
    @FXML private CheckBox _digital_4;
    @FXML private CheckBox _digital_5;
+   @FXML private Slider   _analogOut_5;
    @FXML private CheckBox _digital_6;
+   @FXML private Slider   _analogOut_6;
    @FXML private CheckBox _digital_7;
    @FXML private CheckBox _digital_8;
-   @FXML private Slider   _analog_1;
-   @FXML private Slider   _analog_2;
-   @FXML private Slider   _analog_3;
-   @FXML private Slider   _analog_4;
-   @FXML private Slider   _analog_5;
-   @FXML private Slider   _analog_6;
-   @FXML private Slider   _analog_7;
-   @FXML private Slider   _analog_8;
+   @FXML private CheckBox _digital_9;
+   @FXML private Slider   _analogOut_9;
+   @FXML private CheckBox _digital_10;
+   @FXML private Slider   _analogOut_10;
+   @FXML private CheckBox _digital_11;
+   @FXML private Slider   _analogOut_11;
+   @FXML private CheckBox _digital_12;
+   @FXML private CheckBox _digital_13;
+   @FXML private Slider   _analogIn_0;
+   @FXML private Slider   _analogIn_1;
+   @FXML private Slider   _analogIn_2;
+   @FXML private Slider   _analogIn_3;
+   @FXML private Slider   _analogIn_4;
+   @FXML private Slider   _analogIn_5;
    @FXML private TextArea _serial;
 
    private Label   []   _direction;
    private CheckBox[]   _digital;
-   private Slider  []   _analog;
+   private Slider  []   _analogOut;
+   private Slider  []   _analogIn;
    private ArduinoProxy _proxy;
 
    void setProxy( ArduinoProxy proxy ) {
@@ -50,6 +67,7 @@ public class SimulatorController {
    @FXML
    public void initialize() {
       _direction = new Label[] {
+         _direction_0,
          _direction_1,
          _direction_2,
          _direction_3,
@@ -58,8 +76,14 @@ public class SimulatorController {
          _direction_6,
          _direction_7,
          _direction_8,
+         _direction_9,
+         _direction_10,
+         _direction_11,
+         _direction_12,
+         _direction_13,
       };
       _digital = new CheckBox[] {
+         _digital_0,
          _digital_1,
          _digital_2,
          _digital_3,
@@ -68,19 +92,30 @@ public class SimulatorController {
          _digital_6,
          _digital_7,
          _digital_8,
+         _digital_9,
+         _digital_10,
+         _digital_11,
+         _digital_12,
+         _digital_13,
       };
-      _analog = new Slider[] {
-         _analog_1,
-         _analog_2,
-         _analog_3,
-         _analog_4,
-         _analog_5,
-         _analog_6,
-         _analog_7,
-         _analog_8,
+      _analogOut = new Slider[] {
+         _analogOut_3,
+         _analogOut_5,
+         _analogOut_6,
+         _analogOut_9,
+         _analogOut_10,
+         _analogOut_11,
+      };
+      _analogIn = new Slider[] {
+         _analogIn_0,
+         _analogIn_1,
+         _analogIn_2,
+         _analogIn_3,
+         _analogIn_4,
+         _analogIn_5,
       };
       byte p = 0;
-      for( final Slider pb : _analog ) {
+      for( final Slider pb : _analogIn ) {
          final byte pin = p++;
          pb.valueProperty().addListener(( o, b, a ) -> analog( pin, pb.getValue()));
       }
@@ -150,16 +185,31 @@ public class SimulatorController {
    }
 
    public int analogRead( byte pin ) {
-      return (int)( 1024 * _analog[pin].getValue());
+      return (int)( 1024 * _analogIn[pin].getValue());
    }
 
    public void analogWrite( byte pin, int value ) {
-      Platform.runLater(() -> _analog[pin].setValue( value / 1024.0 ));
+      Platform.runLater(() -> {
+         _analogOut[pin].setVisible( true );
+         _digital  [pin].setVisible( false );
+         _analogOut[pin].setValue( value );
+      });
    }
 
    //-- Communication --------------------------------------------------------
 
    public void serial( String line ) {
       _serial.setText( _serial.getText() + line );
+   }
+
+   //-- Servo ----------------------------------------------------------------
+
+   public void servoAttach( byte pin ) {
+   }
+
+   public void servoWrite( byte pin, int value ) {
+   }
+
+   public void servoDetach( byte pin ) {
    }
 }

@@ -17,6 +17,11 @@ void pinMode     ( uint8_t pin, uint8_t inOrOut );
 
 //-- Analog I/O --------------------------------------------------------------
 
+
+#define EXTERNAL     0 // the voltage applied to the AREF pin (0 to 5V only) is used as the reference.
+#define DEFAULT      1 // the default analog reference of 5 volts (on 5V Arduino boards) or 3.3 volts (on 3.3V Arduino boards)
+#define INTERNAL     3 // an built-in reference, equal to 1.1 volts on the ATmega168 or ATmega328P and 2.56 volts on the ATmega8 (not available on the Arduino Mega)
+
 int  analogRead     ( uint8_t pin );
 void analogReference( uint8_t mode);
 void analogWrite    ( uint8_t pin, int value );
