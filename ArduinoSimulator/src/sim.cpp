@@ -87,7 +87,7 @@ public:
    }
 
    void digitalWrite( uint8_t pin, uint8_t hiOrLo ) {
-      char buffer[1+1+1];
+      char   buffer[1+1+1];
       char * p = buffer;
       *p = E_DIGITAL_WRITE;
       p += 1;
@@ -98,7 +98,7 @@ public:
    }
 
    void pinMode( uint8_t pin, uint8_t inOrOut ) {
-      char buffer[1+1+1];
+      char   buffer[1+1+1];
       char * p = buffer;
       *p = E_PIN_MODE;
       p += 1;
@@ -115,7 +115,7 @@ public:
    }
 
    void analogReference( uint8_t mode ) {
-      char buffer[1+1];
+      char   buffer[1+1];
       char * p = buffer;
       *p = E_ANALOG_REFERENCE;
       p += 1;
@@ -124,20 +124,20 @@ public:
    }
 
    void analogWrite( uint8_t pin, int value ) {
-      char buffer[1+1+4];
+      char   buffer[1+1+4];
       char * p = buffer;
       *p = E_ANALOG_WRITE;
       p += 1;
       *((uint8_t*)p) = pin;
       p += 1;
-      *((int*)p) = value;
+      *((int*)p) = ntohl( value );
       send( buffer, sizeof( buffer ));
    }
 
    //-- Advanced I/O ------------------------------------------------------------
 
    void noTone( uint8_t pin ) {
-      char buffer[1+1];
+      char   buffer[1+1];
       char * p = buffer;
       *p = E_NO_TONE;
       p += 1;
@@ -146,14 +146,14 @@ public:
    }
 
    void tone( uint8_t pin, unsigned int frequency, unsigned long duration ) {
-      char buffer[1+1+4+4];
+      char   buffer[1+1+4+4];
       char * p = buffer;
       *p = E_TONE;
       p += 1;
       *((uint8_t*)p) = pin;
       p += 1;
       *((unsigned int *)p) = htonl( frequency );
-      p += sizeof( int );
+      p += sizeof( unsigned int );
       *((unsigned int *)p) = htonl( duration );
       send( buffer, sizeof( buffer ));
    }
@@ -171,7 +171,7 @@ public:
    //-- Servo -------------------------------------------------------------------
 
    void servoAttach( uint8_t pin ) {
-      char buffer[1+1];
+      char   buffer[1+1];
       char * p = buffer;
       *p = E_SERVO_ATTACH;
       p += 1;
@@ -180,18 +180,18 @@ public:
    }
 
    void servoWrite( uint8_t pin, int value ) {
-      char buffer[1+1+4];
+      char   buffer[1+1+4];
       char * p = buffer;
       *p = E_SERVO_WRITE;
       p += 1;
       *((uint8_t*)p) = pin;
       p += 1;
-      *((int*)p) = value;
+      *((int*)p) = ntohl( value );
       send( buffer, sizeof( buffer ));
    }
 
    void servoDetach( uint8_t pin ) {
-      char buffer[1+1];
+      char   buffer[1+1];
       char * p = buffer;
       *p = E_SERVO_DETACH;
       p += 1;
@@ -421,9 +421,13 @@ bool Servo::attached() {
 //-- Main --------------------------------------------------------------------
 
 int main( int argc, char * argv[] ) {
+   timespec spec;
    setup();
    for(;;) {
       loop();
+      spec.tv_sec  = 0;
+      spec.tv_nsec = 20 * 1000 * 1000;
+      nanosleep( &spec, 0 );
    }
    return 0;
 }

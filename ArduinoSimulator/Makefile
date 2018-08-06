@@ -1,5 +1,5 @@
-CCC     = g++
-ITEPM   = 
+CCC = g++
+CP  = ../hpms.app.arduinosim/hpms.app.arduinosim.jar:../hpms.app.arduinosim/lib/hpms.fx.angle.jar 
 
 all: BUILD/itepm ../hpms.app.arduinosim/hpms.app.arduinosim.jar
 
@@ -25,6 +25,6 @@ BUILD/libsim.a: src/sim.cpp
 run: ../hpms.app.arduinosim/hpms.app.arduinosim.jar
 	make clean all
 	#gnome-terminal -e 'java -jar ../hpms.app.arduinosim/hpms.app.arduinosim.jar' &
-	java -jar ../hpms.app.arduinosim/hpms.app.arduinosim.jar &
+	java -cp $(CP) hpms.app.arduinosim.Main &
 	sleep 2
 	BUILD/itepm

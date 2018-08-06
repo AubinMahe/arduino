@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project default="jar" name="hpms.app.arduinosim">
-   
+
    <property name="BUILD" value="build" />
-   
+
    <target name="clean">
       <delete dir="${BUILD}" />
       <delete file="hpms.app.arduinosim.jar" />
    </target>
-   
+
    <target name="javac">
       <mkdir dir="${BUILD}" />
       <javac
@@ -15,9 +15,10 @@
          debuglevel       ="lines,vars,source"
          destdir          ="${BUILD}"
          srcdir           ="src"
+         classpath        ="lib/hpms.fx.angle.jar"
          includeantruntime="false" />
    </target>
-   
+
    <target name="jar" depends="javac">
       <copy todir="${BUILD}">
          <fileset

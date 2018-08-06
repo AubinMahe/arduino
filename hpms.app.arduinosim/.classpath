@@ -6,5 +6,10 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="lib" path="lib/hpms.fx.angle.jar" sourcepath="lib/hpms.fx.angle-src.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:platform:/resource/hpms.app.arduinosim/lib/hpms.fx.angle-doc.jar!/"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

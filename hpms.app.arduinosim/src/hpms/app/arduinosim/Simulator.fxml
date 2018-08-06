@@ -7,6 +7,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
+<?import hpms.fx.angle.*?>
 
 <SplitPane xmlns:fx="http://javafx.com/fxml"
    fx:controller="hpms.app.arduinosim.SimulatorController"
@@ -16,40 +17,46 @@
    </padding>
    <items>
       <GridPane hgap="4.0" vgap="4.0">
-         <Label  fx:id="_direction_0"  GridPane.columnIndex="0" GridPane.rowIndex= "0" text="Digital n° 0 ---"><maxWidth><Double fx:constant="MAX_VALUE"/></maxWidth></Label>
-         <Label  fx:id="_direction_1"  GridPane.columnIndex="0" GridPane.rowIndex= "1" text="Digital n° 1 ---"><maxWidth><Double fx:constant="MAX_VALUE"/></maxWidth></Label>
-         <Label  fx:id="_direction_2"  GridPane.columnIndex="0" GridPane.rowIndex= "2" text="Digital n° 2 ---"><maxWidth><Double fx:constant="MAX_VALUE"/></maxWidth></Label>
-         <Label  fx:id="_direction_3"  GridPane.columnIndex="0" GridPane.rowIndex= "3" text="Digital n° 3 ---"><maxWidth><Double fx:constant="MAX_VALUE"/></maxWidth></Label>
-         <Label  fx:id="_direction_4"  GridPane.columnIndex="0" GridPane.rowIndex= "4" text="Digital n° 4 ---"><maxWidth><Double fx:constant="MAX_VALUE"/></maxWidth></Label>
-         <Label  fx:id="_direction_5"  GridPane.columnIndex="0" GridPane.rowIndex= "5" text="Digital n° 5 ---"><maxWidth><Double fx:constant="MAX_VALUE"/></maxWidth></Label>
-         <Label  fx:id="_direction_6"  GridPane.columnIndex="0" GridPane.rowIndex= "6" text="Digital n° 6 ---"><maxWidth><Double fx:constant="MAX_VALUE"/></maxWidth></Label>
-         <Label  fx:id="_direction_7"  GridPane.columnIndex="0" GridPane.rowIndex= "7" text="Digital n° 7 ---"><maxWidth><Double fx:constant="MAX_VALUE"/></maxWidth></Label>
-         <Label  fx:id="_direction_8"  GridPane.columnIndex="0" GridPane.rowIndex= "8" text="Digital n° 8 ---"><maxWidth><Double fx:constant="MAX_VALUE"/></maxWidth></Label>
-         <Label  fx:id="_direction_9"  GridPane.columnIndex="0" GridPane.rowIndex= "9" text="Digital n° 9 ---"><maxWidth><Double fx:constant="MAX_VALUE"/></maxWidth></Label>
-         <Label  fx:id="_direction_10" GridPane.columnIndex="0" GridPane.rowIndex="10" text="Digital n°10 ---"><maxWidth><Double fx:constant="MAX_VALUE"/></maxWidth></Label>
-         <Label  fx:id="_direction_11" GridPane.columnIndex="0" GridPane.rowIndex="11" text="Digital n°11 ---"><maxWidth><Double fx:constant="MAX_VALUE"/></maxWidth></Label>
-         <Label  fx:id="_direction_12" GridPane.columnIndex="0" GridPane.rowIndex="12" text="Digital n°12 ---"><maxWidth><Double fx:constant="MAX_VALUE"/></maxWidth></Label>
-         <Label  fx:id="_direction_13" GridPane.columnIndex="0" GridPane.rowIndex="13" text="Digital n°13 ---"><maxWidth><Double fx:constant="MAX_VALUE"/></maxWidth></Label>
-         <CheckBox fx:id="_digital_0"  GridPane.columnIndex="1" GridPane.rowIndex= "0" onAction="#digital" indeterminate="true" disable="true" />
-         <CheckBox fx:id="_digital_1"  GridPane.columnIndex="1" GridPane.rowIndex= "1" onAction="#digital" indeterminate="true" disable="true" />
-         <CheckBox fx:id="_digital_2"  GridPane.columnIndex="1" GridPane.rowIndex= "2" onAction="#digital" indeterminate="true" disable="true" />
-         <CheckBox fx:id="_digital_3"  GridPane.columnIndex="1" GridPane.rowIndex= "3" onAction="#digital" indeterminate="true" disable="true" />
-         <Slider fx:id="_analogOut_3"  GridPane.columnIndex="1" GridPane.rowIndex= "3" onChange="#analog" min="0" max="1023"    disable="true" visible="false" />
-         <CheckBox fx:id="_digital_4"  GridPane.columnIndex="1" GridPane.rowIndex= "4" onAction="#digital" indeterminate="true" disable="true" />
-         <CheckBox fx:id="_digital_5"  GridPane.columnIndex="1" GridPane.rowIndex= "5" onAction="#digital" indeterminate="true" disable="true" />
-         <Slider fx:id="_analogOut_5"  GridPane.columnIndex="1" GridPane.rowIndex= "5" onChange="#analog" min="0" max="1023"    disable="true" visible="false" />
-         <CheckBox fx:id="_digital_6"  GridPane.columnIndex="1" GridPane.rowIndex= "6" onAction="#digital" indeterminate="true" disable="true" />
-         <Slider fx:id="_analogOut_6"  GridPane.columnIndex="1" GridPane.rowIndex= "6" onChange="#analog" min="0" max="1023"    disable="true" visible="false" />
-         <CheckBox fx:id="_digital_7"  GridPane.columnIndex="1" GridPane.rowIndex= "7" onAction="#digital" indeterminate="true" disable="true" />
-         <CheckBox fx:id="_digital_8"  GridPane.columnIndex="1" GridPane.rowIndex= "8" onAction="#digital" indeterminate="true" disable="true" />
-         <CheckBox fx:id="_digital_9"  GridPane.columnIndex="1" GridPane.rowIndex= "9" onAction="#digital" indeterminate="true" disable="true" />
-         <Slider fx:id="_analogOut_9"  GridPane.columnIndex="1" GridPane.rowIndex= "9" onChange="#analog" min="0" max="1023"    disable="true" visible="false" />
-         <CheckBox fx:id="_digital_10" GridPane.columnIndex="1" GridPane.rowIndex="10" onAction="#digital" indeterminate="true" disable="true" />
-         <Slider fx:id="_analogOut_10" GridPane.columnIndex="1" GridPane.rowIndex="10" onChange="#analog" min="0" max="1023"    disable="true" visible="false" />
-         <CheckBox fx:id="_digital_11" GridPane.columnIndex="1" GridPane.rowIndex="11" onAction="#digital" indeterminate="true" disable="true" />
-         <Slider fx:id="_analogOut_11" GridPane.columnIndex="1" GridPane.rowIndex="11" onChange="#analog" min="0" max="1023"    disable="true" visible="false" />
-         <CheckBox fx:id="_digital_12" GridPane.columnIndex="1" GridPane.rowIndex="12" onAction="#digital" indeterminate="true" disable="true" />
-         <CheckBox fx:id="_digital_13" GridPane.columnIndex="1" GridPane.rowIndex="13" onAction="#digital" indeterminate="true" disable="true" />
+         <Label      fx:id="_direction_0"  GridPane.columnIndex="0" GridPane.rowIndex= "0" text="Digital n° 0 ---"><maxWidth><Double fx:constant="MAX_VALUE"/></maxWidth></Label>
+         <Label      fx:id="_direction_1"  GridPane.columnIndex="0" GridPane.rowIndex= "1" text="Digital n° 1 ---"><maxWidth><Double fx:constant="MAX_VALUE"/></maxWidth></Label>
+         <Label      fx:id="_direction_2"  GridPane.columnIndex="0" GridPane.rowIndex= "2" text="Digital n° 2 ---"><maxWidth><Double fx:constant="MAX_VALUE"/></maxWidth></Label>
+         <Label      fx:id="_direction_3"  GridPane.columnIndex="0" GridPane.rowIndex= "3" text="Digital n° 3 ---"><maxWidth><Double fx:constant="MAX_VALUE"/></maxWidth></Label>
+         <Label      fx:id="_direction_4"  GridPane.columnIndex="0" GridPane.rowIndex= "4" text="Digital n° 4 ---"><maxWidth><Double fx:constant="MAX_VALUE"/></maxWidth></Label>
+         <Label      fx:id="_direction_5"  GridPane.columnIndex="0" GridPane.rowIndex= "5" text="Digital n° 5 ---"><maxWidth><Double fx:constant="MAX_VALUE"/></maxWidth></Label>
+         <Label      fx:id="_direction_6"  GridPane.columnIndex="0" GridPane.rowIndex= "6" text="Digital n° 6 ---"><maxWidth><Double fx:constant="MAX_VALUE"/></maxWidth></Label>
+         <Label      fx:id="_direction_7"  GridPane.columnIndex="0" GridPane.rowIndex= "7" text="Digital n° 7 ---"><maxWidth><Double fx:constant="MAX_VALUE"/></maxWidth></Label>
+         <Label      fx:id="_direction_8"  GridPane.columnIndex="0" GridPane.rowIndex= "8" text="Digital n° 8 ---"><maxWidth><Double fx:constant="MAX_VALUE"/></maxWidth></Label>
+         <Label      fx:id="_direction_9"  GridPane.columnIndex="0" GridPane.rowIndex= "9" text="Digital n° 9 ---"><maxWidth><Double fx:constant="MAX_VALUE"/></maxWidth></Label>
+         <Label      fx:id="_direction_10" GridPane.columnIndex="0" GridPane.rowIndex="10" text="Digital n°10 ---"><maxWidth><Double fx:constant="MAX_VALUE"/></maxWidth></Label>
+         <Label      fx:id="_direction_11" GridPane.columnIndex="0" GridPane.rowIndex="11" text="Digital n°11 ---"><maxWidth><Double fx:constant="MAX_VALUE"/></maxWidth></Label>
+         <Label      fx:id="_direction_12" GridPane.columnIndex="0" GridPane.rowIndex="12" text="Digital n°12 ---"><maxWidth><Double fx:constant="MAX_VALUE"/></maxWidth></Label>
+         <Label      fx:id="_direction_13" GridPane.columnIndex="0" GridPane.rowIndex="13" text="Digital n°13 ---"><maxWidth><Double fx:constant="MAX_VALUE"/></maxWidth></Label>
+         <CheckBox     fx:id="_digital_0"  GridPane.columnIndex="1" GridPane.rowIndex= "0" onAction="#digital" indeterminate="true"   disable="true" />
+         <CheckBox     fx:id="_digital_1"  GridPane.columnIndex="1" GridPane.rowIndex= "1" onAction="#digital" indeterminate="true"   disable="true" />
+         <CheckBox     fx:id="_digital_2"  GridPane.columnIndex="1" GridPane.rowIndex= "2" onAction="#digital" indeterminate="true"   disable="true" />
+         <CheckBox     fx:id="_digital_3"  GridPane.columnIndex="1" GridPane.rowIndex= "3" onAction="#digital" indeterminate="true"   disable="true" />
+         <Slider       fx:id="_slider_3"   GridPane.columnIndex="1" GridPane.rowIndex= "3" onChange="#analog"  min="0" max="1023"     disable="true" visible="false" />
+         <AngleControl fx:id="_servo_3"    GridPane.columnIndex="1" GridPane.rowIndex= "6" onChange="#angle" angle="0" hasText="true" disable="true" visible="false" />
+         <CheckBox     fx:id="_digital_4"  GridPane.columnIndex="1" GridPane.rowIndex= "4" onAction="#digital" indeterminate="true"   disable="true" />
+         <CheckBox     fx:id="_digital_5"  GridPane.columnIndex="1" GridPane.rowIndex= "5" onAction="#digital" indeterminate="true"   disable="true" />
+         <Slider       fx:id="_slider_5"   GridPane.columnIndex="1" GridPane.rowIndex= "5" onChange="#analog"  min="0" max="1023"     disable="true" visible="false" />
+         <AngleControl fx:id="_servo_5"    GridPane.columnIndex="1" GridPane.rowIndex= "6" onChange="#angle" angle="0" hasText="true" disable="true" visible="false" />
+         <CheckBox     fx:id="_digital_6"  GridPane.columnIndex="1" GridPane.rowIndex= "6" onAction="#digital" indeterminate="true"   disable="true" />
+         <Slider       fx:id="_slider_6"   GridPane.columnIndex="1" GridPane.rowIndex= "3" onChange="#analog"  min="0" max="1023"     disable="true" visible="false" />
+         <AngleControl fx:id="_servo_6"    GridPane.columnIndex="1" GridPane.rowIndex= "6" onChange="#angle" angle="0" hasText="true" disable="true" visible="false" />
+         <CheckBox     fx:id="_digital_7"  GridPane.columnIndex="1" GridPane.rowIndex= "7" onAction="#digital" indeterminate="true"   disable="true" />
+         <CheckBox     fx:id="_digital_8"  GridPane.columnIndex="1" GridPane.rowIndex= "8" onAction="#digital" indeterminate="true"   disable="true" />
+         <CheckBox     fx:id="_digital_9"  GridPane.columnIndex="1" GridPane.rowIndex= "9" onAction="#digital" indeterminate="true"   disable="true" />
+         <Slider       fx:id="_slider_9"   GridPane.columnIndex="1" GridPane.rowIndex= "9" onChange="#analog"  min="0" max="1023"     disable="true" visible="false" />
+         <AngleControl fx:id="_servo_9"    GridPane.columnIndex="1" GridPane.rowIndex= "6" onChange="#angle" angle="0" hasText="true" disable="true" visible="false" />
+         <CheckBox     fx:id="_digital_10" GridPane.columnIndex="1" GridPane.rowIndex="10" onAction="#digital" indeterminate="true"   disable="true" />
+         <Slider       fx:id="_slider_10"  GridPane.columnIndex="1" GridPane.rowIndex="10" onChange="#analog"  min="0" max="1023"     disable="true" visible="false" />
+         <AngleControl fx:id="_servo_10"   GridPane.columnIndex="1" GridPane.rowIndex= "6" onChange="#angle" angle="0" hasText="true" disable="true" visible="false" />
+         <CheckBox     fx:id="_digital_11" GridPane.columnIndex="1" GridPane.rowIndex="11" onAction="#digital" indeterminate="true"   disable="true" />
+         <Slider       fx:id="_slider_11"  GridPane.columnIndex="1" GridPane.rowIndex="11" onChange="#analog"  min="0" max="1023"     disable="true" visible="false" />
+         <AngleControl fx:id="_servo_11"   GridPane.columnIndex="1" GridPane.rowIndex= "6" onChange="#angle" angle="0" hasText="true" disable="true" visible="false" />
+         <CheckBox     fx:id="_digital_12" GridPane.columnIndex="1" GridPane.rowIndex="12" onAction="#digital" indeterminate="true"   disable="true" />
+         <CheckBox     fx:id="_digital_13" GridPane.columnIndex="1" GridPane.rowIndex="13" onAction="#digital" indeterminate="true"   disable="true" />
          <!--
          <Button text="La 440 Hz ON"  onAction="#noteOn"  GridPane.columnIndex="0" GridPane.rowIndex= "8" GridPane.columnSpan="2" />
          <Button text="La 440 Hz OFF" onAction="#noteOff" GridPane.columnIndex="0" GridPane.rowIndex= "9" GridPane.columnSpan="2" />
