@@ -36,6 +36,8 @@ enum verb_t {
    E_NO_TONE,
    E_TONE,
 
+   //-- External Interrupts --------------------------------------------------
+
    //-- Communication --------------------------------------------------------
 
    E_PRINT,
@@ -57,6 +59,10 @@ public:
 
    UI_proxy( unsigned short port ) {
       memset( _digital, 0, sizeof( _digital ));
+      _isr_0_func = 0;
+      _isr_0_mode = 0;
+      _isr_0_func = 0;
+      _isr_1_mode = 0;
       _socket = ::socket( AF_INET, SOCK_DGRAM, 0 );
       if( _socket < 0 ) {
          perror("socket()");
@@ -80,7 +86,7 @@ public:
 
 public:
 
-   //-- Digital I/O -------------------------------------------------------------
+   //-- Digital I/O ----------------------------------------------------------
 
    int digitalRead( uint8_t pin ) {
       return _digital[pin];
@@ -108,7 +114,7 @@ public:
       send( buffer, sizeof( buffer ));
    }
 
-   //-- Analog I/O --------------------------------------------------------------
+   //-- Analog I/O -----------------------------------------------------------
 
    int analogRead( uint8_t pin ) {
       return _analog[pin];
@@ -134,7 +140,7 @@ public:
       send( buffer, sizeof( buffer ));
    }
 
-   //-- Advanced I/O ------------------------------------------------------------
+   //-- Advanced I/O ---------------------------------------------------------
 
    void noTone( uint8_t pin ) {
       char   buffer[1+1];
@@ -158,7 +164,31 @@ public:
       send( buffer, sizeof( buffer ));
    }
 
-   //-- Communication -----------------------------------------------------------
+   //-- External Interrupts --------------------------------------------------
+
+   void attachInterrupt( uint8_t pin, void (* ISR )(void), uint8_t mode ) {
+      if( pin == 2 ) {
+         _isr_0_func = ISR;
+         _isr_0_mode = mode;
+      }
+      else {
+         _isr_1_func = ISR;
+         _isr_1_mode = mode;
+      }
+   }
+
+   void detachInterrupt( uint8_t pin ) {
+      if( pin == 2 ) {
+         _isr_0_func = 0;
+         _isr_0_mode = 0;
+      }
+      else {
+         _isr_1_func = 0;
+         _isr_1_mode = 0;
+      }
+   }
+
+   //-- Communication --------------------------------------------------------
 
    void print( const char * s ) {
       send( E_PRINT, s );
@@ -201,14 +231,12 @@ public:
 
 private:
 
-   static void * recv( void * arg ) {
-      UI_proxy * ui = (UI_proxy *)arg;
+   void _recv() {
       for(;;) {
          char buffer[1024];
-         socklen_t len = sizeof( ui->_addr );
-         int count = ::recvfrom(
-            ui->_socket, buffer, sizeof( buffer ), MSG_WAITALL,
-            (struct sockaddr *)&ui->_addr, &len );
+         socklen_t len = sizeof( _addr );
+         int count = ::recvfrom( _socket, buffer, sizeof( buffer ), MSG_WAITALL,
+            (struct sockaddr *)&_addr, &len );
          if( count < 0 ) {
             perror("recvfrom()");
             ::exit( EXIT_FAILURE );
@@ -217,13 +245,31 @@ private:
          if( verb == E_DIGITAL_READ ) {
             int pin    = buffer[1];
             int status = buffer[2];
-            ui->_digital[pin] = status;
+            _digital[pin] = status;
+            if(  ( pin == 2 )
+               &&( _isr_0_func )
+               &&(  (( _isr_0_mode == RISING  ) &&  status )
+                  ||(( _isr_0_mode == FALLING ) && !status )))
+            {
+               _isr_0_func();
+            }
+            else if(  ( pin == 3 )
+                    &&( _isr_1_func )
+                    &&(  (( _isr_1_mode == RISING  ) &&  status )
+                       ||(( _isr_1_mode == FALLING ) && !status )))
+            {
+               _isr_1_func();
+            }
          }
          else if( verb == E_EXIT ) {
             int exitCode = ntohl( *(int*)(buffer+1));
             ::exit( exitCode );
          }
       }
+   }
+
+   static void * recv( void * arg ) {
+      ((UI_proxy *)arg) -> _recv();
       return 0;
    }
 
@@ -254,6 +300,10 @@ private:
    pthread_t   _thread;
    uint8_t     _digital[16];
    int         _analog [16];
+   void    ( * _isr_0_func )( void );
+   uint8_t     _isr_0_mode;
+   void    ( * _isr_1_func )( void );
+   uint8_t     _isr_1_mode;
 };
 
 UI_proxy proxy( UI_PROXY_PORT );
@@ -354,11 +404,21 @@ unsigned long millis( void ) {
 //-- External Interrupts -----------------------------------------------------
 
 void attachInterrupt( uint8_t interrupt, void (* ISR )(void), int mode ) {
-   // TODO
+   if( interrupt == 0 ) {
+      proxy.attachInterrupt( 2, ISR, mode );
+   }
+   else if( interrupt == 1 ) {
+      proxy.attachInterrupt( 3, ISR, mode );
+   }
 }
 
 void detachInterrupt( uint8_t interrupt ) {
-   // TODO
+   if( interrupt == 0 ) {
+      proxy.detachInterrupt( 2 );
+   }
+   else if( interrupt == 1 ) {
+      proxy.detachInterrupt( 3 );
+   }
 }
 
 //-- Interrupts --------------------------------------------------------------
@@ -426,7 +486,7 @@ int main( int argc, char * argv[] ) {
    for(;;) {
       loop();
       spec.tv_sec  = 0;
-      spec.tv_nsec = 20 * 1000 * 1000;
+      spec.tv_nsec = 20 * 1000 * 1000; // 20 ms
       nanosleep( &spec, 0 );
    }
    return 0;

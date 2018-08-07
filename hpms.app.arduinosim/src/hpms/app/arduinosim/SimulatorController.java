@@ -231,18 +231,20 @@ public class SimulatorController {
    public void servoAttach( byte pin ) {
       Platform.runLater(() -> {
          final AngleControl angle = _servos.get( pin );
-         String text  = _direction[pin].getText();
-         text = text.substring( 0, text.length() - 3);
-         _direction[pin].setText( text + "OUT" );
-         _digital  [pin].setVisible( false );
-         angle          .setVisible( true  );
+         if( angle != null ) {
+            String text  = _direction[pin].getText();
+            text = text.substring( 0, text.length() - 3);
+            _direction[pin].setText( text + "OUT" );
+            _digital  [pin].setVisible( false );
+            angle          .setVisible( true  );
+         }
       });
    }
 
    public void servoWrite( byte pin, int value ) {
       Platform.runLater(() -> {
          final AngleControl angle = _servos.get( pin );
-         if( angle.isVisible()) {
+         if( angle != null && angle.isVisible()) {
             angle.setAngle( value );
          }
       });
@@ -251,11 +253,13 @@ public class SimulatorController {
    public void servoDetach( byte pin ) {
       Platform.runLater(() -> {
          final AngleControl angle = _servos.get( pin );
-         String text  = _direction[pin].getText();
-         text = text.substring( 0, text.length() - 3);
-         _direction[pin].setText( text + "---" );
-         _digital  [pin].setVisible( true  );
-         angle          .setVisible( false );
+         if( angle != null ) {
+            String text = _direction[pin].getText();
+            text = text.substring( 0, text.length() - 3);
+            _direction[pin].setText( text + "---" );
+            _digital  [pin].setVisible( true  );
+            angle          .setVisible( false );
+         }
       });
    }
 }

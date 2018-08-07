@@ -122,6 +122,12 @@ inline void randomSeed( long seed ) {
 
 //-- External Interrupts -----------------------------------------------------
 
+#define NOT_AN_INTERRUPT -1
+#define digitalPinToInterrupt(p)  ((p) == 2 ? 0 : ((p) == 3 ? 1 : NOT_AN_INTERRUPT))
+#define CHANGE  1
+#define FALLING 2
+#define RISING  3
+
 void attachInterrupt( uint8_t interrupt, void (* ISR )(void), int mode );
 void detachInterrupt( uint8_t interrupt );
 

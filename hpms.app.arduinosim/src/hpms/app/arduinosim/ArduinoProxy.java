@@ -38,6 +38,8 @@ public class ArduinoProxy extends Thread {
       E_NO_TONE,
       E_TONE,
 
+      //-- External Interrupts -----------------------------------------------
+
       //-- Communication -----------------------------------------------------
 
       E_PRINT,
@@ -133,11 +135,13 @@ public class ArduinoProxy extends Thread {
    }
 
    private void tone() {
-      /*final byte pin    =*/_recv.get();
+      /*         pin      */ _recv.get();
       final int  frequency = _recv.getInt();
       final int  duration  = _recv.getInt();
       new Thread(() -> playMidi( frequency, duration )).start();
    }
+
+   //-- External Interrupts --------------------------------------
 
    //-- Communication --------------------------------------------------------
 
@@ -286,18 +290,20 @@ public class ArduinoProxy extends Thread {
                case E_NO_TONE: noTone(); break;
                case E_TONE   : tone  (); break;
 
+               //-- External Interrupts --------------------------------------
+
                //-- Communication --------------------------------------------
 
                case E_PRINT  : print  (); break;
                case E_PRINTLN: println(); break;
 
-               //-- Servo ----------------------------------------------------------------
+               //-- Servo ----------------------------------------------------
 
                case E_SERVO_ATTACH: servoAttach(); break;
                case E_SERVO_WRITE : servoWrite (); break;
                case E_SERVO_DETACH: servoDetach(); break;
 
-               //-- Exit -----------------------------------------------------------------
+               //-- Exit -----------------------------------------------------
 
                case E_EXIT: exit(); break;
                }
