@@ -92,10 +92,13 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Recherche');
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><code>#include &lt;Arduino.h&gt;</code><br />
+<code>#include &lt;Servo.h&gt;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Graphe des dépendances par inclusion de IfThenElsePourMax.cpp:</div>
 <div class="dyncontent">
 <div class="center"><img src="../../d1/d7c/a00003.png" border="0" usemap="#src_2_if_then_else_pour_max_8cpp" alt=""/></div>
+<map name="src_2_if_then_else_pour_max_8cpp" id="src_2_if_then_else_pour_max_8cpp">
+</map>
 </div>
 </div>
 <p><a href="../../d8/d84/a00001_source.html">Aller au code source de ce fichier.</a></p>
@@ -152,9 +155,15 @@ Fonctions</h2></td></tr>
 <tr class="memitem:aefc4bfc5133e36b48e4c89f61d06a2d3"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/d84/a00001.html#aefc4bfc5133e36b48e4c89f61d06a2d3">initialise_les_entrees_sorties</a> ()</td></tr>
 <tr class="memdesc:aefc4bfc5133e36b48e4c89f61d06a2d3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Configure les entrées/sorties au moyen de l'API Arduino <a href="https://www.arduino.cc/reference/en/language/functions/digital-io/pinmode/" target="arduino-page">pinMode()</a>.  <a href="#aefc4bfc5133e36b48e4c89f61d06a2d3">Plus de détails...</a><br /></td></tr>
 <tr class="separator:aefc4bfc5133e36b48e4c89f61d06a2d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a645fae5200da6ca302bf942731b13484"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/d84/a00001.html#a645fae5200da6ca302bf942731b13484">le_bouton_a_ete_presse</a> (void)</td></tr>
+<tr class="memdesc:a645fae5200da6ca302bf942731b13484"><td class="mdescLeft">&#160;</td><td class="mdescRight">Routine d'interruption attachée au front descendant du bouton (pin 2) au moyen de l'API Arduino <a href="https://www.arduino.cc/reference/en/language/functions/external-interrupts/attachinterrupt/" target="arduino-page">attachInterrupt()</a>.  <a href="#a645fae5200da6ca302bf942731b13484">Plus de détails...</a><br /></td></tr>
+<tr class="separator:a645fae5200da6ca302bf942731b13484"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afe461d27b9c48d5921c00d521181f12f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/d84/a00001.html#afe461d27b9c48d5921c00d521181f12f">loop</a> ()</td></tr>
 <tr class="memdesc:afe461d27b9c48d5921c00d521181f12f"><td class="mdescLeft">&#160;</td><td class="mdescRight">L'évolution de l'état du système est confiné ici sous la forme d'un automate état/transition.  <a href="#afe461d27b9c48d5921c00d521181f12f">Plus de détails...</a><br /></td></tr>
 <tr class="separator:afe461d27b9c48d5921c00d521181f12f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8c360f5bc84d281727b899c71f561983"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/d84/a00001.html#a8c360f5bc84d281727b899c71f561983">montre_le_temps_restant</a> (unsigned long temps_ecoule, unsigned long debut, unsigned long fin)</td></tr>
+<tr class="memdesc:a8c360f5bc84d281727b899c71f561983"><td class="mdescLeft">&#160;</td><td class="mdescRight">Utilise le servo moteur pour montrer qu'il faut presser le bouton.  <a href="#a8c360f5bc84d281727b899c71f561983">Plus de détails...</a><br /></td></tr>
+<tr class="separator:a8c360f5bc84d281727b899c71f561983"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4fc01d736fe50cf5b977f755b675f11d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/d84/a00001.html#a4fc01d736fe50cf5b977f755b675f11d">setup</a> ()</td></tr>
 <tr class="memdesc:a4fc01d736fe50cf5b977f755b675f11d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialise le hardware.  <a href="#a4fc01d736fe50cf5b977f755b675f11d">Plus de détails...</a><br /></td></tr>
 <tr class="separator:a4fc01d736fe50cf5b977f755b675f11d"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -164,6 +173,9 @@ Variables</h2></td></tr>
 <tr class="memitem:a7337a18ed95e3dbc44953d2e8d65ba9e"><td class="memItemLeft" align="right" valign="top">static const uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/d84/a00001.html#a7337a18ed95e3dbc44953d2e8d65ba9e">BOUTON_PIN</a> = 2</td></tr>
 <tr class="memdesc:a7337a18ed95e3dbc44953d2e8d65ba9e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bouton branché sur le port n°2.  <a href="#a7337a18ed95e3dbc44953d2e8d65ba9e">Plus de détails...</a><br /></td></tr>
 <tr class="separator:a7337a18ed95e3dbc44953d2e8d65ba9e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a230c9830bb885cd9ba9457972b18912d"><td class="memItemLeft" align="right" valign="top">static volatile bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/d84/a00001.html#a230c9830bb885cd9ba9457972b18912d">bouton_relache</a> = false</td></tr>
+<tr class="memdesc:a230c9830bb885cd9ba9457972b18912d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Le bouton a été perçu relaché par la routine d'interruption <a class="el" href="../../d8/d84/a00001.html#a645fae5200da6ca302bf942731b13484" title="Routine d&#39;interruption attachée au front descendant du bouton (pin 2) au moyen de l&#39;API Arduino attac...">le_bouton_a_ete_presse()</a>.  <a href="#a230c9830bb885cd9ba9457972b18912d">Plus de détails...</a><br /></td></tr>
+<tr class="separator:a230c9830bb885cd9ba9457972b18912d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad779ede00a2d89839f661e8ea2e041a9"><td class="memItemLeft" align="right" valign="top">static unsigned long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/d84/a00001.html#ad779ede00a2d89839f661e8ea2e041a9">buzzer_cycle</a> = 0UL</td></tr>
 <tr class="memdesc:ad779ede00a2d89839f661e8ea2e041a9"><td class="mdescLeft">&#160;</td><td class="mdescRight">N° de la période du buzzer.  <a href="#ad779ede00a2d89839f661e8ea2e041a9">Plus de détails...</a><br /></td></tr>
 <tr class="separator:ad779ede00a2d89839f661e8ea2e041a9"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -185,9 +197,6 @@ Variables</h2></td></tr>
 <tr class="memitem:a3d995e416901085562cefe8cea623d24"><td class="memItemLeft" align="right" valign="top">static const unsigned long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/d84/a00001.html#a3d995e416901085562cefe8cea623d24">DUREE_DU_BUZZER</a> = 160UL</td></tr>
 <tr class="memdesc:a3d995e416901085562cefe8cea623d24"><td class="mdescLeft">&#160;</td><td class="mdescRight">ms Durée du bip  <a href="#a3d995e416901085562cefe8cea623d24">Plus de détails...</a><br /></td></tr>
 <tr class="separator:a3d995e416901085562cefe8cea623d24"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abb013d98e3527e445a799d4639d468df"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/d84/a00001.html#abb013d98e3527e445a799d4639d468df">enfonce</a> = false</td></tr>
-<tr class="memdesc:abb013d98e3527e445a799d4639d468df"><td class="mdescLeft">&#160;</td><td class="mdescRight">Le bouton a été perçu enfoncé.  <a href="#abb013d98e3527e445a799d4639d468df">Plus de détails...</a><br /></td></tr>
-<tr class="separator:abb013d98e3527e445a799d4639d468df"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a31596e70fef19dcec60cd2cb415433e4"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="../../d8/d84/a00001.html#a0753690b45a091cda92b046fcd3edb4e">Etat_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/d84/a00001.html#a31596e70fef19dcec60cd2cb415433e4">etat</a> = <a class="el" href="../../d8/d84/a00001.html#a0753690b45a091cda92b046fcd3edb4ead1c07daa654c2e4ab2237c8d73192961">ETA_VEILLE</a></td></tr>
 <tr class="memdesc:a31596e70fef19dcec60cd2cb415433e4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Etat du système.  <a href="#a31596e70fef19dcec60cd2cb415433e4">Plus de détails...</a><br /></td></tr>
 <tr class="separator:a31596e70fef19dcec60cd2cb415433e4"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -212,12 +221,17 @@ Variables</h2></td></tr>
 <tr class="memitem:a3fa7270b5c0f7b4042db3b4b7acf959b"><td class="memItemLeft" align="right" valign="top">static const uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/d84/a00001.html#a3fa7270b5c0f7b4042db3b4b7acf959b">LED3_PIN</a> = 5</td></tr>
 <tr class="memdesc:a3fa7270b5c0f7b4042db3b4b7acf959b"><td class="mdescLeft">&#160;</td><td class="mdescRight">DEL branchée sur le port n°5.  <a href="#a3fa7270b5c0f7b4042db3b4b7acf959b">Plus de détails...</a><br /></td></tr>
 <tr class="separator:a3fa7270b5c0f7b4042db3b4b7acf959b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7a75724a72c07ac7fa67335dd65bc543"><td class="memItemLeft" align="right" valign="top">static const uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/d84/a00001.html#a7a75724a72c07ac7fa67335dd65bc543">MOTEUR_PIN</a> = 6</td></tr>
+<tr class="memdesc:a7a75724a72c07ac7fa67335dd65bc543"><td class="mdescLeft">&#160;</td><td class="mdescRight">Moteur branché sur le port n°6 (PWM)  <a href="#a7a75724a72c07ac7fa67335dd65bc543">Plus de détails...</a><br /></td></tr>
+<tr class="separator:a7a75724a72c07ac7fa67335dd65bc543"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab4773757a01be0f5685b5f56879b8628"><td class="memItemLeft" align="right" valign="top">static const unsigned long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/d84/a00001.html#ab4773757a01be0f5685b5f56879b8628">PERIODE_D_ACTIVATION_DU_BUZZER</a> = 500UL</td></tr>
 <tr class="memdesc:ab4773757a01be0f5685b5f56879b8628"><td class="mdescLeft">&#160;</td><td class="mdescRight">ms Intervalle entre deux bips  <a href="#ab4773757a01be0f5685b5f56879b8628">Plus de détails...</a><br /></td></tr>
 <tr class="separator:ab4773757a01be0f5685b5f56879b8628"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7bb1ec7dd618711e249eb99af044e53a"><td class="memItemLeft" align="right" valign="top">static unsigned long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/d84/a00001.html#a7bb1ec7dd618711e249eb99af044e53a">t0</a> = 0UL</td></tr>
 <tr class="memdesc:a7bb1ec7dd618711e249eb99af044e53a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Horodatage des événements : temps de départ.  <a href="#a7bb1ec7dd618711e249eb99af044e53a">Plus de détails...</a><br /></td></tr>
 <tr class="separator:a7bb1ec7dd618711e249eb99af044e53a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4a6d8a21aead78e70f29fb1689e16bd9"><td class="memItemLeft" align="right" valign="top">static Servo&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/d84/a00001.html#a4a6d8a21aead78e70f29fb1689e16bd9">temps_restant</a></td></tr>
+<tr class="separator:a4a6d8a21aead78e70f29fb1689e16bd9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Documentation du type de l'énumération</h2>
 <a class="anchor" id="a0753690b45a091cda92b046fcd3edb4e"></a>
@@ -250,7 +264,7 @@ Variables</h2></td></tr>
 </td></tr>
 </table>
 
-<p>Définition à la ligne <a class="el" href="../../d8/d84/a00001_source.html#l00006">6</a> du fichier <a class="el" href="../../d8/d84/a00001_source.html">IfThenElsePourMax.cpp</a>.</p>
+<p>Définition à la ligne <a class="el" href="../../d8/d84/a00001_source.html#l00007">7</a> du fichier <a class="el" href="../../d8/d84/a00001_source.html">IfThenElsePourMax.cpp</a>.</p>
 
 </div>
 </div>
@@ -279,7 +293,7 @@ Variables</h2></td></tr>
 <p>Allume le buzzer et effectue l'horodatage pour gérer son extinction prochaine. </p>
 <dl class="section see"><dt>Voir également</dt><dd><a class="el" href="../../d8/d84/a00001.html#a3d995e416901085562cefe8cea623d24" title="ms Durée du bip ">DUREE_DU_BUZZER</a> </dd></dl>
 
-<p>Définition à la ligne <a class="el" href="../../d8/d84/a00001_source.html#l00060">60</a> du fichier <a class="el" href="../../d8/d84/a00001_source.html">IfThenElsePourMax.cpp</a>.</p>
+<p>Définition à la ligne <a class="el" href="../../d8/d84/a00001_source.html#l00063">63</a> du fichier <a class="el" href="../../d8/d84/a00001_source.html">IfThenElsePourMax.cpp</a>.</p>
 
 <p><div class="dynheader">
 Voici le graphe des appelants de cette fonction :</div>
@@ -316,7 +330,7 @@ Voici le graphe des appelants de cette fonction :</div>
 
 <p>Cette fonction devra, à terme, contrôler un afficheur pour diffuser un message constituant un indice pour résoudre la quête. </p>
 
-<p>Définition à la ligne <a class="el" href="../../d8/d84/a00001_source.html#l00126">126</a> du fichier <a class="el" href="../../d8/d84/a00001_source.html">IfThenElsePourMax.cpp</a>.</p>
+<p>Définition à la ligne <a class="el" href="../../d8/d84/a00001_source.html#l00131">131</a> du fichier <a class="el" href="../../d8/d84/a00001_source.html">IfThenElsePourMax.cpp</a>.</p>
 
 <p><div class="dynheader">
 Voici le graphe des appelants de cette fonction :</div>
@@ -355,7 +369,7 @@ Voici le graphe des appelants de cette fonction :</div>
 <p>Utilise l'API Arduino pour allumer les DEL n°1 et n°2. </p>
 <p>Met en oeuvre l'API Arduino <a href="https://www.arduino.cc/reference/en/language/functions/digital-io/digitalwrite/" target="arduino-page">digitalWrite()</a> </p>
 
-<p>Définition à la ligne <a class="el" href="../../d8/d84/a00001_source.html#l00115">115</a> du fichier <a class="el" href="../../d8/d84/a00001_source.html">IfThenElsePourMax.cpp</a>.</p>
+<p>Définition à la ligne <a class="el" href="../../d8/d84/a00001_source.html#l00119">119</a> du fichier <a class="el" href="../../d8/d84/a00001_source.html">IfThenElsePourMax.cpp</a>.</p>
 
 <p><div class="dynheader">
 Voici le graphe des appelants de cette fonction :</div>
@@ -393,7 +407,7 @@ Voici le graphe des appelants de cette fonction :</div>
 <p>Utilise l'API Arduino pour allumer les DEL n°1, n°2 et n°3. </p>
 <p>Met en oeuvre l'API Arduino <a href="https://www.arduino.cc/reference/en/language/functions/digital-io/digitalwrite/" target="arduino-page">digitalWrite()</a> </p>
 
-<p>Définition à la ligne <a class="el" href="../../d8/d84/a00001_source.html#l00136">136</a> du fichier <a class="el" href="../../d8/d84/a00001_source.html">IfThenElsePourMax.cpp</a>.</p>
+<p>Définition à la ligne <a class="el" href="../../d8/d84/a00001_source.html#l00141">141</a> du fichier <a class="el" href="../../d8/d84/a00001_source.html">IfThenElsePourMax.cpp</a>.</p>
 
 <p><div class="dynheader">
 Voici le graphe d'appel pour cette fonction :</div>
@@ -441,7 +455,7 @@ Voici le graphe des appelants de cette fonction :</div>
 <p>Utilise l'API Arduino pour allumer la DEL n°1. </p>
 <p>Met en oeuvre l'API Arduino <a href="https://www.arduino.cc/reference/en/language/functions/digital-io/digitalwrite/" target="arduino-page">digitalWrite()</a> </p>
 
-<p>Définition à la ligne <a class="el" href="../../d8/d84/a00001_source.html#l00102">102</a> du fichier <a class="el" href="../../d8/d84/a00001_source.html">IfThenElsePourMax.cpp</a>.</p>
+<p>Définition à la ligne <a class="el" href="../../d8/d84/a00001_source.html#l00105">105</a> du fichier <a class="el" href="../../d8/d84/a00001_source.html">IfThenElsePourMax.cpp</a>.</p>
 
 <p><div class="dynheader">
 Voici le graphe des appelants de cette fonction :</div>
@@ -477,9 +491,9 @@ Voici le graphe des appelants de cette fonction :</div>
 </div><div class="memdoc">
 
 <p>Retourne 'vrai' quand le bouton a été enfoncé puis relâché. </p>
-<p>Met en oeuvre l'API Arduino <a href="https://www.arduino.cc/reference/en/language/functions/digital-io/digitalread/" target="arduino-page">digitalRead()</a> pour acquérir l'état du bouton. </p><dl class="section return"><dt>Renvoie</dt><dd>true quand le bouton a été enfoncé puis relâché. </dd></dl>
+<dl class="section return"><dt>Renvoie</dt><dd>true quand le bouton a été enfoncé puis relâché. </dd></dl>
 
-<p>Définition à la ligne <a class="el" href="../../d8/d84/a00001_source.html#l00151">151</a> du fichier <a class="el" href="../../d8/d84/a00001_source.html">IfThenElsePourMax.cpp</a>.</p>
+<p>Définition à la ligne <a class="el" href="../../d8/d84/a00001_source.html#l00154">154</a> du fichier <a class="el" href="../../d8/d84/a00001_source.html">IfThenElsePourMax.cpp</a>.</p>
 
 <p><div class="dynheader">
 Voici le graphe des appelants de cette fonction :</div>
@@ -517,7 +531,7 @@ Voici le graphe des appelants de cette fonction :</div>
 <p>Effectue l'horodatage pour gérer les événements temporels. </p>
 <dl class="section see"><dt>Voir également</dt><dd><a class="el" href="../../d8/d84/a00001.html#a3d995e416901085562cefe8cea623d24" title="ms Durée du bip ">DUREE_DU_BUZZER</a> Met en oeuvre l'API Arduino <a href="https://www.arduino.cc/reference/en/language/functions/time/millis/" target="arduino-page">millis()</a> </dd></dl>
 
-<p>Définition à la ligne <a class="el" href="../../d8/d84/a00001_source.html#l00073">73</a> du fichier <a class="el" href="../../d8/d84/a00001_source.html">IfThenElsePourMax.cpp</a>.</p>
+<p>Définition à la ligne <a class="el" href="../../d8/d84/a00001_source.html#l00076">76</a> du fichier <a class="el" href="../../d8/d84/a00001_source.html">IfThenElsePourMax.cpp</a>.</p>
 
 <p><div class="dynheader">
 Voici le graphe des appelants de cette fonction :</div>
@@ -554,7 +568,7 @@ Voici le graphe des appelants de cette fonction :</div>
 
 <p>Eteint le buzzer. </p>
 
-<p>Définition à la ligne <a class="el" href="../../d8/d84/a00001_source.html#l00051">51</a> du fichier <a class="el" href="../../d8/d84/a00001_source.html">IfThenElsePourMax.cpp</a>.</p>
+<p>Définition à la ligne <a class="el" href="../../d8/d84/a00001_source.html#l00054">54</a> du fichier <a class="el" href="../../d8/d84/a00001_source.html">IfThenElsePourMax.cpp</a>.</p>
 
 <p><div class="dynheader">
 Voici le graphe des appelants de cette fonction :</div>
@@ -593,7 +607,7 @@ Voici le graphe des appelants de cette fonction :</div>
 <p>Remet le système en attente, éteint les DEL, le buzzer, réinitialise l'état interne. </p>
 <dl class="section see"><dt>Voir également</dt><dd><a class="el" href="../../d8/d84/a00001.html#a31596e70fef19dcec60cd2cb415433e4" title="Etat du système. ">etat</a>, <a class="el" href="../../d8/d84/a00001.html#a0753690b45a091cda92b046fcd3edb4e" title="Etats du système. ">Etat_t</a>. </dd></dl>
 
-<p>Définition à la ligne <a class="el" href="../../d8/d84/a00001_source.html#l00083">83</a> du fichier <a class="el" href="../../d8/d84/a00001_source.html">IfThenElsePourMax.cpp</a>.</p>
+<p>Définition à la ligne <a class="el" href="../../d8/d84/a00001_source.html#l00086">86</a> du fichier <a class="el" href="../../d8/d84/a00001_source.html">IfThenElsePourMax.cpp</a>.</p>
 
 <p><div class="dynheader">
 Voici le graphe d'appel pour cette fonction :</div>
@@ -640,7 +654,7 @@ Voici le graphe des appelants de cette fonction :</div>
 
 <p>Initialise la liaison série au moyen de l'API Arduino <a href="https://www.arduino.cc/reference/en/language/functions/communication/serial/begin/" target="arduino-page">Serial.begin()</a>. </p>
 
-<p>Définition à la ligne <a class="el" href="../../d8/d84/a00001_source.html#l00167">167</a> du fichier <a class="el" href="../../d8/d84/a00001_source.html">IfThenElsePourMax.cpp</a>.</p>
+<p>Définition à la ligne <a class="el" href="../../d8/d84/a00001_source.html#l00188">188</a> du fichier <a class="el" href="../../d8/d84/a00001_source.html">IfThenElsePourMax.cpp</a>.</p>
 
 <p><div class="dynheader">
 Voici le graphe des appelants de cette fonction :</div>
@@ -676,8 +690,19 @@ Voici le graphe des appelants de cette fonction :</div>
 </div><div class="memdoc">
 
 <p>Configure les entrées/sorties au moyen de l'API Arduino <a href="https://www.arduino.cc/reference/en/language/functions/digital-io/pinmode/" target="arduino-page">pinMode()</a>. </p>
+<p>Enregistre la routine d'interruption <a class="el" href="../../d8/d84/a00001.html#a645fae5200da6ca302bf942731b13484" title="Routine d&#39;interruption attachée au front descendant du bouton (pin 2) au moyen de l&#39;API Arduino attac...">le_bouton_a_ete_presse()</a> attachée au front descendant du bouton (pin 2) au moyen de l'API Arduino <a href="https://www.arduino.cc/reference/en/language/functions/external-interrupts/attachinterrupt/" target="arduino-page">attachInterrupt()</a>. </p>
 
-<p>Définition à la ligne <a class="el" href="../../d8/d84/a00001_source.html#l00176">176</a> du fichier <a class="el" href="../../d8/d84/a00001_source.html">IfThenElsePourMax.cpp</a>.</p>
+<p>Définition à la ligne <a class="el" href="../../d8/d84/a00001_source.html#l00201">201</a> du fichier <a class="el" href="../../d8/d84/a00001_source.html">IfThenElsePourMax.cpp</a>.</p>
+
+<p><div class="dynheader">
+Voici le graphe d'appel pour cette fonction :</div>
+<div class="dyncontent">
+<div class="center"><img src="../../d8/d84/a00001_aefc4bfc5133e36b48e4c89f61d06a2d3_cgraph.png" border="0" usemap="#d8/d84/a00001_aefc4bfc5133e36b48e4c89f61d06a2d3_cgraph" alt=""/></div>
+<map name="d8/d84/a00001_aefc4bfc5133e36b48e4c89f61d06a2d3_cgraph" id="d8/d84/a00001_aefc4bfc5133e36b48e4c89f61d06a2d3_cgraph">
+<area shape="rect" id="node2" href="../../d8/d84/a00001.html#a645fae5200da6ca302bf942731b13484" title="Routine d&#39;interruption attachée au front descendant du bouton (pin 2) au moyen de l&#39;API Arduino attac..." alt="" coords="196,13,359,39"/>
+</map>
+</div>
+</p>
 
 <p><div class="dynheader">
 Voici le graphe des appelants de cette fonction :</div>
@@ -685,6 +710,45 @@ Voici le graphe des appelants de cette fonction :</div>
 <div class="center"><img src="../../d8/d84/a00001_aefc4bfc5133e36b48e4c89f61d06a2d3_icgraph.png" border="0" usemap="#d8/d84/a00001_aefc4bfc5133e36b48e4c89f61d06a2d3_icgraph" alt=""/></div>
 <map name="d8/d84/a00001_aefc4bfc5133e36b48e4c89f61d06a2d3_icgraph" id="d8/d84/a00001_aefc4bfc5133e36b48e4c89f61d06a2d3_icgraph">
 <area shape="rect" id="node2" href="../../d8/d84/a00001.html#a4fc01d736fe50cf5b977f755b675f11d" title="Initialise le hardware. " alt="" coords="196,13,251,39"/>
+</map>
+</div>
+</p>
+
+</div>
+</div>
+<a class="anchor" id="a645fae5200da6ca302bf942731b13484"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static void le_bouton_a_ete_presse </td>
+          <td>(</td>
+          <td class="paramtype">void&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Routine d'interruption attachée au front descendant du bouton (pin 2) au moyen de l'API Arduino <a href="https://www.arduino.cc/reference/en/language/functions/external-interrupts/attachinterrupt/" target="arduino-page">attachInterrupt()</a>. </p>
+
+<p>Définition à la ligne <a class="el" href="../../d8/d84/a00001_source.html#l00168">168</a> du fichier <a class="el" href="../../d8/d84/a00001_source.html">IfThenElsePourMax.cpp</a>.</p>
+
+<p><div class="dynheader">
+Voici le graphe des appelants de cette fonction :</div>
+<div class="dyncontent">
+<div class="center"><img src="../../d8/d84/a00001_a645fae5200da6ca302bf942731b13484_icgraph.png" border="0" usemap="#d8/d84/a00001_a645fae5200da6ca302bf942731b13484_icgraph" alt=""/></div>
+<map name="d8/d84/a00001_a645fae5200da6ca302bf942731b13484_icgraph" id="d8/d84/a00001_a645fae5200da6ca302bf942731b13484_icgraph">
+<area shape="rect" id="node2" href="../../d8/d84/a00001.html#aefc4bfc5133e36b48e4c89f61d06a2d3" title="Configure les entrées/sorties au moyen de l&#39;API Arduino pinMode(). " alt="" coords="216,5,359,47"/>
+<area shape="rect" id="node3" href="../../d8/d84/a00001.html#a4fc01d736fe50cf5b977f755b675f11d" title="Initialise le hardware. " alt="" coords="407,13,461,39"/>
 </map>
 </div>
 </p>
@@ -707,22 +771,77 @@ Voici le graphe des appelants de cette fonction :</div>
 <p>L'évolution de l'état du système est confiné ici sous la forme d'un automate état/transition. </p>
 <p>La gestion du bip périodique est également effectuée ici. Voir aussi la documentation Arduino <a href="https://www.arduino.cc/reference/en/language/structure/sketch/loop/" target="arduino-page">loop()</a>. </p>
 
-<p>Définition à la ligne <a class="el" href="../../d8/d84/a00001_source.html#l00204">204</a> du fichier <a class="el" href="../../d8/d84/a00001_source.html">IfThenElsePourMax.cpp</a>.</p>
+<p>Définition à la ligne <a class="el" href="../../d8/d84/a00001_source.html#l00231">231</a> du fichier <a class="el" href="../../d8/d84/a00001_source.html">IfThenElsePourMax.cpp</a>.</p>
 
 <p><div class="dynheader">
 Voici le graphe d'appel pour cette fonction :</div>
 <div class="dyncontent">
 <div class="center"><img src="../../d8/d84/a00001_afe461d27b9c48d5921c00d521181f12f_cgraph.png" border="0" usemap="#d8/d84/a00001_afe461d27b9c48d5921c00d521181f12f_cgraph" alt=""/></div>
 <map name="d8/d84/a00001_afe461d27b9c48d5921c00d521181f12f_cgraph" id="d8/d84/a00001_afe461d27b9c48d5921c00d521181f12f_cgraph">
-<area shape="rect" id="node2" href="../../d8/d84/a00001.html#a850275f2638046dfde28a828c30f5906" title="Eteint le buzzer. " alt="" coords="283,87,424,114"/>
-<area shape="rect" id="node3" href="../../d8/d84/a00001.html#a0473eb52e9f0932460412452b7c9067e" title="Allume le buzzer et effectue l&#39;horodatage pour gérer son extinction prochaine. " alt="" coords="107,37,227,63"/>
-<area shape="rect" id="node4" href="../../d8/d84/a00001.html#aaa6fd446b77da85ce3eda50281c99edf" title="Retourne &#39;vrai&#39; quand le bouton a été enfoncé puis relâché. " alt="" coords="100,87,235,114"/>
-<area shape="rect" id="node5" href="../../d8/d84/a00001.html#adbfc11cdf0c7c1bd86cdec47f449c8b3" title="Effectue l&#39;horodatage pour gérer les événements temporels. " alt="" coords="133,138,202,165"/>
-<area shape="rect" id="node6" href="../../d8/d84/a00001.html#ac7d7b30fcc3f4469d3a6b4d6e6c0ddaf" title="Remet le système en attente, éteint les DEL, le buzzer, réinitialise l&#39;état interne. " alt="" coords="126,189,209,215"/>
-<area shape="rect" id="node7" href="../../d8/d84/a00001.html#ae7bc60cc6f30cfeb2aec48d7ed2ed9b4" title="Utilise l&#39;API Arduino pour allumer la DEL n°1. " alt="" coords="107,239,228,266"/>
-<area shape="rect" id="node8" href="../../d8/d84/a00001.html#af5016232deae83d338453879a46489d6" title="Utilise l&#39;API Arduino pour allumer les DEL n°1 et n°2. " alt="" coords="103,290,231,317"/>
-<area shape="rect" id="node9" href="../../d8/d84/a00001.html#a4fac0448487379a273d00320ce664bd7" title="Utilise l&#39;API Arduino pour allumer les DEL n°1, n°2 et n°3. " alt="" coords="105,341,230,367"/>
-<area shape="rect" id="node10" href="../../d8/d84/a00001.html#ae07989acf4bffd608b03f61532fddf51" title="Cette fonction devra, à terme, contrôler un afficheur pour diffuser un message constituant un indice ..." alt="" coords="297,341,409,367"/>
+<area shape="rect" id="node2" href="../../d8/d84/a00001.html#a850275f2638046dfde28a828c30f5906" title="Eteint le buzzer. " alt="" coords="317,93,459,120"/>
+<area shape="rect" id="node3" href="../../d8/d84/a00001.html#a0473eb52e9f0932460412452b7c9067e" title="Allume le buzzer et effectue l&#39;horodatage pour gérer son extinction prochaine. " alt="" coords="125,43,245,69"/>
+<area shape="rect" id="node4" href="../../d8/d84/a00001.html#aaa6fd446b77da85ce3eda50281c99edf" title="Retourne &#39;vrai&#39; quand le bouton a été enfoncé puis relâché. " alt="" coords="117,93,252,120"/>
+<area shape="rect" id="node5" href="../../d8/d84/a00001.html#adbfc11cdf0c7c1bd86cdec47f449c8b3" title="Effectue l&#39;horodatage pour gérer les événements temporels. " alt="" coords="150,144,219,171"/>
+<area shape="rect" id="node6" href="../../d8/d84/a00001.html#ac7d7b30fcc3f4469d3a6b4d6e6c0ddaf" title="Remet le système en attente, éteint les DEL, le buzzer, réinitialise l&#39;état interne. " alt="" coords="143,195,226,221"/>
+<area shape="rect" id="node7" href="../../d8/d84/a00001.html#ae7bc60cc6f30cfeb2aec48d7ed2ed9b4" title="Utilise l&#39;API Arduino pour allumer la DEL n°1. " alt="" coords="124,245,245,272"/>
+<area shape="rect" id="node8" href="../../d8/d84/a00001.html#a8c360f5bc84d281727b899c71f561983" title="Utilise le servo moteur pour montrer qu&#39;il faut presser le bouton. " alt="" coords="100,296,269,323"/>
+<area shape="rect" id="node9" href="../../d8/d84/a00001.html#af5016232deae83d338453879a46489d6" title="Utilise l&#39;API Arduino pour allumer les DEL n°1 et n°2. " alt="" coords="121,347,249,373"/>
+<area shape="rect" id="node10" href="../../d8/d84/a00001.html#a4fac0448487379a273d00320ce664bd7" title="Utilise l&#39;API Arduino pour allumer les DEL n°1, n°2 et n°3. " alt="" coords="122,397,247,424"/>
+<area shape="rect" id="node11" href="../../d8/d84/a00001.html#ae07989acf4bffd608b03f61532fddf51" title="Cette fonction devra, à terme, contrôler un afficheur pour diffuser un message constituant un indice ..." alt="" coords="332,397,444,424"/>
+</map>
+</div>
+</p>
+
+</div>
+</div>
+<a class="anchor" id="a8c360f5bc84d281727b899c71f561983"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static void montre_le_temps_restant </td>
+          <td>(</td>
+          <td class="paramtype">unsigned long&#160;</td>
+          <td class="paramname"><em>temps_ecoule</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned long&#160;</td>
+          <td class="paramname"><em>debut</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned long&#160;</td>
+          <td class="paramname"><em>fin</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Utilise le servo moteur pour montrer qu'il faut presser le bouton. </p>
+
+<p>Définition à la ligne <a class="el" href="../../d8/d84/a00001_source.html#l00175">175</a> du fichier <a class="el" href="../../d8/d84/a00001_source.html">IfThenElsePourMax.cpp</a>.</p>
+
+<p><div class="dynheader">
+Voici le graphe des appelants de cette fonction :</div>
+<div class="dyncontent">
+<div class="center"><img src="../../d8/d84/a00001_a8c360f5bc84d281727b899c71f561983_icgraph.png" border="0" usemap="#d8/d84/a00001_a8c360f5bc84d281727b899c71f561983_icgraph" alt=""/></div>
+<map name="d8/d84/a00001_a8c360f5bc84d281727b899c71f561983_icgraph" id="d8/d84/a00001_a8c360f5bc84d281727b899c71f561983_icgraph">
+<area shape="rect" id="node2" href="../../d8/d84/a00001.html#afe461d27b9c48d5921c00d521181f12f" title="L&#39;évolution de l&#39;état du système est confiné ici sous la forme d&#39;un automate état/transition. " alt="" coords="223,5,269,32"/>
 </map>
 </div>
 </p>
@@ -745,7 +864,7 @@ Voici le graphe d'appel pour cette fonction :</div>
 <p>Initialise le hardware. </p>
 <p>Voir aussi la documentation Arduino <a href="https://www.arduino.cc/reference/en/language/structure/sketch/setup/" target="arduino-page">setup()</a>. </p>
 
-<p>Définition à la ligne <a class="el" href="../../d8/d84/a00001_source.html#l00190">190</a> du fichier <a class="el" href="../../d8/d84/a00001_source.html">IfThenElsePourMax.cpp</a>.</p>
+<p>Définition à la ligne <a class="el" href="../../d8/d84/a00001_source.html#l00217">217</a> du fichier <a class="el" href="../../d8/d84/a00001_source.html">IfThenElsePourMax.cpp</a>.</p>
 
 <p><div class="dynheader">
 Voici le graphe d'appel pour cette fonction :</div>
@@ -754,6 +873,7 @@ Voici le graphe d'appel pour cette fonction :</div>
 <map name="d8/d84/a00001_a4fc01d736fe50cf5b977f755b675f11d_cgraph" id="d8/d84/a00001_a4fc01d736fe50cf5b977f755b675f11d_cgraph">
 <area shape="rect" id="node2" href="../../d8/d84/a00001.html#ab21b1ff35920277890d6f83e712dafd0" title="Initialise la liaison série au moyen de l&#39;API Arduino Serial.begin(). " alt="" coords="114,5,245,47"/>
 <area shape="rect" id="node3" href="../../d8/d84/a00001.html#aefc4bfc5133e36b48e4c89f61d06a2d3" title="Configure les entrées/sorties au moyen de l&#39;API Arduino pinMode(). " alt="" coords="108,71,251,112"/>
+<area shape="rect" id="node4" href="../../d8/d84/a00001.html#a645fae5200da6ca302bf942731b13484" title="Routine d&#39;interruption attachée au front descendant du bouton (pin 2) au moyen de l&#39;API Arduino attac..." alt="" coords="299,78,461,105"/>
 </map>
 </div>
 </p>
@@ -781,7 +901,31 @@ Voici le graphe d'appel pour cette fonction :</div>
 
 <p>Bouton branché sur le port n°2. </p>
 
-<p>Définition à la ligne <a class="el" href="../../d8/d84/a00001_source.html#l00020">20</a> du fichier <a class="el" href="../../d8/d84/a00001_source.html">IfThenElsePourMax.cpp</a>.</p>
+<p>Définition à la ligne <a class="el" href="../../d8/d84/a00001_source.html#l00021">21</a> du fichier <a class="el" href="../../d8/d84/a00001_source.html">IfThenElsePourMax.cpp</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a230c9830bb885cd9ba9457972b18912d"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">volatile bool bouton_relache = false</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Le bouton a été perçu relaché par la routine d'interruption <a class="el" href="../../d8/d84/a00001.html#a645fae5200da6ca302bf942731b13484" title="Routine d&#39;interruption attachée au front descendant du bouton (pin 2) au moyen de l&#39;API Arduino attac...">le_bouton_a_ete_presse()</a>. </p>
+
+<p>Définition à la ligne <a class="el" href="../../d8/d84/a00001_source.html#l00045">45</a> du fichier <a class="el" href="../../d8/d84/a00001_source.html">IfThenElsePourMax.cpp</a>.</p>
 
 </div>
 </div>
@@ -805,7 +949,7 @@ Voici le graphe d'appel pour cette fonction :</div>
 
 <p>N° de la période du buzzer. </p>
 
-<p>Définition à la ligne <a class="el" href="../../d8/d84/a00001_source.html#l00046">46</a> du fichier <a class="el" href="../../d8/d84/a00001_source.html">IfThenElsePourMax.cpp</a>.</p>
+<p>Définition à la ligne <a class="el" href="../../d8/d84/a00001_source.html#l00048">48</a> du fichier <a class="el" href="../../d8/d84/a00001_source.html">IfThenElsePourMax.cpp</a>.</p>
 
 </div>
 </div>
@@ -829,7 +973,7 @@ Voici le graphe d'appel pour cette fonction :</div>
 
 <p>Buzzer branché sur le port n°7. </p>
 
-<p>Définition à la ligne <a class="el" href="../../d8/d84/a00001_source.html#l00024">24</a> du fichier <a class="el" href="../../d8/d84/a00001_source.html">IfThenElsePourMax.cpp</a>.</p>
+<p>Définition à la ligne <a class="el" href="../../d8/d84/a00001_source.html#l00026">26</a> du fichier <a class="el" href="../../d8/d84/a00001_source.html">IfThenElsePourMax.cpp</a>.</p>
 
 </div>
 </div>
@@ -853,7 +997,7 @@ Voici le graphe d'appel pour cette fonction :</div>
 
 <p>Horodatage du déclenchement du buzzer. </p>
 
-<p>Définition à la ligne <a class="el" href="../../d8/d84/a00001_source.html#l00045">45</a> du fichier <a class="el" href="../../d8/d84/a00001_source.html">IfThenElsePourMax.cpp</a>.</p>
+<p>Définition à la ligne <a class="el" href="../../d8/d84/a00001_source.html#l00047">47</a> du fichier <a class="el" href="../../d8/d84/a00001_source.html">IfThenElsePourMax.cpp</a>.</p>
 
 </div>
 </div>
@@ -877,7 +1021,7 @@ Voici le graphe d'appel pour cette fonction :</div>
 
 <p>s On doit presser le bouton </p>
 
-<p>Définition à la ligne <a class="el" href="../../d8/d84/a00001_source.html#l00032">32</a> du fichier <a class="el" href="../../d8/d84/a00001_source.html">IfThenElsePourMax.cpp</a>.</p>
+<p>Définition à la ligne <a class="el" href="../../d8/d84/a00001_source.html#l00034">34</a> du fichier <a class="el" href="../../d8/d84/a00001_source.html">IfThenElsePourMax.cpp</a>.</p>
 
 </div>
 </div>
@@ -901,7 +1045,7 @@ Voici le graphe d'appel pour cette fonction :</div>
 
 <p>s On doit presser le bouton </p>
 
-<p>Définition à la ligne <a class="el" href="../../d8/d84/a00001_source.html#l00034">34</a> du fichier <a class="el" href="../../d8/d84/a00001_source.html">IfThenElsePourMax.cpp</a>.</p>
+<p>Définition à la ligne <a class="el" href="../../d8/d84/a00001_source.html#l00036">36</a> du fichier <a class="el" href="../../d8/d84/a00001_source.html">IfThenElsePourMax.cpp</a>.</p>
 
 </div>
 </div>
@@ -925,7 +1069,7 @@ Voici le graphe d'appel pour cette fonction :</div>
 
 <p>s On doit presser le bouton </p>
 
-<p>Définition à la ligne <a class="el" href="../../d8/d84/a00001_source.html#l00036">36</a> du fichier <a class="el" href="../../d8/d84/a00001_source.html">IfThenElsePourMax.cpp</a>.</p>
+<p>Définition à la ligne <a class="el" href="../../d8/d84/a00001_source.html#l00038">38</a> du fichier <a class="el" href="../../d8/d84/a00001_source.html">IfThenElsePourMax.cpp</a>.</p>
 
 </div>
 </div>
@@ -949,31 +1093,7 @@ Voici le graphe d'appel pour cette fonction :</div>
 
 <p>ms Durée du bip </p>
 
-<p>Définition à la ligne <a class="el" href="../../d8/d84/a00001_source.html#l00030">30</a> du fichier <a class="el" href="../../d8/d84/a00001_source.html">IfThenElsePourMax.cpp</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="abb013d98e3527e445a799d4639d468df"></a>
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool enfonce = false</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Le bouton a été perçu enfoncé. </p>
-
-<p>Définition à la ligne <a class="el" href="../../d8/d84/a00001_source.html#l00043">43</a> du fichier <a class="el" href="../../d8/d84/a00001_source.html">IfThenElsePourMax.cpp</a>.</p>
+<p>Définition à la ligne <a class="el" href="../../d8/d84/a00001_source.html#l00032">32</a> du fichier <a class="el" href="../../d8/d84/a00001_source.html">IfThenElsePourMax.cpp</a>.</p>
 
 </div>
 </div>
@@ -997,7 +1117,7 @@ Voici le graphe d'appel pour cette fonction :</div>
 
 <p>Etat du système. </p>
 
-<p>Définition à la ligne <a class="el" href="../../d8/d84/a00001_source.html#l00042">42</a> du fichier <a class="el" href="../../d8/d84/a00001_source.html">IfThenElsePourMax.cpp</a>.</p>
+<p>Définition à la ligne <a class="el" href="../../d8/d84/a00001_source.html#l00044">44</a> du fichier <a class="el" href="../../d8/d84/a00001_source.html">IfThenElsePourMax.cpp</a>.</p>
 
 </div>
 </div>
@@ -1021,7 +1141,7 @@ Voici le graphe d'appel pour cette fonction :</div>
 
 <p>s On doit attendre </p>
 
-<p>Définition à la ligne <a class="el" href="../../d8/d84/a00001_source.html#l00033">33</a> du fichier <a class="el" href="../../d8/d84/a00001_source.html">IfThenElsePourMax.cpp</a>.</p>
+<p>Définition à la ligne <a class="el" href="../../d8/d84/a00001_source.html#l00035">35</a> du fichier <a class="el" href="../../d8/d84/a00001_source.html">IfThenElsePourMax.cpp</a>.</p>
 
 </div>
 </div>
@@ -1045,7 +1165,7 @@ Voici le graphe d'appel pour cette fonction :</div>
 
 <p>s On doit attendre </p>
 
-<p>Définition à la ligne <a class="el" href="../../d8/d84/a00001_source.html#l00035">35</a> du fichier <a class="el" href="../../d8/d84/a00001_source.html">IfThenElsePourMax.cpp</a>.</p>
+<p>Définition à la ligne <a class="el" href="../../d8/d84/a00001_source.html#l00037">37</a> du fichier <a class="el" href="../../d8/d84/a00001_source.html">IfThenElsePourMax.cpp</a>.</p>
 
 </div>
 </div>
@@ -1069,7 +1189,7 @@ Voici le graphe d'appel pour cette fonction :</div>
 
 <p>s On doit attendre </p>
 
-<p>Définition à la ligne <a class="el" href="../../d8/d84/a00001_source.html#l00037">37</a> du fichier <a class="el" href="../../d8/d84/a00001_source.html">IfThenElsePourMax.cpp</a>.</p>
+<p>Définition à la ligne <a class="el" href="../../d8/d84/a00001_source.html#l00039">39</a> du fichier <a class="el" href="../../d8/d84/a00001_source.html">IfThenElsePourMax.cpp</a>.</p>
 
 </div>
 </div>
@@ -1093,7 +1213,7 @@ Voici le graphe d'appel pour cette fonction :</div>
 
 <p>Hz Note "La" octave 3. </p>
 
-<p>Définition à la ligne <a class="el" href="../../d8/d84/a00001_source.html#l00029">29</a> du fichier <a class="el" href="../../d8/d84/a00001_source.html">IfThenElsePourMax.cpp</a>.</p>
+<p>Définition à la ligne <a class="el" href="../../d8/d84/a00001_source.html#l00031">31</a> du fichier <a class="el" href="../../d8/d84/a00001_source.html">IfThenElsePourMax.cpp</a>.</p>
 
 </div>
 </div>
@@ -1117,7 +1237,7 @@ Voici le graphe d'appel pour cette fonction :</div>
 
 <p>DEL branchée sur le port n°3. </p>
 
-<p>Définition à la ligne <a class="el" href="../../d8/d84/a00001_source.html#l00021">21</a> du fichier <a class="el" href="../../d8/d84/a00001_source.html">IfThenElsePourMax.cpp</a>.</p>
+<p>Définition à la ligne <a class="el" href="../../d8/d84/a00001_source.html#l00022">22</a> du fichier <a class="el" href="../../d8/d84/a00001_source.html">IfThenElsePourMax.cpp</a>.</p>
 
 </div>
 </div>
@@ -1141,7 +1261,7 @@ Voici le graphe d'appel pour cette fonction :</div>
 
 <p>DEL branchée sur le port n°4. </p>
 
-<p>Définition à la ligne <a class="el" href="../../d8/d84/a00001_source.html#l00022">22</a> du fichier <a class="el" href="../../d8/d84/a00001_source.html">IfThenElsePourMax.cpp</a>.</p>
+<p>Définition à la ligne <a class="el" href="../../d8/d84/a00001_source.html#l00023">23</a> du fichier <a class="el" href="../../d8/d84/a00001_source.html">IfThenElsePourMax.cpp</a>.</p>
 
 </div>
 </div>
@@ -1165,7 +1285,31 @@ Voici le graphe d'appel pour cette fonction :</div>
 
 <p>DEL branchée sur le port n°5. </p>
 
-<p>Définition à la ligne <a class="el" href="../../d8/d84/a00001_source.html#l00023">23</a> du fichier <a class="el" href="../../d8/d84/a00001_source.html">IfThenElsePourMax.cpp</a>.</p>
+<p>Définition à la ligne <a class="el" href="../../d8/d84/a00001_source.html#l00024">24</a> du fichier <a class="el" href="../../d8/d84/a00001_source.html">IfThenElsePourMax.cpp</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a7a75724a72c07ac7fa67335dd65bc543"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const uint8_t MOTEUR_PIN = 6</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Moteur branché sur le port n°6 (PWM) </p>
+
+<p>Définition à la ligne <a class="el" href="../../d8/d84/a00001_source.html#l00025">25</a> du fichier <a class="el" href="../../d8/d84/a00001_source.html">IfThenElsePourMax.cpp</a>.</p>
 
 </div>
 </div>
@@ -1189,7 +1333,7 @@ Voici le graphe d'appel pour cette fonction :</div>
 
 <p>ms Intervalle entre deux bips </p>
 
-<p>Définition à la ligne <a class="el" href="../../d8/d84/a00001_source.html#l00031">31</a> du fichier <a class="el" href="../../d8/d84/a00001_source.html">IfThenElsePourMax.cpp</a>.</p>
+<p>Définition à la ligne <a class="el" href="../../d8/d84/a00001_source.html#l00033">33</a> du fichier <a class="el" href="../../d8/d84/a00001_source.html">IfThenElsePourMax.cpp</a>.</p>
 
 </div>
 </div>
@@ -1213,7 +1357,29 @@ Voici le graphe d'appel pour cette fonction :</div>
 
 <p>Horodatage des événements : temps de départ. </p>
 
-<p>Définition à la ligne <a class="el" href="../../d8/d84/a00001_source.html#l00044">44</a> du fichier <a class="el" href="../../d8/d84/a00001_source.html">IfThenElsePourMax.cpp</a>.</p>
+<p>Définition à la ligne <a class="el" href="../../d8/d84/a00001_source.html#l00046">46</a> du fichier <a class="el" href="../../d8/d84/a00001_source.html">IfThenElsePourMax.cpp</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a4a6d8a21aead78e70f29fb1689e16bd9"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">Servo temps_restant</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Définition à la ligne <a class="el" href="../../d8/d84/a00001_source.html#l00049">49</a> du fichier <a class="el" href="../../d8/d84/a00001_source.html">IfThenElsePourMax.cpp</a>.</p>
 
 </div>
 </div>

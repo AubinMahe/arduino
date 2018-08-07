@@ -1,4 +1,5 @@
 <map id="setup" name="setup">
 <area shape="rect" id="node2" href="$d8/d84/a00001.html#ab21b1ff35920277890d6f83e712dafd0" title="Initialise la liaison série au moyen de l&#39;API Arduino Serial.begin(). " alt="" coords="114,5,245,47"/>
 <area shape="rect" id="node3" href="$d8/d84/a00001.html#aefc4bfc5133e36b48e4c89f61d06a2d3" title="Configure les entrées/sorties au moyen de l&#39;API Arduino pinMode(). " alt="" coords="108,71,251,112"/>
+<area shape="rect" id="node4" href="$d8/d84/a00001.html#a645fae5200da6ca302bf942731b13484" title="Routine d&#39;interruption attachée au front descendant du bouton (pin 2) au moyen de l&#39;API Arduino attac..." alt="" coords="299,78,461,105"/>
 </map>

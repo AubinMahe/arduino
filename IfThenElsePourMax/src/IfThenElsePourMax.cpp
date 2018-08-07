@@ -41,11 +41,11 @@ static const unsigned long FIN_DE_FENETRE_3               = 14000UL; //!< s  On 
 //----------------------
 // Variables du système
 //----------------------
-static Etat_t        etat          = ETA_VEILLE; //!< Etat du système.
-static bool          enfonce       = false;      //!< Le bouton a été perçu enfoncé.
-static unsigned long t0            = 0UL;        //!< Horodatage des événements : temps de départ.
-static unsigned long buzzer_t0     = 0UL;        //!< Horodatage du déclenchement du buzzer.
-static unsigned long buzzer_cycle  = 0UL;        //!< N° de la période du buzzer.
+static Etat_t        etat           = ETA_VEILLE; //!< Etat du système.
+static volatile bool bouton_relache = false;      //!< Le bouton a été perçu relaché par la routine d'interruption le_bouton_a_ete_presse().
+static unsigned long t0             = 0UL;        //!< Horodatage des événements : temps de départ.
+static unsigned long buzzer_t0      = 0UL;        //!< Horodatage du déclenchement du buzzer.
+static unsigned long buzzer_cycle   = 0UL;        //!< N° de la période du buzzer.
 static Servo         temps_restant;
 
 /**
@@ -86,7 +86,6 @@ static void demarre() {
 static void eteint_tout() {
    Serial.println( "eteint_tout" );
    etat          = ETA_VEILLE;
-   enfonce       = false;
    t0            = 0;
    buzzer_t0     = 0UL;
    buzzer_cycle  = 0UL;
@@ -150,20 +149,24 @@ static void allume_trois_LED() {
 
 /**
  * Retourne 'vrai' quand le bouton a été enfoncé puis relâché.
- * Met en oeuvre l'API Arduino <a target="arduino-page"
- * href="https://www.arduino.cc/reference/en/language/functions/digital-io/digitalread/"
- * >digitalRead()</a> pour acquérir l'état du bouton.
  * @return true quand le bouton a été enfoncé puis relâché.
  */
 static bool bouton_est_relache() {
-   if( digitalRead( BOUTON_PIN )) {
-      enfonce = true;
-   }
-   else if( enfonce ) {
-      enfonce = false;
+   if( bouton_relache ) {
+      bouton_relache = false;
       return true;
    }
    return false;
+}
+
+/**
+ * Routine d'interruption attachée au front descendant du bouton (pin 2) au
+ * moyen de l'API Arduino <a target="arduino-page" href=
+ * "https://www.arduino.cc/reference/en/language/functions/external-interrupts/attachinterrupt/"
+ * >attachInterrupt()</a>.
+ */
+static void le_bouton_a_ete_presse( void ) {
+   bouton_relache = true;
 }
 
 /**
@@ -190,6 +193,10 @@ static void initialise_la_liaison_serie() {
  * Configure les entrées/sorties au moyen de l'API Arduino <a target="arduino-page"
  * href="https://www.arduino.cc/reference/en/language/functions/digital-io/pinmode/"
  * >pinMode()</a>.
+ * Enregistre la routine d'interruption le_bouton_a_ete_presse() attachée au
+ * front descendant du bouton (pin 2) au moyen de l'API Arduino <a target="arduino-page"
+ * href="https://www.arduino.cc/reference/en/language/functions/external-interrupts/attachinterrupt/"
+ * >attachInterrupt()</a>.
  */
 static void initialise_les_entrees_sorties() {
    pinMode( BOUTON_PIN, INPUT  );
@@ -198,6 +205,7 @@ static void initialise_les_entrees_sorties() {
    pinMode( LED3_PIN  , OUTPUT );
    temps_restant.attach( MOTEUR_PIN );
    pinMode( BUZZER_PIN, OUTPUT );
+   attachInterrupt( digitalPinToInterrupt( BOUTON_PIN ), le_bouton_a_ete_presse, FALLING );
 }
 
 /**
