@@ -23,7 +23,7 @@ void pinMode     ( uint8_t pin, uint8_t inOrOut );
 #define INTERNAL     3 // an built-in reference, equal to 1.1 volts on the ATmega168 or ATmega328P and 2.56 volts on the ATmega8 (not available on the Arduino Mega)
 
 int  analogRead     ( uint8_t pin );
-void analogReference( uint8_t mode);
+void analogReference( uint8_t mode );
 void analogWrite    ( uint8_t pin, int value );
 
 //-- Zero, Due & MKR Family --------------------------------------------------

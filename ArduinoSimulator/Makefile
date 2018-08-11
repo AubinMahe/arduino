@@ -1,30 +1,40 @@
-CCC = g++
-CP  = ../hpms.app.arduinosim/hpms.app.arduinosim.jar:../hpms.app.arduinosim/lib/hpms.fx.angle.jar 
+CP = ../hpms.app.arduinosim/hpms.app.arduinosim.jar:../hpms.app.arduinosim/lib/hpms.fx.angle.jar 
 
 all: BUILD/itepm ../hpms.app.arduinosim/hpms.app.arduinosim.jar
+
+ncurses: BUILD/arduinosim
 
 clean:
 	rm -fr BUILD
 	cd ../hpms.app.arduinosim ; ant clean
 
 BUILD/itepm: BUILD/IfThenElsePourMax.o BUILD/libsim.a
-	g++ -L BUILD $< -o $@ -lsim -lpthread
-
+	g++ -L BUILD $< -o $@ -lsim -lpthread -lncurses -lm -lefence
+	
 BUILD/IfThenElsePourMax.o: ../IfThenElsePourMax/src/IfThenElsePourMax.cpp
-	@mkdir -p BUILD
+	@mkdir -p $$(dirname $@)
 	g++ -c -I inc -I ../IfThenElsePourMax/inc $< -o $@
 
-BUILD/libsim.a: src/sim.cpp
-	@mkdir -p BUILD
-	g++ -c -I inc -o BUILD/sim.o src/sim.cpp
-	ar -rcs BUILD/libsim.a BUILD/sim.o
+BUILD/libsim.a: BUILD/main.o BUILD/java/UIProxy.o BUILD/ncurses/UI.o
+	ar -rcs $@ $?
+
+BUILD/%.o: src/%.cpp
+	@mkdir -p $$(dirname $@)
+	g++ -W -Wall -g3 -std=c++11 -c -I inc -o $@ $<
 
 ../hpms.app.arduinosim/hpms.app.arduinosim.jar:
 	cd ../hpms.app.arduinosim ; ant
 
-run: ../hpms.app.arduinosim/hpms.app.arduinosim.jar
+run-java: ../hpms.app.arduinosim/hpms.app.arduinosim.jar
 	make clean all
-	#gnome-terminal -e 'java -jar ../hpms.app.arduinosim/hpms.app.arduinosim.jar' &
 	java -cp $(CP) hpms.app.arduinosim.Main &
 	sleep 2
-	BUILD/itepm
+	BUILD/itepm --ui=java
+
+run-ncurses:
+	make clean all
+	BUILD/itepm --ui=ncurses
+
+BUILD/main.o        : src/IUI.h src/main.cpp
+BUILD/java/UIProxy.o: src/IUI.h src/java/UIProxy.h src/java/UIProxy.cpp
+BUILD/ncurses/UI.o  : src/IUI.h src/ncurses/IChangeListener.h src/ncurses/Checkbox.h src/ncurses/Control.h src/ncurses/ControlsPane.h src/ncurses/LogPane.h src/ncurses/Slider.h src/ncurses/Timeout.h src/ncurses/UI.h src/ncurses/Window.h src/ncurses/UI.cpp
