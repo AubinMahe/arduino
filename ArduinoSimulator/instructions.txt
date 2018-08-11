@@ -1,0 +1,2 @@
+Pour démarrer, cliquez puis relâchez le bouton n°2
+Pour faire évoluer l'automate, cliquez puis relâchez le bouton n°2 quand le timeout tourne.

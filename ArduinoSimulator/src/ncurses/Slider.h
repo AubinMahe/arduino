@@ -8,29 +8,25 @@ namespace ncurses {
    public:
 
       Slider( Window & window, int x, int y, int width, const std::string & label, int min, int max ) :
-         Control( window, x, y, label + " [" + std::string( width, '-' ) + ']' ),
+         Control( window, x, y, label ),
          _width( width ),
          _min( min ),
          _max( max ),
          _value( min ),
-         _step(( max - min ) / width )
-      {
-         ::mvwprintw( w(), y, x, _label.c_str());
-         ::wrefresh ( w());
-         render();
-      }
+         _step(( max - min ) / width ),
+         _line( _width, '-' )
+      {}
 
    public:
 
       virtual void render() const {
-         ::wmove( w(), _y, left());
-         for( auto i = 0; i < _width; ++i ) {
-            ::waddch( w(), '-' );
-         }
-         ::wmove   ( w(), _y, getXFocus());
-         ::waddch  ( w(), '|' | A_BOLD );
-         ::wmove   ( w(), _y, getXFocus());
-         ::wrefresh( w());
+         ::mvwprintw( w(), _y, _x, "%s [%s] %4d", _label.c_str(), _line.c_str(), _value );
+         ::wmove    ( w(), _y, getXFocus());
+         ::waddch   ( w(), '|' | A_BOLD );
+      }
+
+      virtual bool isFocusable( void ) const {
+         return true;
       }
 
       virtual int getXFocus() const {
@@ -93,15 +89,16 @@ namespace ncurses {
    protected:
 
       int left() const {
-         return _x + _label.length() - _width - 2;
+         return _x + _label.length() + 2;
       }
 
    protected:
 
-      int _width;
-      int _min;
-      int _max;
-      int _value;
-      int _step;
+      int         _width;
+      int         _min;
+      int         _max;
+      int         _value;
+      int         _step;
+      std::string _line;
    };
 }

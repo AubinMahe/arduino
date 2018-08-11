@@ -14,15 +14,16 @@ namespace ncurses {
          Control( window, x, y, label ),
          _value    ( value ),
          _remaining( value )
-      {
-         render();
-      }
+      {}
 
    public:
 
       virtual void render() const {
          ::mvwprintw( w(), _y, _x, "%s OUT %3d", _label.c_str(), _remaining );
-         ::wrefresh ( w());
+      }
+
+      virtual bool isFocusable( void ) const {
+         return false;
       }
 
       virtual int getXFocus() const {

@@ -13,22 +13,22 @@ namespace ncurses {
    class Controls : public Window {
    public:
 
-      Controls() :
-         Window( 0, 0, 40, 22 ),
+      explicit Controls( int width ) :
+         Window( 0, 0, width, 22 ),
          _hasFocus( false ),
-         _focused( 0 )
+         _focused( -1 ),
+         _firstFocusable( -1 )
       {
          char label[40];
-         for( auto i = 0U; i < CHECKBOX_COUNT; ++i ) {
-            ::sprintf( label, "Digital n°%2d", i );
-            _controls[i] = new Checkbox( *this, 2, i+1, label );
+         int y = 1;
+         for( int i = 0U; i < CHECKBOX_COUNT; ++i, ++y ) {
+            ::sprintf( label, "Digital n.%2d", i );
+            _controls[i] = new Checkbox( *this, 2, y, label );
          }
-         for( auto i = 0U; i < SLIDER_COUNT; ++i ) {
-            ::sprintf( label, "Analog  n°%2d", i );
-            auto ndx = CHECKBOX_COUNT + i;
-            _controls[ndx] = new Slider( *this, 2, ndx + 1, 17, label, 0, 1023 );
+         for( int i = 0U; i < SLIDER_COUNT; ++i, ++y ) {
+            ::sprintf( label, "Analog  n.%2d", i );
+            _controls[y-1] = new Slider( *this, 2, y, 18, label, 0, 1023 );
          }
-         _controls[_focused] -> setFocus( true );
       }
 
       ~ Controls() {
@@ -39,6 +39,10 @@ namespace ncurses {
       }
 
    public:
+
+      int getWidth() const {
+         return w()->_maxx - w()->_begx + 1;
+      }
 
       Checkbox * getCheckbox( int index ) {
          if( index < CHECKBOX_COUNT ) {
@@ -64,8 +68,29 @@ namespace ncurses {
       }
 
       void setFocus( bool focus ) {
+         if( _focused > -1 ) {
+            _controls[_focused] -> setFocus( focus );
+         }
          _hasFocus = focus;
-         _controls[_focused] -> setFocus( focus );
+         if( focus && _focused < 0 ) {
+            _firstFocusable = -1;
+            for( int i = 0; i < CHECKBOX_COUNT + SLIDER_COUNT; ++i ) {
+               if( _controls[i] -> isFocusable()) {
+                  _focused        = i;
+                  _firstFocusable = i;
+                  break;
+               }
+            }
+            if( _focused > -1 ) {
+               _controls[_focused] -> setFocus( focus );
+               _hasFocus = true;
+            }
+            else {
+               _hasFocus = false;
+            }
+         }
+         render();
+         ::wrefresh( w());
       }
 
       bool hasFocus() const {
@@ -76,19 +101,26 @@ namespace ncurses {
          for( auto i = 0U; i < CHECKBOX_COUNT+SLIDER_COUNT; ++i ) {
             _controls[i] -> render();
          }
+         if( _focused > -1 ) {
+            _controls[_focused] -> setFocus( _controls[_focused] -> hasFocus());
+         }
+         ::wrefresh( w());
       }
 
       bool keyPressed( int c ) {
-         if( _controls[_focused] -> keyPressed( c )) {
-            switch( c ) {
-            case KEY_HOME: focusFirst   (); break;
-            case KEY_UP  : focusPrevious(); break;
-            case KEY_DOWN: focusNext    (); break;
-            case KEY_END : focusLast    (); break;
-            default: return true;
+         if( _focused > -1 ) {
+            if( _controls[_focused] -> keyPressed( c )) {
+               switch( c ) {
+               case KEY_HOME: focusFirst   (); break;
+               case KEY_UP  : focusPrevious(); break;
+               case KEY_DOWN: focusNext    (); break;
+               case KEY_END : focusLast    (); break;
+               default: return true;
+               }
             }
+            _controls[_focused] -> setFocus( true );
+            ::wrefresh( w());
          }
-         _controls[_focused] -> setFocus( true );
          return false;
       }
 
@@ -117,6 +149,7 @@ namespace ncurses {
             checkbox->setMode( mode );
             if( mode == INPUT ) {
                checkbox->addChangeListener( listener );
+               setFocus( true );
             }
          }
       }
@@ -157,6 +190,7 @@ namespace ncurses {
          Control * control = _controls[pin];
          _controls[pin] = new Timeout( *this, 2, pin + 1, control->getLabel(), 179 );
          delete control;
+         render();
       }
 
       void servoWrite( uint8_t pin, int value ) const {
@@ -172,33 +206,71 @@ namespace ncurses {
    private:
 
       void focusFirst() {
-         if( _focused ) {
+         if( _firstFocusable < 0 ) {
+            return;
+         }
+         if( _focused > 0 ) {
             _controls[_focused] -> setFocus( false );
             _focused = 0;
          }
-         _controls[_focused] -> setFocus( true );
-      }
-
-      void focusPrevious() {
-         _controls[_focused] -> setFocus( false );
-         if( --_focused < 0 ) {
-            _focused = CHECKBOX_COUNT + SLIDER_COUNT - 1;
+         if( ! _controls[_focused] -> isFocusable()) {
+            focusNext();
          }
-         _controls[_focused] -> setFocus( true );
+         else {
+            _controls[_focused] -> setFocus( true );
+         }
       }
 
       void focusNext() {
-         _controls[_focused] -> setFocus( false );
+         if( _firstFocusable < 0 ) {
+            return;
+         }
+         if( _focused > -1 ) {
+            _controls[_focused] -> setFocus( false );
+         }
          if( ++_focused >= CHECKBOX_COUNT + SLIDER_COUNT ) {
             _focused = 0;
          }
-         _controls[_focused] -> setFocus( true );
+         if( ! _controls[_focused] -> isFocusable()) {
+            focusNext();
+         }
+         else {
+            _controls[_focused] -> setFocus( true );
+         }
+      }
+
+      void focusPrevious() {
+         if( _firstFocusable < 0 ) {
+            return;
+         }
+         if( _focused > -1 ) {
+            _controls[_focused] -> setFocus( false );
+         }
+         if( --_focused < 0 ) {
+            _focused = CHECKBOX_COUNT + SLIDER_COUNT - 1;
+         }
+         if( ! _controls[_focused] -> isFocusable()) {
+            focusPrevious();
+         }
+         else {
+            _controls[_focused] -> setFocus( true );
+         }
       }
 
       void focusLast() {
-         _controls[_focused] -> setFocus( false );
+         if( _firstFocusable < 0 ) {
+            return;
+         }
+         if( _focused > -1 ) {
+            _controls[_focused] -> setFocus( false );
+         }
          _focused = CHECKBOX_COUNT + SLIDER_COUNT - 1;
-         _controls[_focused] -> setFocus( true );
+         if( ! _controls[_focused] -> isFocusable()) {
+            focusPrevious();
+         }
+         else {
+            _controls[_focused] -> setFocus( true );
+         }
       }
 
    private:
@@ -206,5 +278,6 @@ namespace ncurses {
       bool      _hasFocus;
       Control * _controls[CHECKBOX_COUNT + SLIDER_COUNT];
       int       _focused;
+      int       _firstFocusable;
    };
 }

@@ -63,9 +63,9 @@ namespace ncurses {
 
    private:
 
-      void enqueue( const std::function<void(void)> & job ) const;
-
       void run( void );
+
+      void enqueue( const std::function<void(void)> & job ) const;
 
    private:
 

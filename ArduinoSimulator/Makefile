@@ -1,6 +1,6 @@
 CP = ../hpms.app.arduinosim/hpms.app.arduinosim.jar:../hpms.app.arduinosim/lib/hpms.fx.angle.jar 
 
-all: BUILD/itepm ../hpms.app.arduinosim/hpms.app.arduinosim.jar
+all: BUILD/itepm ../hpms.app.arduinosim/hpms.app.arduinosim.jar bug
 
 ncurses: BUILD/arduinosim
 
@@ -33,7 +33,16 @@ run-java: ../hpms.app.arduinosim/hpms.app.arduinosim.jar
 
 run-ncurses:
 	make clean all
-	BUILD/itepm --ui=ncurses
+	BUILD/itepm --ui=ncurses 2> ncurses.err
+	cat ncurses.err
+
+run-bug:
+	make clean all
+	BUILD/itepm --ui=ncurses 2> ncurses.err
+	cat ncurses.err
+
+bug: src/ncurses/bug.cpp src/ncurses/Window.h
+	g++ -W -Wall -g3 -std=c++11 -I inc -o $@ $< -lncursesw
 
 BUILD/main.o        : src/IUI.h src/main.cpp
 BUILD/java/UIProxy.o: src/IUI.h src/java/UIProxy.h src/java/UIProxy.cpp

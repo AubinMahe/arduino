@@ -1,4 +1,6 @@
 #include <math.h>
+#include <string.h>
+#include <locale.h>
 
 #include <Arduino.h>
 
@@ -14,6 +16,16 @@
 namespace ncurses {
 
    struct UIAttributes {
+
+      UIAttributes() :
+         ctrl( 42 ),
+         logPane( ctrl.getWidth()),
+         isr_0_func( 0 ),
+         isr_0_mode( 0 ),
+         isr_1_func( 0 ),
+         isr_1_mode( 0 ),
+         thread( 0 )
+      {}
 
       Controls    ctrl;
       LogPane     logPane;
@@ -38,8 +50,8 @@ UI::UI() {
    ::noecho();
    ::nodelay( stdscr, TRUE );
    ::keypad ( stdscr, TRUE );
-   ::refresh();
    ::mousemask( BUTTON1_PRESSED|BUTTON1_RELEASED, 0 );
+   ::refresh();
    a = new UIAttributes();
    a->thread = new std::thread( [ this ] () { run(); });
 }
@@ -49,15 +61,34 @@ UI:: ~ UI() {
    delete a;
 }
 
+static std::vector<std::string> getFileContents( const char * name ) {
+   std::vector<std::string> lines;
+   FILE * instructions = fopen( name, "r" );
+   if( instructions ) {
+      char line[1024];
+      while( fgets( line, sizeof( line ), instructions )) {
+         lines.push_back( strtok( line, "\n" ));
+      }
+      fclose( instructions );
+   }
+   return lines;
+}
+
+// ncurses thread.
 void UI::run( void ) {
+   auto lines = getFileContents( "instructions.txt" );
+   if( lines.size() > 0 ) {
+      a->statusPane.setLine1( lines[0].c_str());
+      if( lines.size() > 1 ) {
+         a->statusPane.setLine2( lines[1].c_str());
+      }
+   }
    a->ctrl.setFocus( true );
-   int c = ::getch();
    a->ctrl.render();
-   a->statusPane.setLine1( "Pour démarrer, cliquez puis relâchez le bouton n°2" );
-   a->statusPane.setLine2( "Pour faire évoluer l'automate, cliquez puis relâchez le bouton n°2 quand le timeout tourne." );
+   int c = ERR;
    while( c != 27 ) {
       MEVENT mouseEvent;
-      if( c == KEY_MOUSE && ::getmouse( &mouseEvent ) == OK ) {
+      if( c == KEY_MOUSE && ::getmouse( &mouseEvent ) != ERR ) {
          if( mouseEvent.bstate | NCURSES_BUTTON_RELEASED ) {
             Control * control = a->ctrl.getControlAt( mouseEvent.x, mouseEvent.y );
             if( control ) {
@@ -75,10 +106,10 @@ void UI::run( void ) {
             }
          }
       }
-      else if( a->ctrl.hasFocus()) {
+      else if( c > 0 && a->ctrl.hasFocus()) {
          a->ctrl.keyPressed( c );
       }
-      else if( a->logPane.hasFocus()) {
+      else if( c > 0 && a->logPane.hasFocus()) {
          a->logPane.keyPressed( c );
       }
       {
@@ -88,18 +119,28 @@ void UI::run( void ) {
             job();
             a->jobs.pop();
          }
-         if( a->ctrl.hasFocus()) {
-            a->ctrl.setFocus( true );
-         }
-         else if( a->logPane.hasFocus()) {
-            a->logPane.setFocus( false );
-         }
       }
+      if( a->ctrl.hasFocus()) {
+         a->ctrl.setFocus( true );
+      }
+      else if( a->logPane.hasFocus()) {
+         a->logPane.setFocus( false );
+      }
+      timespec spec;
+      spec.tv_sec  = 0;
+      spec.tv_nsec = 20 * 1000 * 1000; // 20 ms
+      nanosleep( &spec, 0 );
       c = ::getch();
    }
    delete a;
    ::endwin();
    ::exit( EXIT_SUCCESS );
+}
+
+// ncurses job queue management
+void UI::enqueue( const std::function<void(void)> & job ) const {
+   std::lock_guard<std::mutex> lock( a->jobsLock );
+   a->jobs.push( job );
 }
 
 //-- Digital I/O ----------------------------------------------------------
@@ -193,11 +234,6 @@ void UI::println( const char * line ) const {
 }
 
 //-- Servo -------------------------------------------------------------------
-
-void UI::enqueue( const std::function<void(void)> & job ) const {
-   std::lock_guard<std::mutex> lock( a->jobsLock );
-   a->jobs.push( job );
-}
 
 void UI::servoAttach( uint8_t pin ) const {
    enqueue( [this,pin] () { a->ctrl.servoAttach( pin ); });

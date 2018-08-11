@@ -190,6 +190,7 @@ bool Servo::attached() {
 //-- Main --------------------------------------------------------------------
 
 int main( int argc, char * argv[] ) {
+//   ::setlocale( LC_ALL, "FR-fr" );
    proxy = 0;
    if( argc > 1 && 0 == strcmp( "--ui=ncurses", argv[1] )) {
       proxy = new ncurses::UI();

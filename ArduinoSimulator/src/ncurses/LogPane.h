@@ -12,8 +12,8 @@ namespace ncurses {
    class LogPane : public Window {
    public:
 
-      LogPane() :
-         Window( 40, 0, 60, 22 ),
+      explicit LogPane( int x ) :
+         Window( x, 0, 60, 22 ),
          _hasFocus( false ),
          _first( 0 ),
          _autoScroll( true ),

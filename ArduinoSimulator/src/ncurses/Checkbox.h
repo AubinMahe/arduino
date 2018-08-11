@@ -20,17 +20,19 @@ namespace ncurses {
    public:
 
       virtual void render() const {
+         // Digital n° 0 --- [ ]
+         // Digital n° 0 IN  [ ]
+         // Digital n° 0 OUT [ ]
+         // Digital n° 0 IN  [X]
          const char * mode = ( _mode == INPUT ) ? "IN " : (( _mode == OUTPUT ) ? "OUT" : "---" );
          ::mvwprintw( w(), _y, _x, "%s %s [ ]", _label.c_str(), mode );
          ::wmove    ( w(), _y, getXFocus());
-         if( _checked ) {
-            ::waddch( w(), 'X' | A_BOLD );
-         }
-         else {
-            ::waddch( w(), ' ' );
-         }
-         ::wmove   ( w(), _y, getXFocus());
-         ::wrefresh( w());
+         ::waddch   ( w(), _checked ? ('X'|A_BOLD) : ' ' );
+         ::wmove    ( w(), _y, getXFocus());
+      }
+
+      virtual bool isFocusable( void ) const {
+         return _mode == INPUT;
       }
 
       virtual int getXFocus() const {

@@ -5,6 +5,7 @@
 #include <string>
 
 namespace ncurses {
+
    class Control {
    public:
 
@@ -14,18 +15,17 @@ namespace ncurses {
          _y( y ),
          _hasFocus( false ),
          _label( label )
-      {
-         ::wmove( w(), y, x );
-         ::wprintw( w(), label.c_str());
-      }
+      {}
 
-      virtual ~ Control() {}
+      virtual ~ Control( void ) {}
 
    public:
 
-      virtual void render() const  = 0;
+      virtual void render( void ) const  = 0;
 
-      virtual int getXFocus() const = 0;
+      virtual bool isFocusable( void ) const = 0;
+
+      virtual int getXFocus( void ) const = 0;
 
       virtual bool keyPressed( int c ) = 0;
 
@@ -35,22 +35,21 @@ namespace ncurses {
 
    public:
 
-      WINDOW * w() const {
+      WINDOW * w( void ) const {
          return _window.w();
       }
 
-      bool hasFocus() const {
+      bool hasFocus( void ) const {
          return _hasFocus;
       }
 
       void setFocus( bool focus ) {
          _hasFocus = focus;
          render();
-         ::wmove( _window.w(), _y, getXFocus());
-         ::wrefresh( _window.w());
+         ::wmove( w(), _y, getXFocus());
       }
 
-      const std::string & getLabel() const {
+      const std::string & getLabel( void ) const {
          return _label;
       }
 
