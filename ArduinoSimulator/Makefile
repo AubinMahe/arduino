@@ -5,7 +5,7 @@ all: BUILD/itepm ../hpms.app.arduinosim/hpms.app.arduinosim.jar
 ncurses: BUILD/arduinosim
 
 clean:
-	rm -fr BUILD
+	rm -fr BUILD ncurses.err
 	cd ../hpms.app.arduinosim ; ant clean
 
 BUILD/itepm: BUILD/IfThenElsePourMax.o BUILD/libsim.a
