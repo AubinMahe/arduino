@@ -21,8 +21,8 @@ namespace ncurses {
    public:
 
       virtual void render() const {
-         ::mvwprintw( w(), _y, _x, "%s: %5d", _label.c_str(), _remaining );
-         ::wrefresh( _window.w());
+         ::mvwprintw( w(), _y, _x, "%s OUT %3d", _label.c_str(), _remaining );
+         ::wrefresh ( w());
       }
 
       virtual int getXFocus() const {

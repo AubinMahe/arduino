@@ -20,11 +20,11 @@ namespace ncurses {
       {
          char label[40];
          for( auto i = 0U; i < CHECKBOX_COUNT; ++i ) {
-            ::sprintf( label, "Digital n°%2d ---", i );
+            ::sprintf( label, "Digital n°%2d", i );
             _controls[i] = new Checkbox( *this, 2, i+1, label );
          }
          for( auto i = 0U; i < SLIDER_COUNT; ++i ) {
-            ::sprintf( label, "Analog  n°%2d ---", i );
+            ::sprintf( label, "Analog  n°%2d", i );
             auto ndx = CHECKBOX_COUNT + i;
             _controls[ndx] = new Slider( *this, 2, ndx + 1, 17, label, 0, 1023 );
          }
@@ -73,8 +73,8 @@ namespace ncurses {
       }
 
       void render() {
-         for( auto i = 0U; i < SLIDER_COUNT; ++i ) {
-            _controls[CHECKBOX_COUNT + i] -> render();
+         for( auto i = 0U; i < CHECKBOX_COUNT+SLIDER_COUNT; ++i ) {
+            _controls[i] -> render();
          }
       }
 
@@ -111,10 +111,13 @@ namespace ncurses {
          }
       }
 
-      void pinMode( uint8_t pin, uint8_t inOrOut ) const {
+      void pinMode( uint8_t pin, uint8_t mode, IChangeListener<Checkbox, bool> * listener ) {
          if( pin < CHECKBOX_COUNT ) {
             Checkbox * checkbox = (Checkbox *)_controls[pin];
-            checkbox->setReadOnly( inOrOut == OUTPUT );
+            checkbox->setMode( mode );
+            if( mode == INPUT ) {
+               checkbox->addChangeListener( listener );
+            }
          }
       }
 

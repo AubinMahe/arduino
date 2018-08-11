@@ -30,6 +30,8 @@ namespace ncurses {
 
 using namespace ncurses;
 
+int Checkbox::y = 27;
+
 UI::UI() {
    ::initscr();
    ::cbreak();
@@ -40,12 +42,6 @@ UI::UI() {
    ::mousemask( BUTTON1_PRESSED|BUTTON1_RELEASED, 0 );
    a = new UIAttributes();
    a->thread = new std::thread( [ this ] () { run(); });
-   for( auto i = 0; i < CHECKBOX_COUNT; ++i ) {
-      Checkbox * cb = a->ctrl.getCheckbox( i );
-      if( cb ) {
-         cb->addChangeListener( this );
-      }
-   }
 }
 
 UI:: ~ UI() {
@@ -92,6 +88,12 @@ void UI::run( void ) {
             job();
             a->jobs.pop();
          }
+         if( a->ctrl.hasFocus()) {
+            a->ctrl.setFocus( true );
+         }
+         else if( a->logPane.hasFocus()) {
+            a->logPane.setFocus( false );
+         }
       }
       c = ::getch();
    }
@@ -110,8 +112,9 @@ void UI::digitalWrite( uint8_t pin, uint8_t hiOrLo ) const {
    enqueue( [ this, pin, hiOrLo ] () { a->ctrl.digitalWrite( pin, hiOrLo ); });
 }
 
-void UI::pinMode( uint8_t pin, uint8_t inOrOut ) const {
-   enqueue( [ this, pin, inOrOut ] () { a->ctrl.pinMode( pin, inOrOut ); });
+void UI::pinMode( uint8_t pin, uint8_t mode ) const {
+   UI * notifiable = const_cast<UI * >( this );
+   enqueue( [ this, notifiable, pin, mode ] () { a->ctrl.pinMode( pin, mode, notifiable ); });
 }
 
 //-- Analog I/O -----------------------------------------------------------
@@ -181,12 +184,12 @@ void UI::hasChanged( Checkbox & what, bool, bool after ) {
 
 //-- Communication --------------------------------------------------------
 
-void UI::print( const char * s ) const {
-   a->logPane.print( s );
+void UI::print( const char * line ) const {
+   enqueue( [ this, line ] () { a->logPane.print( line ); });
 }
 
-void UI::println( const char * s ) const {
-   a->logPane.println( s );
+void UI::println( const char * line ) const {
+   enqueue( [ this, line ] () { a->logPane.println( line ); });
 }
 
 //-- Servo -------------------------------------------------------------------

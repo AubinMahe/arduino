@@ -4,6 +4,7 @@
 #include "IChangeListener.h"
 
 #include <vector>
+#include <algorithm>
 
 namespace ncurses {
 
@@ -11,32 +12,33 @@ namespace ncurses {
    public:
 
       Checkbox( Window & window, int x, int y, const std::string & label ) :
-         Control( window, x, y, label + " [ ]" ),
-         _readOnly( false ),
-         _checked ( false )
+         Control( window, x, y, label ),
+         _mode( -1 ),
+         _checked( false )
       {}
 
    public:
 
       virtual void render() const {
-         ::mvwprintw( w(), _y, _x, _label.c_str());
-         ::wmove( w(), _y, getXFocus());
+         const char * mode = ( _mode == INPUT ) ? "IN " : (( _mode == OUTPUT ) ? "OUT" : "---" );
+         ::mvwprintw( w(), _y, _x, "%s %s [ ]", _label.c_str(), mode );
+         ::wmove    ( w(), _y, getXFocus());
          if( _checked ) {
             ::waddch( w(), 'X' | A_BOLD );
          }
          else {
             ::waddch( w(), ' ' );
          }
-         ::wmove( w(), _y, getXFocus());
-         ::wrefresh( _window.w());
+         ::wmove   ( w(), _y, getXFocus());
+         ::wrefresh( w());
       }
 
       virtual int getXFocus() const {
-         return _x + _label.length() - 3;
+         return _x + _label.length() + 6;
       }
 
       virtual bool keyPressed( int c ) {
-         if( ! _readOnly ) {
+         if( _mode == INPUT ) {
             if( c == 32 || c == 13 ) {
                setChecked( ! _checked );
                render();
@@ -51,7 +53,7 @@ namespace ncurses {
       }
 
       virtual void onMouseEvent( const MEVENT & ) {
-         if( ! _readOnly ) {
+         if( _mode == INPUT ) {
             setChecked( ! _checked );
             render();
          }
@@ -73,15 +75,20 @@ namespace ncurses {
       }
 
       bool isReadOnly( void ) const {
-         return _readOnly;
+         return _mode != INPUT;
       }
 
-      void setReadOnly( bool value ) {
-         _readOnly = value;
+      static int y;
+
+      void setMode( int mode ) {
+         _mode = mode;
+         render();
       }
 
       void addChangeListener( IChangeListener<Checkbox, bool> * l ) {
-         _listeners.push_back( l );
+         if( std::find( _listeners.begin(), _listeners.end(), l ) == _listeners.end()) {
+            _listeners.push_back( l );
+         }
       }
 
    protected:
@@ -89,7 +96,7 @@ namespace ncurses {
       std::vector<
          IChangeListener<
             Checkbox, bool>*> _listeners;
-      bool                    _readOnly;
+      int                     _mode;
       bool                    _checked;
    };
 }

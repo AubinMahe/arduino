@@ -12,7 +12,7 @@ namespace ncurses {
          _window( window ),
          _x( x ),
          _y( y ),
-         _haveFocus( false ),
+         _hasFocus( false ),
          _label( label )
       {
          ::wmove( w(), y, x );
@@ -39,12 +39,12 @@ namespace ncurses {
          return _window.w();
       }
 
-      bool haveFocus() const {
-         return _haveFocus;
+      bool hasFocus() const {
+         return _hasFocus;
       }
 
       void setFocus( bool focus ) {
-         _haveFocus = focus;
+         _hasFocus = focus;
          render();
          ::wmove( _window.w(), _y, getXFocus());
          ::wrefresh( _window.w());
@@ -59,7 +59,7 @@ namespace ncurses {
       Window &    _window;
       int         _x;
       int         _y;
-      bool        _haveFocus;
+      bool        _hasFocus;
       std::string _label;
 
    private:
