@@ -12,9 +12,11 @@ namespace ncurses {
    class StatusPane : public Window {
    public:
 
-      StatusPane() :
-         Window( 0, 22, 100, 4 )
-      {}
+      StatusPane( int y, int width ) :
+         Window( 0, y, width, 4 )
+      {
+         fprintf( stderr, "StatusPane( int y = %d, int width = %d )\n", y, width );
+      }
 
    public:
 

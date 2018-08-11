@@ -18,14 +18,18 @@ namespace ncurses {
    struct UIAttributes {
 
       UIAttributes() :
-         ctrl( 42 ),
-         logPane( ctrl.getWidth()),
+         ctrl( 50, 22 ),
+         logPane( ctrl.getWidth(), ctrl.getHeight()),
+         statusPane( ctrl.getHeight(), ctrl.getWidth() + logPane.getWidth()),
          isr_0_func( 0 ),
          isr_0_mode( 0 ),
          isr_1_func( 0 ),
          isr_1_mode( 0 ),
          thread( 0 )
-      {}
+      {
+         fprintf( stderr, "ctrl.Width = %d, logPane.Width = %d )\n",
+            ctrl.getWidth(), logPane.getWidth());
+      }
 
       Controls    ctrl;
       LogPane     logPane;
@@ -41,8 +45,6 @@ namespace ncurses {
 }
 
 using namespace ncurses;
-
-int Checkbox::y = 27;
 
 UI::UI() {
    ::initscr();

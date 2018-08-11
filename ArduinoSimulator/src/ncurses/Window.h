@@ -6,9 +6,7 @@ class Window {
 public:
 
    Window( unsigned x, unsigned y, unsigned width, unsigned height ) :
-      _window( ::newwin( height, width, y, x )),
-      _height( height - 2 )
-
+      _window( ::newwin( height, width, y, x ))
    {
       ::box( _window, 0, 0 );
       ::keypad( w(), TRUE );
@@ -25,10 +23,25 @@ public:
 
    inline WINDOW * w( void ) const { return _window; }
 
+   int getX() const {
+      return w()->_begx;
+   }
+
+   int getY() const {
+      return w()->_begy;
+   }
+
+   int getWidth() const {
+      return w()->_maxx + 1;
+   }
+
+   int getHeight() const {
+      return w()->_maxy + 1;
+   }
+
 protected:
 
    WINDOW * _window;
-   unsigned _height;
 
 private:
    Window( const Window & );

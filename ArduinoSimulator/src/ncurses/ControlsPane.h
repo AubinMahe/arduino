@@ -13,8 +13,8 @@ namespace ncurses {
    class Controls : public Window {
    public:
 
-      explicit Controls( int width ) :
-         Window( 0, 0, width, 22 ),
+      explicit Controls( int width, int height ) :
+         Window( 0, 0, width, height ),
          _hasFocus( false ),
          _focused( -1 ),
          _firstFocusable( -1 )
@@ -27,7 +27,7 @@ namespace ncurses {
          }
          for( int i = 0U; i < SLIDER_COUNT; ++i, ++y ) {
             ::sprintf( label, "Analog  n.%2d", i );
-            _controls[y-1] = new Slider( *this, 2, y, 18, label, 0, 1023 );
+            _controls[y-1] = new Slider( *this, 2, y, width - 24, label, 0, 1023 );
          }
       }
 
@@ -39,10 +39,6 @@ namespace ncurses {
       }
 
    public:
-
-      int getWidth() const {
-         return w()->_maxx - w()->_begx + 1;
-      }
 
       Checkbox * getCheckbox( int index ) {
          if( index < CHECKBOX_COUNT ) {
@@ -188,7 +184,7 @@ namespace ncurses {
 
       void servoAttach( uint8_t pin ) {
          Control * control = _controls[pin];
-         _controls[pin] = new Timeout( *this, 2, pin + 1, control->getLabel(), 179 );
+         _controls[pin] = new Timeout( *this, 2, pin + 1, control->getLabel(), 0 );
          delete control;
          render();
       }

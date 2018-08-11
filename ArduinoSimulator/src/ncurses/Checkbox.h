@@ -80,8 +80,6 @@ namespace ncurses {
          return _mode != INPUT;
       }
 
-      static int y;
-
       void setMode( int mode ) {
          _mode = mode;
          render();

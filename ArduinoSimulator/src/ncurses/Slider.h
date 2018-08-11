@@ -13,7 +13,7 @@ namespace ncurses {
          _min( min ),
          _max( max ),
          _value( min ),
-         _step(( max - min ) / width ),
+         _step( ceil(( max - min ) /(double)( width - 1.0 ))),
          _line( _width, '-' )
       {}
 
@@ -30,7 +30,7 @@ namespace ncurses {
       }
 
       virtual int getXFocus() const {
-         double pos = round( left() + _width * ( _value - _min ) / (double)( _max - _min + 1.0 ));
+         double pos = left() + _width * ( _value - _min ) / ( _max - _min );
          if( pos > left() + _width - 1 ) {
             pos = left() + _width - 1;
          }

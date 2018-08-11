@@ -12,8 +12,8 @@ namespace ncurses {
    class LogPane : public Window {
    public:
 
-      explicit LogPane( int x ) :
-         Window( x, 0, 60, 22 ),
+      explicit LogPane( int x, int height ) :
+         Window( x, 0, 40, height ),
          _hasFocus( false ),
          _first( 0 ),
          _autoScroll( true ),
@@ -23,8 +23,8 @@ namespace ncurses {
    public:
 
       void render() {
-         auto count = std::min((unsigned int)_lines.size(), _height );
-         for( auto i = _first, y = 1U; i < count; ++i, ++y ) {
+         int count = std::min((int)_lines.size(), getHeight() - 2 );
+         for( int i = _first, y = 1; i < count; ++i, ++y ) {
             std::string line = _lines[i].c_str();
             if( line[line.length()-1] == '\n' ) {
                line.erase( line.length() - 1 );
@@ -107,19 +107,19 @@ namespace ncurses {
       }
 
       void down() {
-         if( _first + _height < _lines.size()) {
+         if( _first + getHeight() - 2 < _lines.size()) {
             ++_selected;
             ++_first;
          }
       }
 
       void end() {
-         if( _lines.size() < _height ) {
+         if((int)_lines.size() < getHeight() - 2) {
             _first    = 0;
             _selected = _lines.size() - 1;
          }
          else {
-            _selected = _height - 1;
+            _selected = getHeight() - 3;
             _first    = _lines.size() - _selected;
          }
       }
