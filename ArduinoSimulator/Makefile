@@ -9,13 +9,13 @@ clean:
 	cd ../hpms.app.arduinosim ; ant clean
 
 BUILD/itepm: BUILD/IfThenElsePourMax.o BUILD/libsim.a
-	g++ -L BUILD $< -o $@ -lsim -lpthread -lncurses -lm -lefence
+	g++ -L BUILD $< -o $@ -lsim -lpthread -lncursesw -lm -lefence
 	
 BUILD/IfThenElsePourMax.o: ../IfThenElsePourMax/src/IfThenElsePourMax.cpp
 	@mkdir -p $$(dirname $@)
 	g++ -c -I inc -I ../IfThenElsePourMax/inc $< -o $@
 
-BUILD/libsim.a: BUILD/main.o BUILD/java/UIProxy.o BUILD/ncurses/UI.o
+BUILD/libsim.a: BUILD/main.o BUILD/java/UIProxy.o BUILD/ncurses/UI.o BUILD/ncurses/getFileContents.o BUILD/ncurses/utf8len.o
 	ar -rcs $@ $?
 
 BUILD/%.o: src/%.cpp
@@ -36,6 +36,7 @@ run-ncurses:
 	BUILD/itepm --ui=ncurses 2> ncurses.err
 	cat ncurses.err
 
-BUILD/main.o        : src/IUI.h src/main.cpp
+BUILD/main.o: src/IUI.h src/main.cpp
 BUILD/java/UIProxy.o: src/IUI.h src/java/UIProxy.h src/java/UIProxy.cpp
-BUILD/ncurses/UI.o  : src/IUI.h src/ncurses/IChangeListener.h src/ncurses/Checkbox.h src/ncurses/Control.h src/ncurses/ControlsPane.h src/ncurses/LogPane.h src/ncurses/Slider.h src/ncurses/Timeout.h src/ncurses/UI.h src/ncurses/Window.h src/ncurses/UI.cpp
+BUILD/ncurses/UI.o: src/IUI.h src/ncurses/UI_Impl.h src/ncurses/utf8len.h src/ncurses/getFileContents.h src/ncurses/IChangeListener.h src/ncurses/Checkbox.h src/ncurses/Control.h src/ncurses/ControlsPane.h src/ncurses/LogPane.h src/ncurses/Slider.h src/ncurses/Timeout.h src/ncurses/UI.h src/ncurses/Window.h src/ncurses/UI.cpp
+BUILD/ncurses/getFileContents.o: src/ncurses/getFileContents.cpp src/ncurses/getFileContents.h

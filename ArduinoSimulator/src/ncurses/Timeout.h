@@ -10,7 +10,13 @@ namespace ncurses {
    class Timeout : public Control {
    public:
 
-      Timeout( Window & window, int x, int y, const std::string & label, unsigned value ) :
+      Timeout(
+         Window &             window,
+         unsigned             x,
+         unsigned             y,
+         const std::wstring & label,
+         unsigned             value )
+      :
          Control( window, x, y, label ),
          _value    ( value ),
          _remaining( value )
@@ -19,14 +25,17 @@ namespace ncurses {
    public:
 
       virtual void render() const {
-         ::mvwprintw( w(), _y, _x, "%s OUT %3d", _label.c_str(), _remaining );
+         int x = _label.length() + 2;
+         ::wmove    ( w(), _y, _x );
+         waddwstr   ( w(), _label.c_str());
+         ::mvwprintw( w(), _y, x, " OUT %3d", _remaining );
       }
 
       virtual bool isFocusable( void ) const {
          return false;
       }
 
-      virtual int getXFocus() const {
+      virtual unsigned getXFocus() const {
          return _x + _label.length() + 1;
       }
 
@@ -34,7 +43,7 @@ namespace ncurses {
          return true;
       }
 
-      virtual bool isHitPoint( int, int ) {
+      virtual bool isHitPoint( unsigned, unsigned ) {
          return false;
       }
 

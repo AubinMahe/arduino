@@ -14,19 +14,19 @@ namespace ncurses {
    public:
 
       explicit Controls( int width, int height ) :
-         Window( 0, 0, width, height ),
+         Window( 0, 0, width, height, ACS_ULCORNER, ACS_TTEE, ACS_LTEE, ACS_BTEE ),
          _hasFocus( false ),
          _focused( -1 ),
          _firstFocusable( -1 )
       {
-         char label[40];
+         wchar_t label[40];
          int y = 1;
          for( int i = 0U; i < CHECKBOX_COUNT; ++i, ++y ) {
-            ::sprintf( label, "Digital n.%2d", i );
+            ::swprintf( label, sizeof( label ), L"Digital n°%2d", i );
             _controls[i] = new Checkbox( *this, 2, y, label );
          }
          for( int i = 0U; i < SLIDER_COUNT; ++i, ++y ) {
-            ::sprintf( label, "Analog  n.%2d", i );
+            ::swprintf( label, sizeof( label ), L"Analog  n°%2d", i );
             _controls[y-1] = new Slider( *this, 2, y, width - 24, label, 0, 1023 );
          }
       }
@@ -39,6 +39,17 @@ namespace ncurses {
       }
 
    public:
+
+      virtual void render( bool clear ) {
+         Window::render( clear );
+         for( auto i = 0U; i < CHECKBOX_COUNT+SLIDER_COUNT; ++i ) {
+            _controls[i] -> render();
+         }
+         if( _focused > -1 ) {
+            _controls[_focused] -> setFocus( _controls[_focused] -> hasFocus());
+         }
+         ::wrefresh( w());
+      }
 
       Checkbox * getCheckbox( int index ) {
          if( index < CHECKBOX_COUNT ) {
@@ -85,28 +96,17 @@ namespace ncurses {
                _hasFocus = false;
             }
          }
-         render();
-         ::wrefresh( w());
+         render( false );
       }
 
       bool hasFocus() const {
          return _hasFocus;
       }
 
-      void render() {
-         for( auto i = 0U; i < CHECKBOX_COUNT+SLIDER_COUNT; ++i ) {
-            _controls[i] -> render();
-         }
+      bool keyPressed( int key ) {
          if( _focused > -1 ) {
-            _controls[_focused] -> setFocus( _controls[_focused] -> hasFocus());
-         }
-         ::wrefresh( w());
-      }
-
-      bool keyPressed( int c ) {
-         if( _focused > -1 ) {
-            if( _controls[_focused] -> keyPressed( c )) {
-               switch( c ) {
+            if( _controls[_focused] -> keyPressed( key )) {
+               switch( key ) {
                case KEY_HOME: focusFirst   (); break;
                case KEY_UP  : focusPrevious(); break;
                case KEY_DOWN: focusNext    (); break;
@@ -186,7 +186,7 @@ namespace ncurses {
          Control * control = _controls[pin];
          _controls[pin] = new Timeout( *this, 2, pin + 1, control->getLabel(), 0 );
          delete control;
-         render();
+         render( false );
       }
 
       void servoWrite( uint8_t pin, int value ) const {

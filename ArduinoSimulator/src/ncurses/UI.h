@@ -1,14 +1,11 @@
 #pragma once
 
 #include "../IUI.h"
-#include "IChangeListener.h"
-#include <functional>
 
 namespace ncurses {
 
-   struct UIAttributes;
-   class Checkbox;
-   class UI : public IUI, public IChangeListener<Checkbox, bool> {
+   class UI_Impl;
+   class UI : public IUI {
    public:
 
       UI();
@@ -45,8 +42,6 @@ namespace ncurses {
 
       virtual void detachInterrupt( uint8_t pin ) const;
 
-      virtual void hasChanged( Checkbox & what, bool before, bool after );
-
       //-- Communication --------------------------------------------------------
 
       virtual void print( const char * s ) const;
@@ -63,12 +58,6 @@ namespace ncurses {
 
    private:
 
-      void run( void );
-
-      void enqueue( const std::function<void(void)> & job ) const;
-
-   private:
-
-      UIAttributes * a;
+      UI_Impl * _ui;
    };
 }

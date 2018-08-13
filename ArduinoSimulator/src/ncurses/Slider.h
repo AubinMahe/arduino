@@ -1,44 +1,65 @@
 #pragma once
 
 #include "Control.h"
+#include "utf8len.h"
 
 namespace ncurses {
 
    class Slider : public Control {
    public:
 
-      Slider( Window & window, int x, int y, int width, const std::string & label, int min, int max ) :
+      Slider(
+         Window &             window,
+         unsigned             x,
+         unsigned             y,
+         unsigned             width,
+         const std::wstring & label,
+         int                  min,
+         int                  max )
+       :
          Control( window, x, y, label ),
          _width( width ),
          _min( min ),
          _max( max ),
          _value( min ),
-         _step( ceil(( max - min ) /(double)( width - 1.0 ))),
-         _line( _width, '-' )
+         _step((unsigned)ceil(( max - min ) /(double)( width - 1.0 ))),
+         _left( x + _label.length() + 2 ),
+         _right( _left + _width )
       {}
 
    public:
 
       virtual void render() const {
-         ::mvwprintw( w(), _y, _x, "%s [%s] %4d", _label.c_str(), _line.c_str(), _value );
-         ::wmove    ( w(), _y, getXFocus());
-         ::waddch   ( w(), '|' | A_BOLD );
+         ::wmove    ( w(), _y, _x );
+         waddwstr   ( w(), _label.c_str());
+         ::mvwprintw( w(), _y, _left - 1, "[" );
+         ::mvwprintw( w(), _y, _right, "] %4d", _value );
+         for( auto i = 0U; i < _width; ++i ) {
+            auto x = _left + i;
+            ::wmove( w(), _y, x );
+            if( x == getXFocus()) {
+               ::waddch( w(), ACS_PLUS | A_BOLD );
+            }
+            else {
+               ::waddch( w(), ACS_HLINE );
+            }
+         }
       }
 
       virtual bool isFocusable( void ) const {
          return true;
       }
 
-      virtual int getXFocus() const {
-         double pos = left() + _width * ( _value - _min ) / ( _max - _min );
-         if( pos > left() + _width - 1 ) {
-            pos = left() + _width - 1;
+      virtual unsigned getXFocus() const {
+         double pos = _left + _width * ( _value - _min ) / ( _max - _min );
+         if( pos > _left + _width - 1 ) {
+            pos = _left + _width - 1;
          }
          return pos;
       }
 
-      virtual bool keyPressed( int c ) {
-         switch( c ) {
+      virtual bool keyPressed( int key ) {
+         switch( key ) {
          case KEY_PPAGE: _value = _min; break;
          case KEY_LEFT :
             if( _value > _min ) {
@@ -63,12 +84,12 @@ namespace ncurses {
          return false;
       }
 
-      virtual bool isHitPoint( int x, int y ) {
-         return ( y == _y )&&( x >= left())&&( x < (int)_label.length());
+      virtual bool isHitPoint( unsigned x, unsigned y ) {
+         return ( y == _y )&&( x >= _left )&&( x < _right );
       }
 
       virtual void onMouseEvent( const MEVENT & mouseEvent ) {
-         _value = ( mouseEvent.x - left() + 1 ) * _step;
+         _value = ( mouseEvent.x - _left) * _step;
          if( _value < _min ) {
             _value = _min;
          }
@@ -88,17 +109,12 @@ namespace ncurses {
 
    protected:
 
-      int left() const {
-         return _x + _label.length() + 2;
-      }
-
-   protected:
-
-      int         _width;
-      int         _min;
-      int         _max;
-      int         _value;
-      int         _step;
-      std::string _line;
+      unsigned _width;
+      int      _min;
+      int      _max;
+      int      _value;
+      unsigned _step;
+      unsigned _left;
+      unsigned _right;
    };
 }

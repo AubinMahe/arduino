@@ -2,6 +2,7 @@
 
 #include "Control.h"
 #include "IChangeListener.h"
+#include "utf8len.h"
 
 #include <vector>
 #include <algorithm>
@@ -11,7 +12,7 @@ namespace ncurses {
    class Checkbox : public Control {
    public:
 
-      Checkbox( Window & window, int x, int y, const std::string & label ) :
+      Checkbox( Window & window, int x, int y, const std::wstring & label ) :
          Control( window, x, y, label ),
          _mode( -1 ),
          _checked( false )
@@ -20,12 +21,11 @@ namespace ncurses {
    public:
 
       virtual void render() const {
-         // Digital n° 0 --- [ ]
-         // Digital n° 0 IN  [ ]
-         // Digital n° 0 OUT [ ]
-         // Digital n° 0 IN  [X]
          const char * mode = ( _mode == INPUT ) ? "IN " : (( _mode == OUTPUT ) ? "OUT" : "---" );
-         ::mvwprintw( w(), _y, _x, "%s %s [ ]", _label.c_str(), mode );
+         int x = _label.length() + 2;
+         ::wmove    ( w(), _y, _x );
+         waddwstr   ( w(), _label.c_str());
+         ::mvwprintw( w(), _y, x, " %s [ ]", mode );
          ::wmove    ( w(), _y, getXFocus());
          ::waddch   ( w(), _checked ? ('X'|A_BOLD) : ' ' );
          ::wmove    ( w(), _y, getXFocus());
@@ -35,13 +35,13 @@ namespace ncurses {
          return _mode == INPUT;
       }
 
-      virtual int getXFocus() const {
+      virtual unsigned getXFocus() const {
          return _x + _label.length() + 6;
       }
 
-      virtual bool keyPressed( int c ) {
+      virtual bool keyPressed( int key ) {
          if( _mode == INPUT ) {
-            if( c == 32 || c == 13 ) {
+            if( key == 32 || key == 13 ) {
                setChecked( ! _checked );
                render();
                return false;
@@ -50,7 +50,7 @@ namespace ncurses {
          return true;
       }
 
-      virtual bool isHitPoint( int x, int y ) {
+      virtual bool isHitPoint( unsigned x, unsigned y ) {
          return ( y == _y )&&( x == getXFocus());
       }
 

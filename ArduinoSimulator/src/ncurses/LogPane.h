@@ -12,25 +12,24 @@ namespace ncurses {
    class LogPane : public Window {
    public:
 
-      explicit LogPane( int x, int height ) :
-         Window( x, 0, 40, height ),
+      explicit LogPane( int x, int width, int height ) :
+         Window( x, 0, width, height, ACS_TTEE, ACS_URCORNER, ACS_BTEE, ACS_RTEE),
          _hasFocus( false ),
+         _scrollable( ::derwin( w(), height - 2, width - 4, 1, 2 )),
          _first( 0 ),
-         _autoScroll( true ),
-         _selected( 1 )
-      {}
+         _autoScroll( true )
+      {
+         ::scrollok( _scrollable, true );
+      }
 
    public:
 
-      void render() {
-         int count = std::min((int)_lines.size(), getHeight() - 2 );
-         for( int i = _first, y = 1; i < count; ++i, ++y ) {
-            std::string line = _lines[i].c_str();
-            if( line[line.length()-1] == '\n' ) {
-               line.erase( line.length() - 1 );
-            }
-            ::mvwprintw( w(), y, 2, "%s", line.c_str());
+      virtual void render( bool clear ) {
+         Window::render( clear );
+         for( unsigned i = _first, y = 0; i < _lines.size() && y < getHeight() - 2; ++i, ++y ) {
+            ::mvwprintw( _scrollable, (int)y, 0, "%s", removeEOL( _lines[i] ).c_str());
          }
+         ::wrefresh( _scrollable );
          ::wrefresh( w());
       }
 
@@ -39,7 +38,7 @@ namespace ncurses {
             _lines.push_back( trim( line ));
          }
          else {
-            std::string & lastLine = _lines[_lines.size()-1];
+            std::string & lastLine = _lines[_lines.size() - 1];
             if( lastLine.empty() || lastLine[lastLine.length()-1] != '\n' ) {
                lastLine += trim( line );
             }
@@ -47,34 +46,29 @@ namespace ncurses {
                _lines.push_back( trim( line ));
             }
          }
-         if( _autoScroll ) {
-            unsigned height = w()->_maxy - w()->_begy + 1;
-            if( _lines.size() > height ) {
-               _first = _lines.size() - height;
-            }
+         if( _autoScroll && _lines.size() > getHeight() - 2 ) {
+            down();
          }
-         render();
+         if( _lines.size() < _first + getHeight() - 1 ) {
+            render( false );
+         }
       }
 
       void println( const std::string & line ) {
          print( trim( line ) + '\n' );
       }
 
-      bool contains( int x, int y ) {
-         return ::wmouse_trafo( w(), &y, &x, false );
-      }
-
       void setFocus( bool focus ) {
          _hasFocus = focus;
-         ::wmove( w(), _selected, 2 );
+         ::wmove( w(), 1, 1 );
       }
 
       bool hasFocus() const {
          return _hasFocus;
       }
 
-      bool keyPressed( int c ) {
-         switch( c ) {
+      bool keyPressed( int key ) {
+         switch( key ) {
          case KEY_HOME: home(); break;
          case KEY_UP  : up(); break;
          case KEY_DOWN: down(); break;
@@ -85,7 +79,7 @@ namespace ncurses {
       }
 
       bool onMouseEvent( MEVENT mouseEvent ) {
-         if( ::wmouse_trafo( w(), &mouseEvent.y, &mouseEvent.x, false )) {
+         if( ::wmouse_trafo( _scrollable, &mouseEvent.y, &mouseEvent.x, false )) {
             setFocus( true );
             return false;
          }
@@ -94,33 +88,54 @@ namespace ncurses {
 
    private:
 
+      static std::string removeEOL( const std::string & i ) {
+         std::string            line = i;
+         std::string::size_type last = line.length() - 1;
+         if( line[last] == '\n' ) {
+            line.erase( last );
+         }
+         return line;
+      }
+
       void home() {
-         _first    = 0;
-         _selected = 1;
+         if( _first > 0 ) {
+            _first = 0;
+            ::wclear( _scrollable );
+            render( false );
+         }
       }
 
       void up() {
-         if( _selected > 1 ) {
-            --_selected;
+         if( _first > 0 ) {
             --_first;
+            ::wscrl( _scrollable, -1 );
+            ::mvwprintw( _scrollable, 0, 0, "%s", removeEOL( _lines[_first] ).c_str());
+            ::wrefresh( _scrollable );
+            ::wrefresh( w());
          }
       }
 
       void down() {
-         if( _first + getHeight() - 2 < _lines.size()) {
-            ++_selected;
+         if( _first <= _lines.size() - getHeight() + 1 ) {
             ++_first;
+            ::wscrl( _scrollable, +1 );
+            unsigned y = getHeight() - 3;
+            unsigned l = _first + y;
+            if( l < _lines.size()) {
+               ::mvwprintw( _scrollable, y, 0, "%s", removeEOL( _lines[l] ).c_str());
+            }
+            ::wrefresh( _scrollable );
+            ::wrefresh( w());
+            _autoScroll = ( _first + getHeight() - 2 == _lines.size());
          }
       }
 
       void end() {
-         if((int)_lines.size() < getHeight() - 2) {
-            _first    = 0;
-            _selected = _lines.size() - 1;
-         }
-         else {
-            _selected = getHeight() - 3;
-            _first    = _lines.size() - _selected;
+         _autoScroll = true;
+         if( _lines.size() > getHeight() - 2 ) {
+            _first = _lines.size() - getHeight() + 2;
+            ::wclear( _scrollable );
+            render( false );
          }
       }
 
@@ -138,8 +153,8 @@ namespace ncurses {
 
       bool                     _hasFocus;
       std::vector<std::string> _lines;
+      WINDOW *                 _scrollable;
       unsigned                 _first;
       bool                     _autoScroll;
-      unsigned                 _selected;
    };
 }
