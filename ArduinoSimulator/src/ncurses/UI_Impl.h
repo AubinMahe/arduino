@@ -117,9 +117,9 @@ namespace ncurses {
             if( key == KEY_RESIZE ) {
                ::clear();
                ::refresh();
-               if( COLS < 120 && COLS > 90 ) {
+               if( COLS < 120 && COLS > 86 ) {
                   _logPane   ->setWidth( COLS - _ctrl->getWidth());
-                  _statusPane->setWidth( COLS );
+                  _statusPane->setWidth( COLS - 1 );
                }
                _ctrl      ->render( true );
                _logPane   ->render( true );
