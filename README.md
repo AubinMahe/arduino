@@ -1,6 +1,7 @@
 # Arduino UNO
 
-Partage d'un projet Arduino avec [Max](https://github.com/exancillatus)
+Partage d'un projet Arduino avec [Max](https://github.com/exancillatus) :
+![Le montage en fils volants](img/board.png)
 
 Pour consulter la documentation de IfThenElsePourMax, c'est
 [par ici !](https://aubinmahe.github.io/arduino/IfThenElsePourMax/doc/html/index.html)
