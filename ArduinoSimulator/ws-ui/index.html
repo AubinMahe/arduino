@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="fr"> 
+<head>
+   <meta charset="UTF-8">
+   <title>Arduino simulator</title>
+   <link rel="stylesheet" href="css/arduinosim.css" />
+   <script type="text/javascript" src="js/arduinosim.js"></script>
+</head>
+<body onload="ardsim.create()">
+   <h1 id="ardsim-title">Arduino simulator : déconnecté</h1>
+   <div id="ardsim-app">
+      <div id="ardsim-top">
+         <div id="ardsim-controls">
+         
+            <div style="display: flex;">
+               <label class="ardsim-label">Digital</label>
+               <label class="ardsim-rank">0</label>
+               <p     class="ardsim-role"  id="ardsim-digital_role_0">---</p>
+               <input class="ardsim-checkbox" id="ardsim-digital_value_0" type="checkbox" disabled="disabled"
+                  onchange="ardsim.digitalChanged( this );" />
+            </div>
+         
+            <div style="display: flex;">
+               <label class="ardsim-label">Digital</label>
+               <label class="ardsim-rank">1</label>
+               <p     class="ardsim-role"  id="ardsim-digital_role_1">---</p>
+               <input class="ardsim-checkbox" id="ardsim-digital_value_1" type="checkbox" disabled="disabled"
+                  onchange="ardsim.digitalChanged( this );" />
+            </div>
+         
+            <div style="display: flex;">
+               <label class="ardsim-label">Digital</label>
+               <label class="ardsim-rank">2</label>
+               <p     class="ardsim-role"  id="ardsim-digital_role_2">---</p>
+               <input class="ardsim-checkbox" id="ardsim-digital_value_2" type="checkbox"
+                  onchange="ardsim.digitalChanged( this );" />
+            </div>
+         
+            <div style="display: flex;">
+               <label class="ardsim-label">Digital</label>
+               <label class="ardsim-rank">3</label>
+               <p     class="ardsim-role"  id="ardsim-digital_role_3">---</p>
+               <input class="ardsim-checkbox" id="ardsim-digital_value_3" type="checkbox" disabled="disabled"
+                  onchange="ardsim.digitalChanged( this );" />
+               <input class="ardsim-timeout"  id="ardsim-servo_3" type="text" value="0"
+                  style="display:none" readonly="readonly" />
+            </div>
+         
+            <div style="display: flex;">
+               <label class="ardsim-label">Digital</label>
+               <label class="ardsim-rank">4</label>
+               <p     class="ardsim-role"  id="ardsim-digital_role_4">---</p>
+               <input class="ardsim-checkbox" id="ardsim-digital_value_4" type="checkbox" disabled="disabled"
+                  onchange="ardsim.digitalChanged( this );" />
+            </div>
+         
+            <div style="display: flex;">
+               <label class="ardsim-label">Digital</label>
+               <label class="ardsim-rank">5</label>
+               <p     class="ardsim-role"  id="ardsim-digital_role_5">---</p>
+               <input class="ardsim-checkbox" id="ardsim-digital_value_5" type="checkbox" disabled="disabled"
+                  onchange="ardsim.digitalChanged( this );" />
+               <input class="ardsim-timeout"  id="ardsim-servo_5" type="text" value="0"
+                  style="display:none" readonly="readonly" />
+            </div>
+         
+            <div style="display: flex;">
+               <label class="ardsim-label">Digital</label>
+               <label class="ardsim-rank">6</label>
+               <p     class="ardsim-role"  id="ardsim-digital_role_6">---</p>
+               <input class="ardsim-checkbox" id="ardsim-digital_value_6" type="checkbox" disabled="disabled"
+                  onchange="ardsim.digitalChanged( this );" />
+               <input class="ardsim-timeout"  id="ardsim-servo_6" type="text" value="0"
+                  style="display:none" readonly="readonly" />
+            </div>
+         
+            <div style="display: flex;">
+               <label class="ardsim-label">Digital</label>
+               <label class="ardsim-rank">7</label>
+               <p     class="ardsim-role"  id="ardsim-digital_role_7">---</p>
+               <input class="ardsim-checkbox" id="ardsim-digital_value_7" type="checkbox" disabled="disabled"
+                  onchange="ardsim.digitalChanged( this );" />
+            </div>
+         
+            <div style="display: flex;">
+               <label class="ardsim-label">Digital</label>
+               <label class="ardsim-rank">8</label>
+               <p     class="ardsim-role"  id="ardsim-digital_role_8">---</p>
+               <input class="ardsim-checkbox" id="ardsim-digital_value_8" type="checkbox" disabled="disabled"
+                  onchange="ardsim.digitalChanged( this );" />
+            </div>
+         
+            <div style="display: flex;">
+               <label class="ardsim-label">Digital</label>
+               <label class="ardsim-rank">9</label>
+               <p     class="ardsim-role"  id="ardsim-digital_role_9">---</p>
+               <input class="ardsim-checkbox" id="ardsim-digital_value_9" type="checkbox" disabled="disabled"
+                  onchange="ardsim.digitalChanged( this );" />
+               <input class="ardsim-timeout"  id="ardsim-servo_9" type="text" value="0"
+                  style="display:none" readonly="readonly" />
+            </div>
+         
+            <div style="display: flex;">
+               <label class="ardsim-label">Digital</label>
+               <label class="ardsim-rank">10</label>
+               <p     class="ardsim-role"  id="ardsim-digital_role_10">---</p>
+               <input class="ardsim-checkbox" id="ardsim-digital_value_10" type="checkbox" disabled="disabled"
+                  onchange="ardsim.digitalChanged( this );" />
+               <input class="ardsim-timeout"  id="ardsim-servo_10" type="text" value="0"
+                  style="display:none" readonly="readonly" />
+            </div>
+         
+            <div style="display: flex;">
+               <label class="ardsim-label">Digital</label>
+               <label class="ardsim-rank">11</label>
+               <p     class="ardsim-role"  id="ardsim-digital_role_11">---</p>
+               <input class="ardsim-checkbox" id="ardsim-digital_value_11" type="checkbox" disabled="disabled"
+                  onchange="ardsim.digitalChanged( this );" />
+               <input class="ardsim-timeout"  id="ardsim-servo_11" type="text" value="0"
+                  style="display:none" readonly="readonly" />
+            </div>
+         
+            <div style="display: flex;">
+               <label class="ardsim-label">Digital</label>
+               <label class="ardsim-rank">12</label>
+               <p     class="ardsim-role"  id="ardsim-digital_role_12">---</p>
+               <input class="ardsim-checkbox" id="ardsim-digital_value_12" type="checkbox" disabled="disabled"
+                  onchange="ardsim.digitalChanged( this );" />
+            </div>
+         
+            <div style="display: flex;">
+               <label class="ardsim-label">Digital</label>
+               <label class="ardsim-rank">13</label>
+               <p     class="ardsim-role"  id="ardsim-digital_role_13">---</p>
+               <input class="ardsim-checkbox" id="ardsim-digital_value_13" type="checkbox" disabled="disabled"
+                  onchange="ardsim.digitalChanged( this );" />
+            </div>
+         
+            <div style="display: flex;">
+               <label class="ardsim-label">Analog</label>
+               <label class="ardsim-rank">0</label>
+               <input class="ardsim-slider" id="ardsim-analog_pos_0" type="range"
+                  min="0" max="1023" value="0"
+                  onchange="ardsim.analogChanged( this );" />
+               <span  class="ardsim-analog-value" id="ardsim-analog_value_0">0</span>
+            </div>
+         
+            <div style="display: flex;">
+               <label class="ardsim-label">Analog</label>
+               <label class="ardsim-rank">1</label>
+               <input class="ardsim-slider" id="ardsim-analog_pos_1" type="range"
+                  min="0" max="1023" value="0"
+                  onchange="ardsim.analogChanged( this );" />
+               <span  class="ardsim-analog-value" id="ardsim-analog_value_1">0</span>
+            </div>
+         
+            <div style="display: flex;">
+               <label class="ardsim-label">Analog</label>
+               <label class="ardsim-rank">2</label>
+               <input class="ardsim-slider" id="ardsim-analog_pos_2" type="range"
+                  min="0" max="1023" value="0"
+                  onchange="ardsim.analogChanged( this );" />
+               <span  class="ardsim-analog-value" id="ardsim-analog_value_2">0</span>
+            </div>
+         
+            <div style="display: flex;">
+               <label class="ardsim-label">Analog</label>
+               <label class="ardsim-rank">3</label>
+               <input class="ardsim-slider" id="ardsim-analog_pos_3" type="range"
+                  min="0" max="1023" value="0"
+                  onchange="ardsim.analogChanged( this );" />
+               <span  class="ardsim-analog-value" id="ardsim-analog_value_3">0</span>
+            </div>
+         
+            <div style="display: flex;">
+               <label class="ardsim-label">Analog</label>
+               <label class="ardsim-rank">4</label>
+               <input class="ardsim-slider" id="ardsim-analog_pos_4" type="range"
+                  min="0" max="1023" value="0"
+                  onchange="ardsim.analogChanged( this );" />
+               <span  class="ardsim-analog-value" id="ardsim-analog_value_4">0</span>
+            </div>
+
+            <div style="display: flex;">
+               <label class="ardsim-label">Analog</label>
+               <label class="ardsim-rank">5</label>
+               <input class="ardsim-slider" id="ardsim-analog_pos_5" type="range"
+                  min="0" max="1023" value="0"
+                  onchange="ardsim.analogChanged( this );" />
+               <span  class="ardsim-analog-value" id="ardsim-analog_value_5">0</span>
+            </div>
+         </div>
+         <div id="ardsim-log"></div>
+      </div>
+      <div id="ardsim-status"
+         >Pour démarrer, cliquez puis relâchez le bouton n°2. Pour faire évoluer l'automate,
+         cliquez puis relâchez le bouton n°2 quand le timeout n°6 décompte.</div>
+   </div>
+</body>
+</html>

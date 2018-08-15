@@ -54,10 +54,6 @@ namespace ncurses {
          }
       }
 
-      void println( const std::string & line ) {
-         print( trim( line ) + '\n' );
-      }
-
       void setFocus( bool focus ) {
          _hasFocus = focus;
          ::wmove( w(), 1, 1 );

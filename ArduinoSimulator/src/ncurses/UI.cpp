@@ -65,7 +65,7 @@ void UI::print( const char * line ) const {
 }
 
 void UI::println( const char * line ) const {
-   _ui->enqueue( [ this, line ] () { _ui->log().println( line ); });
+   _ui->enqueue( [ this, line ] () { _ui->log().print( std::string( line ) + "\n" ); });
 }
 
 //-- Servo -------------------------------------------------------------------

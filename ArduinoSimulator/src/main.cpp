@@ -3,6 +3,7 @@
 
 #include "java/UIProxy.h"
 #include "ncurses/UI.h"
+#include "ws/WebSocketUIServer.h"
 
 #include <stdio.h>
 #include <errno.h>
@@ -10,6 +11,8 @@
 #include <string.h>
 #include <pthread.h>
 #include <sys/time.h>
+
+#include <iostream>
 
 #define UI_PROXY_PORT 2416
 
@@ -189,14 +192,19 @@ bool Servo::attached() {
 
 //-- Main --------------------------------------------------------------------
 
+//extern void jsontest( void );
+
 int main( int argc, char * argv[] ) {
-//   ::setlocale( LC_ALL, "FR-fr" );
+//   jsontest();
    proxy = 0;
    if( argc > 1 && 0 == strcmp( "--ui=ncurses", argv[1] )) {
       proxy = new ncurses::UI();
    }
    else if( argc > 1 && 0 == strcmp( "--ui=java", argv[1] )) {
       proxy = new JavaUIProxy( UI_PROXY_PORT );
+   }
+   else if( argc > 1 && 0 == strcmp( "--ui=ws", argv[1] )) {
+      proxy = new ws::WebSocketUIServer( UI_PROXY_PORT );
    }
    if( proxy ) {
       timespec spec;
@@ -209,7 +217,7 @@ int main( int argc, char * argv[] ) {
       }
    }
    else {
-      fprintf( stderr, "usage: %s --ui={ncurses|java}\n", argv[0] );
+      fprintf( stderr, "usage: %s --ui={ncurses|java|ws}\n", argv[0] );
       return EXIT_FAILURE;
    }
    return EXIT_SUCCESS;
