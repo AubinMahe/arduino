@@ -1,3 +1,8 @@
+CXX      = g++
+CXXFLAGS = -W -Wall -g3 -O0 -std=c++11 -I inc -DDEBUG
+#CXXFLAGS = -W -Wall -g3 -O3 -std=c++11 -I inc -DDEBUG
+#CXXFLAGS = -W -Wall -g0 -O3 -std=c++11 -I inc -DNDEBUG
+LDFLAGS  = -L BUILD -lsim -lncursesw -lm -lwebsockets -lpthread -lefence
 CP = ../hpms.app.arduinosim/hpms.app.arduinosim.jar:../hpms.app.arduinosim/lib/hpms.fx.angle.jar 
 OBJS =\
  BUILD/main.o\
@@ -17,18 +22,18 @@ clean:
 	cd ../hpms.app.arduinosim ; ant clean
 
 BUILD/itepm: BUILD/IfThenElsePourMax.o BUILD/libsim.a
-	g++ -L BUILD $< -o $@ -lsim -lncursesw -lm -lwebsockets -lpthread -lefence
+	$(CXX) $< -o $@ $(LDFLAGS)
 	
 BUILD/IfThenElsePourMax.o: ../IfThenElsePourMax/src/IfThenElsePourMax.cpp
 	@mkdir -p $$(dirname $@)
-	g++ -c -I inc -I ../IfThenElsePourMax/inc $< -o $@
+	$(CXX) $(CXXFLAGS) -I ../IfThenElsePourMax/inc $< -c -o $@
 
 BUILD/libsim.a: $(OBJS)
 	ar -rcs $@ $?
 
 BUILD/%.o: src/%.cpp
 	@mkdir -p $$(dirname $@)
-	g++ -W -Wall -g3 -std=c++11 -c -I inc -o $@ $<
+	$(CXX) $(CXXFLAGS) -c -o $@ $<
 
 ../hpms.app.arduinosim/hpms.app.arduinosim.jar:
 	cd ../hpms.app.arduinosim ; ant

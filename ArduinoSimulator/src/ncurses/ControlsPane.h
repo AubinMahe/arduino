@@ -5,6 +5,9 @@
 #include "Slider.h"
 #include "Timeout.h"
 
+#include <sstream>
+#include <iomanip>
+
 #define CHECKBOX_COUNT 14
 #define SLIDER_COUNT    6
 
@@ -19,15 +22,16 @@ namespace ncurses {
          _focused( -1 ),
          _firstFocusable( -1 )
       {
-         wchar_t label[40];
          int y = 1;
          for( int i = 0U; i < CHECKBOX_COUNT; ++i, ++y ) {
-            ::swprintf( label, sizeof( label ), L"Digital n°%2d", i );
-            _controls[i] = new Checkbox( *this, 2, y, label );
+            std::wstringstream label;
+            label << L"Digital n°" << std::setw(2) << i << std::ends;
+            _controls[i] = new Checkbox( *this, 2, y, label.str());
          }
          for( int i = 0U; i < SLIDER_COUNT; ++i, ++y ) {
-            ::swprintf( label, sizeof( label ), L"Analog  n°%2d", i );
-            _controls[y-1] = new Slider( *this, 2, y, width - 24, label, 0, 1023 );
+            std::wstringstream label;
+            label << L"Analog  n°" << std::setw(2) << i << std::ends;
+            _controls[y-1] = new Slider( *this, 2, y, width - 24, label.str(), 0, 1023 );
          }
       }
 

@@ -82,8 +82,8 @@ JavaUIProxy::JavaUIProxy( unsigned short port ) {
    }
    ::memset( &a->addr, 0, sizeof( a->addr ));
    a->addr.sin_family      = AF_INET;
-   a->addr.sin_addr.s_addr = ::htonl( INADDR_ANY );
-   a->addr.sin_port        = ::htons( port + 1 );
+   a->addr.sin_addr.s_addr = htonl( INADDR_ANY );
+   a->addr.sin_port        = htons( port + 1 );
    int st = ::bind( a->socket, (sockaddr *)&a->addr, sizeof( a->addr ));
    if( st ) {
       ::perror("bind()");
