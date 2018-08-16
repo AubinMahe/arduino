@@ -21,6 +21,8 @@ public class ArduinoProxy extends Thread {
 
       E_NONE,
 
+      E_RESET,
+
       //-- Digital I/O -------------------------------------------------------
 
       E_DIGITAL_READ,
@@ -103,6 +105,15 @@ public class ArduinoProxy extends Thread {
       _ctrl.pinMode( pin, output );
    }
 
+   void reset() throws IOException {
+      _sent.clear();
+      _sent.put((byte)verb_t.E_RESET.ordinal());
+      _sent.flip();
+      if( _arduino != null ) {
+         _channel.send( _sent, _arduino );
+      }
+   }
+
    //-- Analog I/O -----------------------------------------------------------
 
    void analogChanged( int pin, int value ) throws IOException {
@@ -118,7 +129,6 @@ public class ArduinoProxy extends Thread {
 
    void analogReference() {
       /*final byte type = */_recv.get();
-      // TODO
    }
 
    void analogWrite() {
@@ -269,9 +279,12 @@ public class ArduinoProxy extends Thread {
             _recv.flip();
             final byte verb = _recv.get();
             if( verb >= 0 && verb < verb_t.values().length ) {
+               _ctrl.onMsgRecv();
                final verb_t v = verb_t.values()[verb];
+               System.err.println( v );
                switch( v ) {
                case E_NONE: break;
+               case E_RESET: break;
 
                //-- Digital I/O ----------------------------------------------
 

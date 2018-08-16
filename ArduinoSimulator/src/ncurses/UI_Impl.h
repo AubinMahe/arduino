@@ -31,16 +31,30 @@ namespace ncurses {
          _ctrl( 0 ),
          _logPane( 0 ),
          _statusPane( 0 ),
+         _status( sim::E_RUNNING ),
          _thread( [ this ] () { run(); })
       {}
 
    public:
 
+      sim::SimuStatus getStatus( void ) {
+         sim::SimuStatus status = _status;
+         if( status == sim::E_RESET ) {
+            _status = sim::E_RUNNING;
+         }
+         return status;
+      }
+
       virtual void hasChanged( Checkbox & what, bool, bool after ) {
-         if(  ( &what == _ctrl->getCheckbox( 2 ))
-            &&( _isr_0_func )
-            &&(  (( _isr_0_mode == RISING  ) &&  after )
-               ||(( _isr_0_mode == FALLING ) && !after )))
+         if( what.getLabel() == L"Reset" ) {
+            if( ! what.isChecked()) {
+               _status = sim::E_RESET;
+            }
+         }
+         else if(  ( &what == _ctrl->getCheckbox( 2 ))
+                  &&( _isr_0_func )
+                  &&(  (( _isr_0_mode == RISING  ) &&  after )
+                     ||(( _isr_0_mode == FALLING ) && !after )))
          {
             _isr_0_func();
          }
@@ -65,14 +79,7 @@ namespace ncurses {
       }
 
       void detachInterrupt( uint8_t pin ) {
-         if( pin == 2 ) {
-            _isr_0_func = 0;
-            _isr_0_mode = 0;
-         }
-         else if( pin == 3 ) {
-            _isr_1_func = 0;
-            _isr_1_mode = 0;
-         }
+         attachInterrupt( pin, 0, 0 );
       }
 
       Controls & ctrl() {
@@ -99,10 +106,11 @@ namespace ncurses {
          ::keypad ( stdscr, TRUE );
          ::mousemask( BUTTON1_PRESSED|BUTTON1_RELEASED, 0 );
          ::refresh();
-         _ctrl       = new Controls( 50, 22 );
+         _ctrl       = new Controls( 50, 23 );
          _logPane    = new LogPane( _ctrl->getWidth() - 1, 40, _ctrl->getHeight());
          _statusPane =
             new StatusPane( _ctrl->getHeight() - 1, _ctrl->getWidth() + _logPane->getWidth() - 1 );
+         _ctrl->addResetListener( this );
          auto lines = hpms::getFileContents( "instructions.txt" );
          if( lines.size() > 0 ) {
             _statusPane->setLine1( lines[0].c_str());
@@ -171,7 +179,7 @@ namespace ncurses {
             key = ::getch();
          }
          ::endwin();
-         ::exit( EXIT_SUCCESS );
+         _status = sim::E_ENDED;
       }
 
    private:
@@ -187,6 +195,7 @@ namespace ncurses {
       Controls *          _ctrl;
       LogPane *           _logPane;
       StatusPane *        _statusPane;
+      sim::SimuStatus     _status;
       std::thread         _thread;
    };
 }

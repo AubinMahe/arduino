@@ -10,6 +10,10 @@ UI:: ~ UI() {
    delete _ui;
 }
 
+sim::SimuStatus UI::getStatus( void ) const {
+   return _ui->getStatus();
+}
+
 //-- Digital I/O ----------------------------------------------------------
 
 int UI::digitalRead( uint8_t pin ) const {

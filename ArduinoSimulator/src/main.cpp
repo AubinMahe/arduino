@@ -16,7 +16,7 @@
 
 #define UI_PROXY_PORT 2416
 
-IUI * proxy;
+sim::IUI * proxy;
 
 //-- Digital I/O -------------------------------------------------------------
 
@@ -208,12 +208,15 @@ int main( int argc, char * argv[] ) {
    }
    if( proxy ) {
       timespec spec;
-      setup();
-      for(;;) {
-         loop();
-         spec.tv_sec  = 0;
-         spec.tv_nsec = 20 * 1000 * 1000; // 20 ms
-         nanosleep( &spec, 0 );
+      int status = sim::E_RUNNING;
+      while(( status = proxy->getStatus()) != sim::E_ENDED ) {
+         setup();
+         while(( status = proxy->getStatus()) == sim::E_RUNNING ) {
+            loop();
+            spec.tv_sec  = 0;
+            spec.tv_nsec = 20 * 1000 * 1000; // 20 ms
+            nanosleep( &spec, 0 );
+         }
       }
    }
    else {

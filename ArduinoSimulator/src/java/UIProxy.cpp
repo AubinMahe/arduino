@@ -19,19 +19,21 @@
 
 struct JavaUIProxyAttributes {
 
-   int         socket;
-   sockaddr_in addr;
-   uint8_t     digital[16];
-   int         analog [16];
-   void    ( * isr_0_func )( void );
-   uint8_t     isr_0_mode;
-   void    ( * isr_1_func )( void );
-   uint8_t     isr_1_mode;
+   int             socket;
+   sockaddr_in     addr;
+   uint8_t         digital[16];
+   int             analog [16];
+   void    ( *     isr_0_func )( void );
+   uint8_t         isr_0_mode;
+   void    ( *     isr_1_func )( void );
+   uint8_t         isr_1_mode;
+   sim::SimuStatus status;
 };
 
 enum verb_t {
 
    E_NONE,
+   E_RESET,
 
    //-- Digital I/O ----------------------------------------------------------
 
@@ -70,7 +72,7 @@ enum verb_t {
 
 JavaUIProxy::JavaUIProxy( unsigned short port ) {
    a = new JavaUIProxyAttributes();
-   ::memset( a->digital, 0, sizeof( a->digital ));
+   ::memset( a, 0, sizeof( JavaUIProxyAttributes ));
    a->isr_0_func = 0;
    a->isr_0_mode = 0;
    a->isr_0_func = 0;
@@ -90,11 +92,20 @@ JavaUIProxy::JavaUIProxy( unsigned short port ) {
       ::exit( EXIT_FAILURE );
    }
    a->addr.sin_port = htons( port );
+   a->status = sim::E_RUNNING;
    pthread_t thread;
    if( ::pthread_create( &thread, 0, JavaUIProxy::recv, this )) {
       ::perror("pthread_create()");
       ::exit( EXIT_FAILURE );
    }
+}
+
+sim::SimuStatus JavaUIProxy::getStatus( void ) const {
+   sim::SimuStatus status = a->status;
+   if( status == sim::E_RESET ) {
+      a->status = sim::E_RUNNING;
+   }
+   return status;
 }
 
 //-- Digital I/O ----------------------------------------------------------
@@ -251,7 +262,10 @@ void JavaUIProxy::_recv() const {
          ::exit( EXIT_FAILURE );
       }
       verb_t verb = (verb_t)buffer[0];
-      if( verb == E_DIGITAL_READ ) {
+      if( verb == E_RESET ) {
+         a -> status = sim::E_RESET;
+      }
+      else if( verb == E_DIGITAL_READ ) {
          int pin    = buffer[1];
          int status = buffer[2];
          a->digital[pin] = status;

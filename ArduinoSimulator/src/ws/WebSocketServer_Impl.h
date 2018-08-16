@@ -26,37 +26,39 @@ namespace ws {
 
       E_NONE,
 
-      //-- Digital I/O ----------------------------------------------------------
+      E_RESET,
+
+      //-- Digital I/O -------------------------------------------------------
 
       E_DIGITAL_READ,
       E_DIGITAL_WRITE,
       E_PIN_MODE,
 
-      //-- Analog I/O -----------------------------------------------------------
+      //-- Analog I/O --------------------------------------------------------
 
       E_ANALOG_READ,
       E_ANALOG_REFERENCE,
       E_ANALOG_WRITE,
 
-      //-- Advanced I/O ---------------------------------------------------------
+      //-- Advanced I/O ------------------------------------------------------
 
       E_NO_TONE,
       E_TONE,
 
-      //-- External Interrupts --------------------------------------------------
+      //-- External Interrupts -----------------------------------------------
 
-      //-- Communication --------------------------------------------------------
+      //-- Communication -----------------------------------------------------
 
       E_PRINT,
       E_PRINTLN,
 
-      //-- Servo ----------------------------------------------------------------
+      //-- Servo -------------------------------------------------------------
 
       E_SERVO_ATTACH,
       E_SERVO_WRITE,
       E_SERVO_DETACH,
 
-      //-- Exit -----------------------------------------------------------------
+      //-- Exit --------------------------------------------------------------
 
       E_EXIT
    };
@@ -109,17 +111,33 @@ namespace ws {
    public:
 
       WebSocketServer_Impl( int port ) :
+         _context( 0 ),
+         _wsi( 0 ),
+         _isr_0_func( 0 ),
+         _isr_0_mode( 0 ),
+         _isr_1_func( 0 ),
+         _isr_1_mode( 0 ),
+         _status( sim::E_RUNNING ),
+         _clientCount( 0U ),
          _thread( [ this, port ] () { run( port ); })
       {}
 
    public:
+
+      sim::SimuStatus getStatus( void ) {
+         sim::SimuStatus status = _status;
+         if( status == sim::E_RESET ) {
+            _status = sim::E_RUNNING;
+         }
+         return status;
+      }
 
       void enqueue( const std::function<void(void)> & job ) {
          std::lock_guard<std::mutex> lock( _jobsLock );
          _jobs.push( job );
       }
 
-      //-- Digital I/O -------------------------------------------------------------
+      //-- Digital I/O -------------------------------------------------------
 
       int digitalRead( uint8_t pin ) const {
          return _digital[pin];
@@ -162,7 +180,7 @@ namespace ws {
          sendToUI( msg );
       }
 
-      //-- External Interrupts --------------------------------------------------
+      //-- External Interrupts -----------------------------------------------
 
       void attachInterrupt( uint8_t pin, void (* ISR )(void), uint8_t mode ) {
          if( pin == 2 ) {
@@ -204,7 +222,7 @@ namespace ws {
          sendToUI( msg );
       }
 
-      //-- Servo -------------------------------------------------------------------
+      //-- Servo -------------------------------------------------------------
 
       void servoAttach( uint8_t pin ) {
          hpms::JSonObject msg = {
@@ -256,28 +274,17 @@ namespace ws {
          verb_t verb = msg.getEnum<verb_t>( "verb" );
          uint8_t pin;
          bool hiOrLo;
-         switch( verb ) {
-         case E_NONE: break;
-         case E_DIGITAL_READ:
+         if( verb == E_RESET ) {
+            _status = sim::E_RESET;
+         }
+         else if( verb == E_DIGITAL_READ ) {
             pin    = msg.getInt<uint8_t>( "pin" );
             hiOrLo = msg.getBoolean( "hiOrLo" );
             _digital[pin] = hiOrLo;
             digitalChanged( pin, hiOrLo );
-            break;
-         case E_DIGITAL_WRITE:
-         case E_PIN_MODE:
-         case E_ANALOG_READ:
-         case E_ANALOG_REFERENCE:
-         case E_ANALOG_WRITE:
-         case E_NO_TONE:
-         case E_TONE:
-         case E_PRINT:
-         case E_PRINTLN:
-         case E_SERVO_ATTACH:
-         case E_SERVO_WRITE:
-         case E_SERVO_DETACH:
-         case E_EXIT:
-            break;
+         }
+         else if( verb == E_EXIT ) {
+            _status = sim::E_ENDED;
          }
       }
 
@@ -330,12 +337,16 @@ namespace ws {
             if( ! ui->_msgQueue.empty()) {
                ::lws_callback_on_writable_all_protocol( ui->_context, &_protocols[1] );
             }
+            ++( ui->_clientCount );
             break;
 
          case LWS_CALLBACK_CLOSED:
             ::_lws_log( LLL_NOTICE, "CLOSED\n" );
             /* remove our closing pss from the list of live pss */
             lws_ll_fwd_remove( per_session_data__minimal, pss_list, pss, vhd->pss_list );
+            if( --(ui->_clientCount) == 0 ) {
+               _isRunning = false;
+            }
             break;
 
          case LWS_CALLBACK_SERVER_WRITEABLE: return ui->send( wsi );
@@ -374,11 +385,11 @@ namespace ws {
                }
             }
             ::lws_context_destroy( context );
+            _status = sim::E_ENDED;
          }
          else {
             lwsl_err( "lws_create_context failed\n" );
          }
-         exit( EXIT_SUCCESS );
       }
 
    private:
@@ -389,7 +400,6 @@ namespace ws {
          std::function<
             void(void)> >     _jobs;
       std::mutex              _jobsLock;
-      std::thread             _thread;
       lws_context *           _context;
       lws *                   _wsi;
       Message                 _message;
@@ -400,6 +410,9 @@ namespace ws {
       void    ( *             _isr_1_func )( void );
       uint8_t                 _isr_1_mode;
       int                     _analog[SLIDER_COUNT];
+      sim::SimuStatus         _status;
+      unsigned                _clientCount;
+      std::thread             _thread;
    };
 
    lws_protocols WebSocketServer_Impl::_protocols[] = {

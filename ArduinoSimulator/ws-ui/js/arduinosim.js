@@ -1,64 +1,75 @@
 var ardsim = {
 
    E_NONE            :  0,
+   E_RESET           :  1,
    //-- Digital I/O ----------------------------------------------------------
-   E_DIGITAL_READ    :  1,
-   E_DIGITAL_WRITE   :  2,
-   E_PIN_MODE        :  3,
+   E_DIGITAL_READ    :  2,
+   E_DIGITAL_WRITE   :  3,
+   E_PIN_MODE        :  4,
    //-- Analog I/O -----------------------------------------------------------
-   E_ANALOG_READ     :  4,
-   E_ANALOG_REFERENCE:  5,
-   E_ANALOG_WRITE    :  6,
+   E_ANALOG_READ     :  5,
+   E_ANALOG_REFERENCE:  6,
+   E_ANALOG_WRITE    :  7,
    //-- Advanced I/O ---------------------------------------------------------
-   E_NO_TONE         :  7,
-   E_TONE            :  8,
+   E_NO_TONE         :  8,
+   E_TONE            :  9,
    //-- Communication --------------------------------------------------------
-   E_PRINT           :  9,
-   E_PRINTLN         : 10,
+   E_PRINT           : 10,
+   E_PRINTLN         : 11,
    //-- Servo ----------------------------------------------------------------
-   E_SERVO_ATTACH    : 11,
-   E_SERVO_WRITE     : 12,
-   E_SERVO_DETACH    : 13,
+   E_SERVO_ATTACH    : 12,
+   E_SERVO_WRITE     : 13,
+   E_SERVO_DETACH    : 14,
    //-- Exit -----------------------------------------------------------------
-   E_EXIT            : 14,
+   E_EXIT            : 15,
 
    ws    : null,
    create: function() {
-      try {
-         ardsim.ws = new WebSocket( "ws://localhost:2416", "ardsim" );
-         ardsim.ws.onopen = function() {
-            let title = document.getElementById( "ardsim-title" );
-            title.textContent = "Arduino simulator : connecté";
-         };
-         ardsim.ws.onclose = function() {
-            let title = document.getElementById( "ardsim-title" );
-            title.textContent = "Arduino simulator : déconnecté";
-         };
-         ardsim.ws.onmessage = function( msg ) {
+      ardsim.ws = new WebSocket( "ws://localhost:2416", "ardsim" );
+      ardsim.ws.onopen = function() {
+         let title = document.getElementById( "ardsim-title" );
+         title.textContent = "Arduino simulator : connecté";
+      };
+      ardsim.ws.onclose = function() {
+         let title = document.getElementById( "ardsim-title" );
+         title.textContent = "Arduino simulator : déconnecté";
+      };
+      ardsim.ws.onmessage = function( msg ) {
 //            console.log( "%o", msg.data );
-            let m = JSON.parse( msg.data );
-            switch( m.verb ) {
-            //-- Digital I/O -------------------------------------------------
-            case ardsim.E_DIGITAL_WRITE: ardsim.digitalWrite( m.pin, m.hiOrLo ); break;
-            case ardsim.E_PIN_MODE     : ardsim.pinMode     ( m.pin, m.mode   ); break;
-            //-- Analog I/O -----------------------------------------------------------
-            case ardsim.E_ANALOG_WRITE : ardsim.analogWrite ( m.pin, m.value  ); break;
-            //-- Communication -----------------------------------------------
-            case ardsim.E_PRINT        : ardsim.print       ( m.line );          break;
-            case ardsim.E_PRINTLN      : ardsim.println     ( m.line );          break;
-            //-- Servo -------------------------------------------------------
-            case ardsim.E_SERVO_ATTACH : ardsim.servoAttach ( m.pin );           break;
-            case ardsim.E_SERVO_WRITE  : ardsim.servoWrite  ( m.pin, m.value );  break;
-            case ardsim.E_SERVO_DETACH : ardsim.servoAttach ( m.pin );           break;
-            }
-         };
-      }
-      catch( exception ) {
-         console.err( exception );
-      }
+         let m = JSON.parse( msg.data );
+         switch( m.verb ) {
+         //-- Digital I/O -------------------------------------------------
+         case ardsim.E_DIGITAL_WRITE: ardsim.digitalWrite( m.pin, m.hiOrLo ); break;
+         case ardsim.E_PIN_MODE     : ardsim.pinMode     ( m.pin, m.mode   ); break;
+         //-- Analog I/O -----------------------------------------------------------
+         case ardsim.E_ANALOG_WRITE : ardsim.analogWrite ( m.pin, m.value  ); break;
+         //-- Communication -----------------------------------------------
+         case ardsim.E_PRINT        : ardsim.print       ( m.line );          break;
+         case ardsim.E_PRINTLN      : ardsim.println     ( m.line );          break;
+         //-- Servo -------------------------------------------------------
+         case ardsim.E_SERVO_ATTACH : ardsim.servoAttach ( m.pin );           break;
+         case ardsim.E_SERVO_WRITE  : ardsim.servoWrite  ( m.pin, m.value );  break;
+         case ardsim.E_SERVO_DETACH : ardsim.servoAttach ( m.pin );           break;
+         }
+      };
+      ardsim.ws.onerror = function( event ) {
+         if(  ( ardsim.ws.readyState == WebSocket.CLOSING )
+            ||( ardsim.ws.readyState == WebSocket.CLOSED  ))
+         {
+            console.log( 'ArduinoSim server is unreachable, retrying in 500 ms...' );
+            setTimeout( ardsim.create, 500 );
+         }
+      };
    },
    idToPin: function( id ) {
       return parseInt( id.substring( id.lastIndexOf( "_" ) + 1 ));
+   },
+   reset: function( e ) {
+      console.log( "reset|e: %o", e );
+      let msg = "{'verb':" + ardsim.E_RESET + "}";
+      if( ardsim.ws.readyState == WebSocket.OPEN ) {
+         ardsim.ws.send( msg );
+      }
    },
    //-- Digital I/O ----------------------------------------------------------
    digitalChanged: function( checkbox ) {
@@ -68,8 +79,9 @@ var ardsim = {
          ",'pin':"    + ardsim.idToPin( checkbox.id ) +
          ",'hiOrLo':" + checkbox.checked +
          "}";
-      console.log( msg );
-      ardsim.ws.send( msg );
+      if( ardsim.ws.readyState == WebSocket.OPEN ) {
+         ardsim.ws.send( msg );
+      }
    },
    digitalWrite: function( pin, hiOrLo ) {
       console.log( "digitalWrite|pin: %s, hiOrLo: %s", pin, hiOrLo );
@@ -97,10 +109,11 @@ var ardsim = {
          ",'pin':"   + pin +
          ",'value':" + slider.value +
          "}";
-      console.log( msg );
-      ardsim.ws.send( msg );
       let label = document.getElementById( "ardsim-analog_value_" + pin );
       label.textContent = slider.value;
+      if( ardsim.ws.readyState == WebSocket.OPEN ) {
+         ardsim.ws.send( msg );
+      }
    },
    analogWrite: function( pin, value ) {
       console.log( "analogWrite|pin: %s, value: %s", pin, value );

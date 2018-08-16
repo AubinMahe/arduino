@@ -1,10 +1,24 @@
 SUBDIRS = src
 
-$(top_srcdir)/../hpms.app.arduinosim/hpms.app.arduinosim.jar:
-	cd $(top_srcdir)/../hpms.app.arduinosim ; ant
+EXTRA_DIST = \
+ java-ui/hpms.app.arduinosim.jar \
+ java-ui/hpms.fx.angle.jar \
+ ws-ui/css/arduinosim.css \
+ ws-ui/js/arduinosim.js \
+ ws-ui/favicon.ico \
+ ws-ui/index.html
 
-run-java: src/itepm $(top_srcdir)/../hpms.app.arduinosim/hpms.app.arduinosim.jar
-	java -cp $(top_srcdir)/../hpms.app.arduinosim/hpms.app.arduinosim.jar:$(top_srcdir)/../hpms.app.arduinosim/lib/hpms.fx.angle.jar hpms.app.arduinosim.Main &
+nobase_dist_pkgdata_DATA = \
+ java-ui/hpms.app.arduinosim.jar \
+ java-ui/hpms.fx.angle.jar \
+ ws-ui/css/arduinosim.css \
+ ws-ui/js/arduinosim.js \
+ ws-ui/favicon.ico \
+ ws-ui/index.html \
+ instructions.txt
+
+run-java: src/itepm java-ui/hpms.app.arduinosim.jar
+	java -cp java-ui/hpms.app.arduinosim.jar:java-ui/hpms.fx.angle.jar hpms.app.arduinosim.Main &
 	sleep 2
 	src/itepm --ui=java
 
@@ -13,5 +27,5 @@ run-ncurses: src/itepm
 	cat ncurses.err
 
 run-ws: src/itepm
-	firefox $(top_srcdir)/ws-ui/index.html &
+	firefox ws-ui/index.html &
 	src/itepm --ui=ws

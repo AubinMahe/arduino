@@ -1,2 +1,0 @@
-This folder contains the java proxy implementation of the simulator UI.
-It's connected by socket to a JavaFx UI.

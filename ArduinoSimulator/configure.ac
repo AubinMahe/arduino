@@ -20,8 +20,6 @@ AC_CHECK_HEADERS([stdlib.h])
 AC_CHECK_HEADERS([string.h])
 AC_CHECK_HEADERS([sys/socket.h])
 AC_CHECK_HEADERS([sys/time.h])
-AC_CHECK_FILE([${srcdir}/../hpms.app.arduinosim/build.xml], [], [AC_MSG_ERROR([library 'Java project hpms.app.arduinosim' is required for ArduinoSim])])
-AC_CHECK_FILE([${srcdir}/../IfThenElsePourMax/src/IfThenElsePourMax.cpp], [], [AC_MSG_ERROR([library 'Arduino project IfThenElsePourMax' is required for ArduinoSim])])
 AC_CHECK_HEADER_STDBOOL
 AC_C_INLINE
 AC_FUNC_STRTOD

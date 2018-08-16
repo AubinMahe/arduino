@@ -7,8 +7,11 @@
    <script type="text/javascript" src="js/arduinosim.js"></script>
 </head>
 <body onload="ardsim.create()">
-   <h1 id="ardsim-title">Arduino simulator : déconnecté</h1>
    <div id="ardsim-app">
+      <div id="ardsim-top-title">
+         <button id="ardsim-reset" onclick="ardsim.reset( this );">Reset</button>
+         <h1 id="ardsim-title">Arduino simulator : déconnecté</h1>
+      </div>
       <div id="ardsim-top">
          <div id="ardsim-controls">
          
@@ -32,7 +35,7 @@
                <label class="ardsim-label">Digital</label>
                <label class="ardsim-rank">2</label>
                <p     class="ardsim-role"  id="ardsim-digital_role_2">---</p>
-               <input class="ardsim-checkbox" id="ardsim-digital_value_2" type="checkbox"
+               <input class="ardsim-checkbox" id="ardsim-digital_value_2" type="checkbox" disabled="disabled"
                   onchange="ardsim.digitalChanged( this );" />
             </div>
          

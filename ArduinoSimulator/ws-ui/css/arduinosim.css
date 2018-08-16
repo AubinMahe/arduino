@@ -1,15 +1,13 @@
 * {
-   margin : 0;
-   padding: 0;
+   margin     : 0;
+   padding    : 0;
+   font-family: sans-serif;
 }
 body {
 	padding: 4px; /* haut droite bas gauche */
 }
 div {
    box-sizing: border-box;
-}
-#ardsim-title {
-   display: inline-block;
 }
 .ardsim-label {
    display       : inline-block;
@@ -59,6 +57,22 @@ div {
 #ardsim-app {
    display: block;
    width  : 1000px;
+}
+#ardsim-top-title {
+   display       : inline-block;
+	height        : 42px;
+}
+#ardsim-reset {
+   display       : inline-block;
+   width         : 72px;
+   height        : 80%;
+   font-weight   : bold;
+   vertical-align: middle;
+}
+#ardsim-title {
+   display       : inline-block;
+   vertical-align: middle;
+   height        : 100%;
 }
 #ardsim-top {
    display: flex;

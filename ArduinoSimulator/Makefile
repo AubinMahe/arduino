@@ -1,10 +1,9 @@
 CXX      = g++
-CXXFLAGS = -W -Wall -g3 -O0 -std=c++11 -I inc -DDEBUG
-#CXXFLAGS = -W -Wall -g3 -O3 -std=c++11 -I inc -DDEBUG
-#CXXFLAGS = -W -Wall -g0 -O3 -std=c++11 -I inc -DNDEBUG
+CXXFLAGS = -W -Wall -g3 -O0 -std=c++11 -I src/arduinosim -DDEBUG
+#CXXFLAGS = -W -Wall -g3 -O3 -std=c++11 -I src/arduinosim -DDEBUG
+#CXXFLAGS = -W -Wall -g0 -O3 -std=c++11 -I src/arduinosim -DNDEBUG
 LDFLAGS  = -L BUILD -lsim -lncursesw -lm -lwebsockets -lpthread -lefence
-CP = ../hpms.app.arduinosim/hpms.app.arduinosim.jar:../hpms.app.arduinosim/lib/hpms.fx.angle.jar 
-OBJS =\
+OBJS     =\
  BUILD/main.o\
  BUILD/java/UIProxy.o\
  BUILD/ncurses/UI.o\
@@ -13,46 +12,49 @@ OBJS =\
  BUILD/ws/WebSocketUIServer.o\
  BUILD/ws/jsontest.o
 
-all: BUILD/itepm ../hpms.app.arduinosim/hpms.app.arduinosim.jar
+DISTRIBUTED =\
+ BUILD/main.o\
+ BUILD/java/UIProxy.o\
+ BUILD/ncurses/UI.o\
+ BUILD/ncurses/getFileContents.o\
+ BUILD/ws/WebSocketUIServer.o
 
-ncurses: BUILD/arduinosim
+all: BUILD/arduinosimsample $(OBJS)
 
 clean:
-	rm -fr BUILD ncurses.err
-	cd ../hpms.app.arduinosim ; ant clean
+	rm -fr BUILD arduinosimsample.err
 
-BUILD/itepm: BUILD/IfThenElsePourMax.o BUILD/libsim.a
+BUILD/arduinosimsample: BUILD/IfThenElsePourMax.o BUILD/libsim.a
 	$(CXX) $< -o $@ $(LDFLAGS)
 	
-BUILD/IfThenElsePourMax.o: ../IfThenElsePourMax/src/IfThenElsePourMax.cpp
+BUILD/IfThenElsePourMax.o: src/sample/IfThenElsePourMax.cpp
 	@mkdir -p $$(dirname $@)
-	$(CXX) $(CXXFLAGS) -I ../IfThenElsePourMax/inc $< -c -o $@
+	$(CXX) $(CXXFLAGS) $< -c -o $@
 
-BUILD/libsim.a: $(OBJS)
+BUILD/libsim.a: $(DISTRIBUTED)
 	ar -rcs $@ $?
 
 BUILD/%.o: src/%.cpp
 	@mkdir -p $$(dirname $@)
 	$(CXX) $(CXXFLAGS) -c -o $@ $<
 
-../hpms.app.arduinosim/hpms.app.arduinosim.jar:
-	cd ../hpms.app.arduinosim ; ant
-
-run-java: ../hpms.app.arduinosim/hpms.app.arduinosim.jar BUILD/itepm
-	java -cp $(CP) hpms.app.arduinosim.Main &
+run-java: BUILD/arduinosimsample
+	java -jar java-ui/hpms.app.arduinosim.jar 2> arduinosimsample.err &
 	sleep 2
-	BUILD/itepm --ui=java
+	BUILD/arduinosimsample --ui=java
+	cat arduinosimsample.err
 
-run-ncurses: BUILD/itepm
-	BUILD/itepm --ui=ncurses 2> ncurses.err
-	cat ncurses.err
+run-ncurses: BUILD/arduinosimsample
+	BUILD/arduinosimsample --ui=ncurses 2> arduinosimsample.err
+	cat arduinosimsample.err
 
-run-ws: BUILD/itepm
+run-ws: BUILD/arduinosimsample
 	firefox ws-ui/index.html &
-	BUILD/itepm --ui=ws
+	BUILD/arduinosimsample --ui=ws
 
-BUILD/main.o: src/IUI.h src/main.cpp
 BUILD/java/UIProxy.o: src/IUI.h src/java/UIProxy.h src/java/UIProxy.cpp
 BUILD/ncurses/UI.o: src/IUI.h src/ncurses/UI_Impl.h src/ncurses/utf8len.h src/ncurses/getFileContents.h src/ncurses/IChangeListener.h src/ncurses/Checkbox.h src/ncurses/Control.h src/ncurses/ControlsPane.h src/ncurses/LogPane.h src/ncurses/Slider.h src/ncurses/Timeout.h src/ncurses/UI.h src/ncurses/Window.h src/ncurses/UI.cpp
 BUILD/ncurses/getFileContents.o: src/ncurses/getFileContents.cpp src/ncurses/getFileContents.h
 BUILD/ws/WebSocketUIServer.o: src/IUI.h src/ws/json.h src/ws/WebSocketServer_Impl.h src/ws/WebSocketUIServer.h
+BUILD/main.o: src/arduinosim/Arduino.h src/arduinosim/Servo.h src/IUI.h src/main.cpp
+BUILD/IfThenElsePourMax.o: src/arduinosim/Arduino.h src/arduinosim/Servo.h src/sample/IfThenElsePourMax.cpp

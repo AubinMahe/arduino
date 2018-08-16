@@ -1,6 +1,8 @@
 package hpms.app.arduinosim;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,6 +17,7 @@ import javafx.scene.control.TextArea;
 
 public class SimulatorController {
 
+   @FXML private Label        _status;
    @FXML private Label        _direction_0;
    @FXML private Label        _direction_1;
    @FXML private Label        _direction_2;
@@ -71,6 +74,8 @@ public class SimulatorController {
    @FXML private Slider       _analogIn_4;
    @FXML private Slider       _analogIn_5;
    @FXML private TextArea     _serial;
+   @FXML private Label        _status1;
+   @FXML private Label        _status2;
 
    private final Map<Byte, Slider>       _sliders = new HashMap<>();
    private final Map<Byte, AngleControl> _servos  = new HashMap<>();
@@ -78,9 +83,16 @@ public class SimulatorController {
    private /* */ CheckBox[]              _digital;
    private /* */ Slider  []              _analogIn;
    private /* */ ArduinoProxy            _proxy;
+   private /* */ long                    _msgCount;
 
    void setProxy( ArduinoProxy proxy ) {
       _proxy = proxy;
+      try {
+         final var lines = Files.readAllLines( Paths.get( "instructions.txt" ));
+         _status1.setText( lines.get( 0 ));
+         _status2.setText( lines.get( 1 ));
+      }
+      catch( final Throwable t ) {/**/}
    }
 
    @FXML
@@ -143,6 +155,18 @@ public class SimulatorController {
          pb.valueProperty().addListener(( o, b, a ) -> analog( pin, pb.getValue()));
       }
       _serial.setText( "" );
+   }
+
+   @FXML
+   public void reset() throws IOException {
+      _proxy.reset();
+   }
+
+   public void onMsgRecv() {
+      Platform.runLater(() -> {
+         ++_msgCount;
+         _status.setText( "Arduino simulator : message(s) reçu : " + _msgCount );
+      });
    }
 
    @FXML

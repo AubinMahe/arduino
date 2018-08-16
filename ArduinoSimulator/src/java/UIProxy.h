@@ -5,12 +5,14 @@
 #define UI_PROXY_PORT 2416
 
 struct JavaUIProxyAttributes;
-class JavaUIProxy : public IUI {
+class JavaUIProxy : public sim::IUI {
 public:
 
    JavaUIProxy( unsigned short port );
 
 public:
+
+   virtual sim::SimuStatus getStatus( void ) const;
 
    //-- Digital I/O ----------------------------------------------------------
 

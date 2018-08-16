@@ -28,8 +28,14 @@
       <jar basedir="build" destfile="hpms.app.arduinosim.jar">
          <manifest>
             <attribute name="Main-Class" value="hpms.app.arduinosim.Main"/>
+            <attribute name="Class-Path" value="hpms.fx.angle.jar"/>
          </manifest>
       </jar>
+   </target>
+
+   <target name="deploy" depends="jar">
+      <copy todir="../ArduinoSimulator/java-ui" file="hpms.app.arduinosim.jar" />
+      <copy todir="../ArduinoSimulator/java-ui" file="lib/hpms.fx.angle.jar" />
    </target>
 
 </project>

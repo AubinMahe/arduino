@@ -5,7 +5,7 @@
 namespace ncurses {
 
    class UI_Impl;
-   class UI : public IUI {
+   class UI : public sim::IUI {
    public:
 
       UI();
@@ -13,6 +13,8 @@ namespace ncurses {
       virtual ~ UI();
 
    public:
+
+      virtual sim::SimuStatus getStatus( void ) const;
 
       //-- Digital I/O ----------------------------------------------------------
 

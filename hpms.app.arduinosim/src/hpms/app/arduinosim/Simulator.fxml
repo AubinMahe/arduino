@@ -9,13 +9,23 @@
 <?import javafx.scene.text.*?>
 <?import hpms.fx.angle.*?>
 
-<SplitPane xmlns:fx="http://javafx.com/fxml"
-   fx:controller="hpms.app.arduinosim.SimulatorController"
-   orientation="HORIZONTAL" dividerPositions="0.34">
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+   fx:controller="hpms.app.arduinosim.SimulatorController">
    <padding>
       <Insets topRightBottomLeft="4" />
    </padding>
-   <items>
+   <top>
+      <HBox alignment="CENTER_LEFT" spacing="8">
+         <maxWidth><Double fx:constant="MAX_VALUE"/></maxWidth>
+         <Button text="Reset" onAction="#reset" />
+         <Label fx:id="_status"
+            text="Arduino simulator : déconnecté"
+            style="-fx-font-size: 24px; -fx-font-weight: bold;">
+            <maxWidth><Double fx:constant="MAX_VALUE"/></maxWidth>
+         </Label>
+      </HBox>
+   </top>
+   <left>
       <GridPane hgap="4.0" vgap="4.0">
          <Label      fx:id="_direction_0"  GridPane.columnIndex="0" GridPane.rowIndex= "0" text="Digital n° 0 ---"><maxWidth><Double fx:constant="MAX_VALUE"/></maxWidth></Label>
          <Label      fx:id="_direction_1"  GridPane.columnIndex="0" GridPane.rowIndex= "1" text="Digital n° 1 ---"><maxWidth><Double fx:constant="MAX_VALUE"/></maxWidth></Label>
@@ -61,12 +71,12 @@
          <Button text="La 440 Hz ON"  onAction="#noteOn"  GridPane.columnIndex="0" GridPane.rowIndex= "8" GridPane.columnSpan="2" />
          <Button text="La 440 Hz OFF" onAction="#noteOff" GridPane.columnIndex="0" GridPane.rowIndex= "9" GridPane.columnSpan="2" />
          -->
-         <Label text="Analog n°0"    GridPane.columnIndex="0" GridPane.rowIndex="14" />
-         <Label text="Analog n°1"    GridPane.columnIndex="0" GridPane.rowIndex="15" />
-         <Label text="Analog n°2"    GridPane.columnIndex="0" GridPane.rowIndex="16" />
-         <Label text="Analog n°3"    GridPane.columnIndex="0" GridPane.rowIndex="17" />
-         <Label text="Analog n°4"    GridPane.columnIndex="0" GridPane.rowIndex="18" />
-         <Label text="Analog n°5"    GridPane.columnIndex="0" GridPane.rowIndex="19" />
+         <Label text="Analog n°A0"   GridPane.columnIndex="0" GridPane.rowIndex="14" />
+         <Label text="Analog n°A1"   GridPane.columnIndex="0" GridPane.rowIndex="15" />
+         <Label text="Analog n°A2"   GridPane.columnIndex="0" GridPane.rowIndex="16" />
+         <Label text="Analog n°A3"   GridPane.columnIndex="0" GridPane.rowIndex="17" />
+         <Label text="Analog n°A4"   GridPane.columnIndex="0" GridPane.rowIndex="18" />
+         <Label text="Analog n°A5"   GridPane.columnIndex="0" GridPane.rowIndex="19" />
          <Slider fx:id="_analogIn_0" GridPane.columnIndex="1" GridPane.rowIndex="14" onChange="#analog" min="0" max="1023" />
          <Slider fx:id="_analogIn_1" GridPane.columnIndex="1" GridPane.rowIndex="15" onChange="#analog" min="0" max="1023" />
          <Slider fx:id="_analogIn_2" GridPane.columnIndex="1" GridPane.rowIndex="16" onChange="#analog" min="0" max="1023" />
@@ -74,6 +84,21 @@
          <Slider fx:id="_analogIn_4" GridPane.columnIndex="1" GridPane.rowIndex="18" onChange="#analog" min="0" max="1023" />
          <Slider fx:id="_analogIn_5" GridPane.columnIndex="1" GridPane.rowIndex="19" onChange="#analog" min="0" max="1023" />
       </GridPane>
+   </left>
+   <center>
       <TextArea fx:id="_serial" />
-   </items>
-</SplitPane>
+   </center>
+   <bottom>
+      <VBox>
+         <maxWidth><Double fx:constant="MAX_VALUE"/></maxWidth>
+         <Label fx:id="_status1" style="-fx-font-style: italic"
+            text="Si un fichier nommé 'instructions.txt' existe dans le dossier de">
+            <maxWidth><Double fx:constant="MAX_VALUE"/></maxWidth>
+         </Label>
+         <Label fx:id="_status2" style="-fx-font-style: italic"
+            text="lancement du simulateur, il sera lu pour renseigner ces deux lignes.">
+            <maxWidth><Double fx:constant="MAX_VALUE"/></maxWidth>
+         </Label>
+      </VBox>
+   </bottom>
+</BorderPane>

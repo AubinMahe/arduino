@@ -10,6 +10,10 @@ WebSocketUIServer::WebSocketUIServer( int port ) :
 WebSocketUIServer:: ~ WebSocketUIServer() {
 }
 
+sim::SimuStatus WebSocketUIServer::getStatus( void ) const {
+   return _ui->getStatus();
+}
+
 //-- Digital I/O -------------------------------------------------------------
 
 int WebSocketUIServer::digitalRead( uint8_t pin ) const {

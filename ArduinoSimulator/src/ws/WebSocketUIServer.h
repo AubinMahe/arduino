@@ -5,7 +5,7 @@
 namespace ws {
 
    class WebSocketServer_Impl;
-   class WebSocketUIServer : public IUI {
+   class WebSocketUIServer : public sim::IUI {
    public:
 
       WebSocketUIServer( int port );
@@ -13,6 +13,8 @@ namespace ws {
       virtual ~ WebSocketUIServer();
 
    public:
+
+      virtual sim::SimuStatus getStatus( void ) const;
 
       //-- Digital I/O ----------------------------------------------------------
 

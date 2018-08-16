@@ -23,7 +23,7 @@ namespace ncurses {
          _max( max ),
          _value( min ),
          _step((unsigned)ceil(( max - min ) /(double)( width - 1.0 ))),
-         _left( x + _label.length() + 2 ),
+         _left( x + _label.length() + 1 ),
          _right( _left + _width )
       {}
 
