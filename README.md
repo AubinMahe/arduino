@@ -40,12 +40,12 @@ Voici deux captures d'écran concernant l'IHM *WebSocket* (Firefox) :
 
 **Lisez d'abord toutes les étapes.**
 
-1. Téléchargez [l'archive](https://aubinmahe.github.io/arduino/ArduinoSimulator/arduinosim-1.0.tar.gz)
+1. Téléchargez [l'archive](https://aubinmahe.github.io/arduino/ArduinoSimulator/arduinosim-1.1.tar.gz)
 
 1. Dans un terminal, entrez la séquence habituelle :
 
-       $> tar xzf arduinosim-1.0.tar.gz
-       $> cd arduinosim-1.0
+       $> tar xzf arduinosim-1.1.tar.gz
+       $> cd arduinosim-1.1
        $> ./configure [--prefix chemin-absolu]
        $> make
        $> sudo make install
@@ -60,6 +60,7 @@ Voici deux captures d'écran concernant l'IHM *WebSocket* (Firefox) :
        <prefixe>/share/arduinosim/ws-ui/css/arduinosim.css
        <prefixe>/share/arduinosim/ws-ui/js
        <prefixe>/share/arduinosim/ws-ui/js/arduinosim.js
+       <prefixe>/share/arduinosim/ws-ui/js/gfx.Angle.js
        <prefixe>/share/arduinosim/ws-ui/favicon.ico
        <prefixe>/share/arduinosim/java-ui
        <prefixe>/share/arduinosim/java-ui/hpms.fx.angle.jar

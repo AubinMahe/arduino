@@ -9,50 +9,40 @@ body {
 div {
    box-sizing: border-box;
 }
-.ardsim-label {
-   display       : inline-block;
-	width         : 64px;
-   height        : 100%;
-   line-height   : 20px;
-   text-align    : left;
-   vertical-align: middle;
+.ardsim-io {
+   display        : flex;
+   justify-content: left;
+   align-items    : center;
 }
-.ardsim-rank {
-   display       : inline-block;
-	width         : 24px;
-   height        : 100%;
-   line-height   : 20px;
-   text-align    : right;
-   vertical-align: middle;
-   margin        : 0 4px 0 0;
+.ardsim-io label:nth-of-type(2) { /* rank */
+   display   : inline-block;
+	width     : 24px;
+   text-align: right;
+   margin    : 0 2px;
 }
-.ardsim-role {
-	display       : inline-block;
-   width         : 56px;
-   height        : 100%;
-   line-height   : 20px;
-   text-align    : center;
-   vertical-align: middle;
+.ardsim-io label:nth-of-type(3) { /* role */
+	display   : inline-block;
+   width     : 42px;
+   text-align: right;
+   margin    : 0 2px;
 }
-.ardsim-checkbox {
-   width         : 20px;
-   height        : 20px;
-   line-height   : 20px;
-   vertical-align: middle;
+.ardsim-digital {
+   width : 24px;
+   height: 24px;
+   margin: 0 2px;
 }
-.ardsim-checkbox:checked {
+.ardsim-digital:checked {
     background: #26ca28;
 }
-.ardsim-slider {
-   line-height   : 20px;
-   vertical-align: middle;
-   width         : calc( 100% - 64px - 24px - 4px - 42px );
-   padding       : 0 0 0 4px; /* haut droite bas gauche */
+.ardsim-analog {
+   width  : calc( 100% - 64px - 24px - 4px - 42px );
+   height : 24px;
+   padding: 0 0 0 4px; /* haut droite bas gauche */
 }
 .ardsim-analog-value {
-   display       : inline-block;
-   width         : 42px;
-   margin-left   : 4px;
+   display    : inline-block;
+   width      : 42px;
+   margin-left: 4px;
 }
 #ardsim-app {
    display: block;
@@ -86,7 +76,7 @@ div {
 #ardsim-log {
    display     : block;
 	flex        : calc(100% - 300px);
-   height      : 420px;
+   height      : calc(4px + 4px + 3px + (14 + 6) * 24px);
    padding     : 4px;
    overflow-y  : scroll;
    border-top  : 3px solid darkgray;

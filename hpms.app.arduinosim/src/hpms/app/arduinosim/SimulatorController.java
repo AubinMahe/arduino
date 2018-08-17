@@ -211,7 +211,7 @@ public class SimulatorController {
             _digital  [pin].setStyle( "-fx-opacity: 1" );
          }
          else {
-            _direction[pin].setText( text + "IN" );
+            _direction[pin].setText( text + " IN" );
             _digital  [pin].setSelected( false );
             _digital  [pin].setDisable( false );
             _digital  [pin].setStyle( "" );

@@ -1,4 +1,4 @@
-AC_INIT([arduinosim],[1.0],[])
+AC_INIT([arduinosim],[1.1],[aubin.mahe@wanadoo.fr])
 AM_INIT_AUTOMAKE([subdir-objects foreign -Wall -Werror])
 AM_PROG_AR
 AX_CXX_COMPILE_STDCXX_11(noext)

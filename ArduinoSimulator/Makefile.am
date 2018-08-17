@@ -13,6 +13,7 @@ nobase_dist_pkgdata_DATA = \
  java-ui/hpms.fx.angle.jar \
  ws-ui/css/arduinosim.css \
  ws-ui/js/arduinosim.js \
+ ws-ui/js/gfx.Angle.js \
  ws-ui/favicon.ico \
  ws-ui/index.html \
  instructions.txt

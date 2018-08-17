@@ -23,7 +23,11 @@ var ardsim = {
    //-- Exit -----------------------------------------------------------------
    E_EXIT            : 15,
 
-   ws    : null,
+   ws     : null,
+   idToPin: function( id ) {
+      return parseInt( id.substring( id.lastIndexOf( "_" ) + 1 ));
+   },
+   servos: [],
    create: function() {
       ardsim.ws = new WebSocket( "ws://localhost:2416", "ardsim" );
       ardsim.ws.onopen = function() {
@@ -56,13 +60,10 @@ var ardsim = {
          if(  ( ardsim.ws.readyState == WebSocket.CLOSING )
             ||( ardsim.ws.readyState == WebSocket.CLOSED  ))
          {
-            console.log( 'ArduinoSim server is unreachable, retrying in 500 ms...' );
-            setTimeout( ardsim.create, 500 );
+            setTimeout( ardsim.create, 100 );
          }
       };
-   },
-   idToPin: function( id ) {
-      return parseInt( id.substring( id.lastIndexOf( "_" ) + 1 ));
+      ardsim.servos[6] = new gfx.Angle( document.getElementById( "ardsim-servo_6" ));
    },
    reset: function( e ) {
       console.log( "reset|e: %o", e );
@@ -142,34 +143,48 @@ var ardsim = {
       log.appendChild( p );
       p.textContent = line;
    },
+   computeLogHeight: function() {
+      let log = document.getElementById( "ardsim-log" );
+      let height = 4 + 4 + 3 + (14 + 6) * 24;
+      let canvases = document.getElementsByTagName('canvas');
+      for( let i = 0; i < canvases.length; ++i ) {
+         let canvas = canvases.item( i );
+         if( canvas.style.display == "inline-block" ) {
+            height += -24 + 62;
+         }
+      }
+      log.style.height = height + 'px';
+   },
    //-- Servo ----------------------------------------------------------------
    servoAttach: function( pin ) {
       console.log( "servoAttach|pin: %s", pin );
-      let timeout = document.getElementById( "ardsim-servo_" + pin );
-      if( timeout ) {
+      let servo = document.getElementById( "ardsim-servo_" + pin );
+      if( servo ) {
          let digital_role  = document.getElementById( "ardsim-digital_role_"  + pin );
          let digital_value = document.getElementById( "ardsim-digital_value_" + pin );
          digital_role.textContent = "OUT";
          digital_value.style= "display:none";
-         timeout      .style= "display:inline-block";
+         servo        .style= "display:inline-block";
+         this.computeLogHeight();
+         this.servoWrite( pin, 0 );
       }
    },
    servoWrite: function( pin, value ) {
       console.log( "servoWrite|pin: %s, value: %s", pin, value );
-      let timeout = document.getElementById( "ardsim-servo_" + pin );
-      if( timeout ) {
-         timeout.value = value;
-      }
+      let angle = ardsim.servos[pin];
+      angle.value = value;
+      angle.render();
    },
    servoDetach: function( pin ) {
       console.log( "servoDetach|pin: %s", pin );
-      let timeout = document.getElementById( "ardsim-servo_" + pin );
-      if( timeout ) {
+      let servo = document.getElementById( "ardsim-servo_" + pin );
+      if( servo ) {
          let digital_role  = document.getElementById( "ardsim-digital_role_"  + pin );
          let digital_value = document.getElementById( "ardsim-digital_value_" + pin );
          digital_role.textContent = "---";
          digital_value.style= "display:inline-block";
-         timeout      .style= "display:none";
+         servo        .style= "display:none";
+         this.computeLogHeight();
       }
    },
 };
