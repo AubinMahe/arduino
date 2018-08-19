@@ -42,6 +42,8 @@ Voici deux captures d'écran concernant l'IHM *WebSocket* (Firefox) :
 
 1. Téléchargez [l'archive](https://aubinmahe.github.io/arduino/ArduinoSimulator/arduinosim-1.1.tar.gz)
 
+1. Mettez à jour votre installation pour disposer de libwebsockets 7 ou plus, de Java 8 ou plus, de ncursesw 5 ou plus.
+
 1. Dans un terminal, entrez la séquence habituelle :
 
        $> tar xzf arduinosim-1.1.tar.gz
