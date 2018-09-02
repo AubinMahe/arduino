@@ -1,18 +1,35 @@
 #include "Activite.h"
 
+#include <ESP8266WiFi.h>
+
 using namespace hpms;
+
+Activite::Activite( const Instant & o, const Instant & f ) :
+   ouverture( o ),
+   fermeture( f )
+{}
 
 bool Activite::est( const Instant & maintenant ) const {
    return( maintenant > ouverture )&&( maintenant < fermeture );
 }
 
-/**
- * Analyse une chaine de catactères pour en extraire les informations
- * temporelles d'ouverture et de fermeture de vanne.
- * @param hhsmm une chaine respectant le format hh:mm-hh:mm
- * @return vrai si la chaine respecte le format et que les informations
- * temporelles sont valides.
- */
-bool Activite::decode( char activite[] ) {
-   return( activite[5] == '-' ) && ouverture.decode( activite ) && fermeture.decode( activite );
+json::Status Activite::decode( const char * name, json::Parser & parser ) {
+   if( 0 == strcmp( name, "ouverture" )) {
+      return parser.decode( ouverture );
+   }
+   if( 0 == strcmp( name, "fermeture" )) {
+      return parser.decode( fermeture );
+   }
+   return json::UNEXPECTED_ATTRIBUTE;
+}
+
+json::Status Activite::encode( json::Generator & generator ) const {
+   json::Status status = json::SUCCESS;
+   if( status == json::SUCCESS ) {
+      status = generator.encodeObject( "ouverture", ouverture );
+   }
+   if( status == json::SUCCESS ) {
+      status = generator.encodeObject( "fermeture", fermeture );
+   }
+   return status;
 }

@@ -9,17 +9,17 @@ namespace hpms {
    class Vanne {
    public:
 
-      Vanne( void ) :
-         pin( 0 ),
-         ouverte( false )
-      {}
+      static bool pin_est_valide( uint8_t pin );
 
-      Vanne( uint8_t p, const Activite & m, const Activite & s ) :
-         pin( p ),
-         ouverte( false ),
-         matin( m ),
-         soir( s )
-      {}
+   public:
+
+      Vanne( void );
+
+      Vanne( uint8_t p, const Activite & m, const Activite & s );
+
+   public:
+
+      bool est( uint8_t pin ) const;
 
       void ouvrir( void );
 
@@ -27,14 +27,11 @@ namespace hpms {
 
       void evaluer( const Instant & maintenant );
 
-      /**
-       * Analyse une chaine de catactères pour en extraire les informations
-       * temporelles d'ouverture et de fermeture de vanne pour matin et soir.
-       * @param hhsmm une chaine respectant le format hh:mm-hh:mm|hh:mm-hh:mm
-       * @return vrai si la chaine respecte le format et que les informations
-       * temporelles sont valides.
-       */
-      bool decode( char activite[] );
+   public:
+
+      json::Status decode( const char * name, json::Parser & parser );
+
+      json::Status encode( json::Generator & generator ) const;
 
    private:
 

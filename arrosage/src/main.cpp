@@ -1,11 +1,11 @@
-#include "Arrosage.h"
+#include "Serveur.h"
 
-static hpms::Arrosage theArrosage;
+static hpms::Serveur theServeur;
 
 void setup() {
-   theArrosage.setup();
+   theServeur.setup();
 }
 
 void loop() {
-   theArrosage.loop();
+   theServeur.loop();
 }
