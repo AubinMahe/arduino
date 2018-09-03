@@ -6,7 +6,7 @@
 
 namespace hpms {
 
-   class Vanne {
+   class Vanne : private json::IJSonData {
    public:
 
       static bool pin_est_valide( uint8_t pin );
@@ -29,9 +29,9 @@ namespace hpms {
 
    public:
 
-      json::Status decode( const char * name, json::Parser & parser );
+      json::Status decode( const char * name, json::Decoder & decoder );
 
-      json::Status encode( json::Generator & generator ) const;
+      json::Status encode( json::Encoder & encoder ) const;
 
    private:
 

@@ -13,23 +13,23 @@ bool Activite::est( const Instant & maintenant ) const {
    return( maintenant > ouverture )&&( maintenant < fermeture );
 }
 
-json::Status Activite::decode( const char * name, json::Parser & parser ) {
+json::Status Activite::decode( const char * name, json::Decoder & decoder ) {
    if( 0 == strcmp( name, "ouverture" )) {
-      return parser.decode( ouverture );
+      return decoder.decode( ouverture );
    }
    if( 0 == strcmp( name, "fermeture" )) {
-      return parser.decode( fermeture );
+      return decoder.decode( fermeture );
    }
    return json::UNEXPECTED_ATTRIBUTE;
 }
 
-json::Status Activite::encode( json::Generator & generator ) const {
+json::Status Activite::encode( json::Encoder & encoder ) const {
    json::Status status = json::SUCCESS;
    if( status == json::SUCCESS ) {
-      status = generator.encodeObject( "ouverture", ouverture );
+      status = encoder.encodeObject( "ouverture", ouverture );
    }
    if( status == json::SUCCESS ) {
-      status = generator.encodeObject( "fermeture", fermeture );
+      status = encoder.encodeObject( "fermeture", fermeture );
    }
    return status;
 }

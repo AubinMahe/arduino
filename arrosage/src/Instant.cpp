@@ -30,23 +30,23 @@ bool Instant::operator < ( const Instant & r ) const {
    return minute < r.minute;
 }
 
-json::Status Instant::decode( const char * name, json::Parser & parser ) {
+json::Status Instant::decode( const char * name, json::Decoder & decoder ) {
    if( 0 == strcmp( name, "heure" )) {
-      return parser.get( heure );
+      return decoder.get( heure );
    }
    if( 0 == strcmp( name, "minute" )) {
-      return parser.get( minute );
+      return decoder.get( minute );
    }
    return json::UNEXPECTED_ATTRIBUTE;
 }
 
-json::Status Instant::encode( json::Generator & generator ) const {
+json::Status Instant::encode( json::Encoder & encoder ) const {
    json::Status status = json::SUCCESS;
    if( status == json::SUCCESS ) {
-      status = generator.encode( "heure", heure );
+      status = encoder.encode( "heure", heure );
    }
    if( status == json::SUCCESS ) {
-      status = generator.encode( "minute", minute );
+      status = encoder.encode( "minute", minute );
    }
    return status;
 }

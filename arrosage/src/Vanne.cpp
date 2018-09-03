@@ -51,35 +51,35 @@ void Vanne::evaluer( const Instant & maintenant ) {
    }
 }
 
-json::Status Vanne::decode( const char * name, json::Parser & parser ) {
+json::Status Vanne::decode( const char * name, json::Decoder & decoder ) {
    if( 0 == strcmp( name, "pin" )) {
-      return parser.get( pin );
+      return decoder.get( pin );
    }
    if( 0 == strcmp( name, "ouverte" )) {
-      return parser.get( ouverte );
+      return decoder.get( ouverte );
    }
    if( 0 == strcmp( name, "matin" )) {
-      return parser.decode( matin );
+      return decoder.decode( matin );
    }
    if( 0 == strcmp( name, "soir" )) {
-      return parser.decode( soir );
+      return decoder.decode( soir );
    }
    return json::UNEXPECTED_ATTRIBUTE;
 }
 
-json::Status Vanne::encode( json::Generator & generator ) const {
+json::Status Vanne::encode( json::Encoder & encoder ) const {
    json::Status status = json::SUCCESS;
    if( status == json::SUCCESS ) {
-      status = generator.encode( "pin", pin );
+      status = encoder.encode( "pin", pin );
    }
    if( status == json::SUCCESS ) {
-      status = generator.encode( "ouverte", ouverte );
+      status = encoder.encode( "ouverte", ouverte );
    }
    if( status == json::SUCCESS ) {
-      status = generator.encodeObject( "matin", matin );
+      status = encoder.encodeObject( "matin", matin );
    }
    if( status == json::SUCCESS ) {
-      status = generator.encodeObject( "soir", soir );
+      status = encoder.encodeObject( "soir", soir );
    }
    return status;
 }

@@ -35,23 +35,23 @@ void Arrosage::evaluer( Horloge & horloge ) {
    }
 }
 
-json::Status Arrosage::decode( const char * name, json::Parser & parser ) {
+json::Status Arrosage::decode( const char * name, json::Decoder & decoder ) {
    if( 0 == strcmp( name, "est_en_marche" )) {
-      return parser.get( est_en_marche );
+      return decoder.get( est_en_marche );
    }
    if( 0 == strcmp( name, "vannes" )) {
-      return parser.decode( vannes, sizeof( vannes ) / sizeof( vannes[0] ));
+      return decoder.decode( vannes, sizeof( vannes ) / sizeof( vannes[0] ));
    }
    return json::UNEXPECTED_ATTRIBUTE;
 }
 
-json::Status Arrosage::encode( json::Generator & generator ) const {
+json::Status Arrosage::encode( json::Encoder & encoder ) const {
    json::Status status = json::SUCCESS;
    if( status == json::SUCCESS ) {
-      status = generator.encode( "est_en_marche", est_en_marche );
+      status = encoder.encode( "est_en_marche", est_en_marche );
    }
    if( status == json::SUCCESS ) {
-      status = generator.encodeObjectArray<Vanne>(
+      status = encoder.encodeObjectArray<Vanne>(
          "vannes", vannes, sizeof( vannes ) / sizeof( vannes[0] ));
    }
    return status;

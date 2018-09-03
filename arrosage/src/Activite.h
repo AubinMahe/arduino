@@ -4,7 +4,7 @@
 
 namespace hpms {
 
-   class Activite {
+   class Activite : private json::IJSonData {
    public:
 
       Activite( const Instant & o = Instant(), const Instant & f = Instant());
@@ -15,9 +15,9 @@ namespace hpms {
 
    public:
 
-      json::Status decode( const char * name, json::Parser & parser );
+      json::Status decode( const char * name, json::Decoder & decoder );
 
-      json::Status encode( json::Generator & generator ) const;
+      json::Status encode( json::Encoder & encoder ) const;
 
    private:
 

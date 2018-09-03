@@ -62,7 +62,7 @@ void Serveur::lire_la_configuration( WiFiClient & client ) {
    client.print( "Connection: close\r\n" );
    client.print( "\r\n" );
    char buffer[10*1024];
-   json::Generator generator( buffer, sizeof( buffer ));
+   json::Encoder generator( buffer, sizeof( buffer ));
    json::Status status = generator.encode( arrosage );
    client.print( "{\"code\":" );
    client.print( status );
@@ -78,17 +78,21 @@ void Serveur::lire_la_configuration( WiFiClient & client ) {
    client.print( "\r\n" );
 }
 
-struct DemarrerArreter {
+struct DemarrerArreter : private json::IJSonData {
 
    DemarrerArreter() :
       demarrer( false )
    {}
 
-   json::Status decode( const char * name, json::Parser & parser ) {
+   virtual json::Status decode( const char * name, json::Decoder & decoder ) {
       if( 0 == strcmp( name, "demarrer" )) {
-         return parser.get( demarrer );
+         return decoder.get( demarrer );
       }
       return json::UNEXPECTED_ATTRIBUTE;
+   }
+
+   virtual json::Status encode( json::Encoder & encoder ) const {
+      return json::SUCCESS;
    }
 
    bool demarrer;
@@ -101,7 +105,7 @@ void Serveur::demarrer_arreter( WiFiClient & client ) {
       client.print( "Content-type: application/json\r\n" );
       client.print( "Connection: close\r\n" );
       client.print( "\r\n" );
-      json::Parser parser( payload );
+      json::Decoder parser( payload );
       DemarrerArreter commande;
       json::Status status = parser.decode( commande );
       client.print( "{\"code\":" );
@@ -118,36 +122,44 @@ void Serveur::demarrer_arreter( WiFiClient & client ) {
    }
 }
 
-struct CommanderUneVanne {
+struct CommanderUneVanne : private json::IJSonData {
 
    CommanderUneVanne() :
       pin( 0 ),
       ouvrir( false )
    {}
 
-   json::Status decode( const char * name, json::Parser & parser ) {
+   json::Status decode( const char * name, json::Decoder & decoder ) {
       if( 0 == strcmp( name, "pin" )) {
-         return parser.get( pin );
+         return decoder.get( pin );
       }
       if( 0 == strcmp( name, "ouvrir" )) {
-         return parser.get( ouvrir );
+         return decoder.get( ouvrir );
       }
       return json::UNEXPECTED_ATTRIBUTE;
+   }
+
+   virtual json::Status encode( json::Encoder & encoder ) const {
+      return json::SUCCESS;
    }
 
    uint8_t pin;
    bool    ouvrir;
 };
 
-struct CommanderLesVannes {
+struct CommanderLesVannes : private json::IJSonData {
 
    CommanderLesVannes() {}
 
-   json::Status decode( const char * name, json::Parser & parser ) {
+   json::Status decode( const char * name, json::Decoder & decoder ) {
       if( 0 == strcmp( name, "vannes" )) {
-         return parser.decode( vannes, sizeof( vannes )/sizeof( vannes[0] ));
+         return decoder.decode( vannes, sizeof( vannes )/sizeof( vannes[0] ));
       }
       return json::UNEXPECTED_ATTRIBUTE;
+   }
+
+   virtual json::Status encode( json::Encoder & encoder ) const {
+      return json::SUCCESS;
    }
 
    CommanderUneVanne vannes[100];
@@ -160,7 +172,7 @@ void Serveur::commander_les_vannes( WiFiClient & client ) {
       client.print( "Content-type: application/json\r\n" );
       client.print( "Connection: close\r\n" );
       client.print( "\r\n" );
-      json::Parser parser( payload );
+      json::Decoder parser( payload );
       CommanderLesVannes commande;
       json::Status status = parser.decode( commande );
       if( json::SUCCESS == status ) {
@@ -190,7 +202,7 @@ void Serveur::configurer( WiFiClient & client ) {
       client.print( "Content-type: application/json\r\n" );
       client.print( "Connection: close\r\n" );
       client.print( "\r\n" );
-      json::Parser parser( payload );
+      json::Decoder parser( payload );
       Arrosage commande;
       json::Status status = parser.decode( commande );
       if( json::SUCCESS == status ) {

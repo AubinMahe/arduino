@@ -7,7 +7,7 @@
 
 namespace hpms {
 
-   class Arrosage {
+   class Arrosage : private json::IJSonData {
    public:
 
       Arrosage();
@@ -22,9 +22,9 @@ namespace hpms {
 
    public:
 
-      json::Status decode( const char * name, json::Parser & parser );
+      json::Status decode( const char * name, json::Decoder & decoder );
 
-      json::Status encode( json::Generator & generator ) const;
+      json::Status encode( json::Encoder & encoder ) const;
 
    private:
 

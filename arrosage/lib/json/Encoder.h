@@ -4,14 +4,16 @@
 #include <stdio.h>
 #include <assert.h>
 
-#include "Status.h"
+#include <type_traits>
+
+#include "IJSonData.h"
 
 namespace json {
 
-   class Generator {
+   class Encoder {
    public:
 
-      Generator( char * buffer, size_t size ) :
+      Encoder( char * buffer, size_t size ) :
          _buffer( buffer ),
          _size( size ),
          _end( buffer + _size ),
@@ -20,7 +22,7 @@ namespace json {
          memset( _buffer, 0, _size );
       }
 
-      template<class T>
+      template<typename T, typename std::enable_if<std::is_base_of<IJSonData, T>::value>::type* = nullptr>
       Status encode( const T & t ) {
          assert( _work[0] == '\0' );
          if( _work + 1 > _end ) {
@@ -41,7 +43,7 @@ namespace json {
          return SUCCESS;
       }
 
-      template<class T>
+      template<class T, typename std::enable_if<std::is_scalar<T>::value>::type* = nullptr>
       Status encode( const char * name, T t ) {
          assert( _work[0] == '\0' );
          const char * value = format( t );
@@ -62,7 +64,7 @@ namespace json {
          return BUFFER_OVERFLOW;
       }
 
-      template<class T>
+      template<typename T, typename std::enable_if<std::is_base_of<IJSonData, T>::value>::type* = nullptr>
       Status encodeObject( const char * name, const T & value ) {
          assert( _work[0] == '\0' );
          bool first = ( _work[-1] == '{' );
@@ -80,7 +82,7 @@ namespace json {
          return encode( value );
       }
 
-      template<class T>
+      template<typename T, typename std::enable_if<std::is_scalar<T>::value>::type* = nullptr>
       Status encodeArray( const char * name, T value[], size_t size ) {
          assert( _work[0] == '\0' );
          bool first = ( _work[-1] == '{' );
@@ -116,7 +118,7 @@ namespace json {
          return SUCCESS;
       }
 
-      template<class T>
+      template<class T, typename std::enable_if<std::is_base_of<IJSonData, T>::value>::type* = nullptr>
       Status encodeObjectArray( const char * name, const T value[], size_t size ) {
          assert( _work[0] == '\0' );
          bool first = ( _work[-1] == '{' );

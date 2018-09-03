@@ -1,11 +1,11 @@
 #pragma once
 
-#include "json/Generator.h"
-#include "json/Parser.h"
+#include "json/Encoder.h"
+#include "json/Decoder.h"
 
 namespace hpms {
 
-   class Instant {
+   class Instant : private json::IJSonData {
    public:
 
       Instant( int h = 0, int m = 0 );
@@ -18,9 +18,9 @@ namespace hpms {
 
    public:
 
-      json::Status decode( const char * name, json::Parser & parser );
+      json::Status decode( const char * name, json::Decoder & decoder );
 
-      json::Status encode( json::Generator & generator ) const;
+      json::Status encode( json::Encoder & encoder ) const;
 
    protected:
 

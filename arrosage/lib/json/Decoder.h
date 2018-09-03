@@ -3,7 +3,9 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include "Status.h"
+#include <type_traits>
+
+#include "IJSonData.h"
 
 #ifndef MIN
 #  define MIN(a,b) (( (a) < (b) ) ? (a) : (b))
@@ -11,10 +13,10 @@
 
 namespace json {
 
-   class Parser {
+   class Decoder {
    public:
 
-      Parser( const char * begin, size_t len = 0 ) :
+      Decoder( const char * begin, size_t len = 0 ) :
          _begin( begin ),
          _end( 0 ),
          _work( _begin ),
@@ -37,7 +39,7 @@ namespace json {
        * son accesseur dans la liste pour initialiser l'objet avec la valeur
        * décodée.
        */
-      template<class T>
+      template<class T, typename std::enable_if<std::is_base_of<IJSonData, T>::value>::type* = nullptr>
       Status decode( T & target ) {
          int c = skip_spaces();
          if( c == '{' ) {
