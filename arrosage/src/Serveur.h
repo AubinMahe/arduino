@@ -20,11 +20,13 @@ namespace hpms {
 
    private:
 
+      void sendHTTPResponse( WiFiClient & client, json::Status status, const char * buffer = 0 ) const;
+
       /**
        * La configuration retournée est un objet encodé en JSON de même type
        * que celui utilisé pour configurer().
        */
-      void lire_la_configuration( WiFiClient & client );
+      void lire_la_configuration( WiFiClient & client ) const;
 
       /**
        * L'objet encodé en JSON à envoyer par HTTP est :
