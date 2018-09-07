@@ -5,6 +5,8 @@
 #include "Slider.h"
 #include "Timeout.h"
 
+#undef min
+#undef max
 #include <sstream>
 #include <iomanip>
 

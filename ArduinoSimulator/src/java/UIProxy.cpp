@@ -15,6 +15,11 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
+#undef min
+#undef max
+#include <iomanip>
+#include <sstream>
+
 #define UI_PROXY_PORT 2416
 
 struct JavaUIProxyAttributes {
@@ -212,12 +217,88 @@ void JavaUIProxy::detachInterrupt( uint8_t pin ) const {
 
 //-- Communication --------------------------------------------------------
 
-void JavaUIProxy::print( const char * s ) const {
-   send( E_PRINT, s );
+size_t JavaUIProxy::print( const char value[] ) const {
+   return send( E_PRINT, value );
 }
 
-void JavaUIProxy::println( const char * s ) const {
-   send( E_PRINTLN, s );
+size_t JavaUIProxy::print( unsigned char value, int base ) const {
+   return print((long)value, base );
+}
+
+size_t JavaUIProxy::print( int value, int base ) const {
+   return print((long)value, base );
+}
+
+size_t JavaUIProxy::print( unsigned int value, int base ) const {
+   return print((long)value, base );
+}
+
+size_t JavaUIProxy::print( long value, int base ) const {
+   return print((long)value, base );
+}
+
+size_t JavaUIProxy::print( unsigned long value, int base ) const {
+   std::stringstream ss;
+   if( base == OCT ) {
+      ss << std::oct << value;
+   }
+   else if( base == HEX ) {
+      ss << std::hex << value;
+   }
+   else {
+      ss << value;
+   }
+   return send( E_PRINT, ss.str().c_str());
+}
+
+size_t JavaUIProxy::print( double value, int prec ) const {
+   std::stringstream ss;
+   ss << std::setprecision( prec ) << value;
+   return send( E_PRINT, ss.str().c_str());
+}
+
+size_t JavaUIProxy::println( const char value[] ) const {
+   return send( E_PRINTLN, value );
+}
+
+size_t JavaUIProxy::println( unsigned char value, int base ) const {
+   return println((long)value, base );
+}
+
+size_t JavaUIProxy::println( int value, int base ) const {
+   return println((long)value, base );
+}
+
+size_t JavaUIProxy::println( unsigned int value, int base ) const {
+   return println((long)value, base );
+}
+
+size_t JavaUIProxy::println( long value, int base ) const {
+   return println((long)value, base );
+}
+
+size_t JavaUIProxy::println( unsigned long value, int base ) const {
+   std::stringstream ss;
+   if( base == OCT ) {
+      ss << std::oct << value;
+   }
+   else if( base == HEX ) {
+      ss << std::hex << value;
+   }
+   else {
+      ss << value;
+   }
+   return send( E_PRINTLN, ss.str().c_str());
+}
+
+size_t JavaUIProxy::println( double value, int prec ) const {
+   std::stringstream ss;
+   ss << std::setprecision( prec ) << value;
+   return send( E_PRINTLN, ss.str().c_str());
+}
+
+size_t JavaUIProxy::println( void ) const {
+   return send( E_PRINTLN, "" );
 }
 
 //-- Servo -------------------------------------------------------------------
@@ -291,7 +372,7 @@ void JavaUIProxy::_recv() const {
    }
 }
 
-void JavaUIProxy::send( int verb, const char * s ) const {
+size_t JavaUIProxy::send( int verb, const char * s ) const {
    if( ! s ) {
       s = "(null)";
    }
@@ -300,13 +381,14 @@ void JavaUIProxy::send( int verb, const char * s ) const {
    buffer[0] = verb;
    *((unsigned short *)(buffer+1)) = htons( len );
    strncpy( buffer+3, s, len );
-   send( buffer, sizeof( buffer ));
+   return send( buffer, sizeof( buffer ));
 }
 
-void JavaUIProxy::send( const char * buffer, unsigned short len ) const {
+size_t JavaUIProxy::send( const char * buffer, unsigned short len ) const {
    int bytesSent = ::sendto( a->socket, buffer, len, 0, (const sockaddr*)&a->addr, sizeof( a->addr ));
    if( bytesSent < 0 ) {
       perror("sendto()");
       ::exit( EXIT_FAILURE );
    }
+   return bytesSent;
 }

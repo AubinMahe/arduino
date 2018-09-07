@@ -2,6 +2,8 @@
 
 #include "Window.h"
 
+#undef min
+#undef max
 #include <string>
 #include <vector>
 #include <algorithm>

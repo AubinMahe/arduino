@@ -138,14 +138,37 @@ void detachInterrupt( uint8_t interrupt );
 
 //-- Communication -----------------------------------------------------------
 
+#define DEC 10
+#define HEX 16
+#define OCT 8
+#ifdef BIN // Prevent warnings if BIN is previously defined in "iotnx4.h" or similar
+#undef BIN
+#endif
+#define BIN 2
+
 class Print {
 public:
 
    virtual ~ Print() {}
 
-   void print( const char * );
+   size_t print( const char    value[] );
+   size_t print( char          value );
+   size_t print( unsigned char value, int base = DEC );
+   size_t print( int           value, int base = DEC );
+   size_t print( unsigned int  value, int base = DEC );
+   size_t print( long          value, int base = DEC );
+   size_t print( unsigned long value, int base = DEC );
+   size_t print( double        value, int prec = 2   );
 
-   void println( const char * );
+   size_t println( const char    value[] );
+   size_t println( char          value );
+   size_t println( unsigned char value, int base = DEC );
+   size_t println( int           value, int base = DEC );
+   size_t println( unsigned int  value, int base = DEC );
+   size_t println( long          value, int base = DEC );
+   size_t println( unsigned long value, int base = DEC );
+   size_t println( double        value, int prec = 2   );
+   size_t println( void );
 
    virtual void flush() { /* Empty implementation for backward compatibility */ }
 };

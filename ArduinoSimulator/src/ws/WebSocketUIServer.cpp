@@ -1,6 +1,10 @@
 #include "WebSocketUIServer.h"
 #include "WebSocketServer_Impl.h"
 
+#undef min
+#undef max
+#include <iomanip>
+
 using namespace ws;
 
 WebSocketUIServer::WebSocketUIServer( int port ) :
@@ -59,12 +63,131 @@ void WebSocketUIServer::detachInterrupt( uint8_t pin ) const {
 
 //-- Communication -----------------------------------------------------------
 
-void WebSocketUIServer::print( const char * line ) const {
-   _ui->enqueue( [ this, line ] () { _ui->print( line ); });
+size_t WebSocketUIServer::print( const char value[] ) const {
+   _ui->enqueue( [ this, value ] () { _ui->print( value ); });
+   return ::strlen( value );
 }
 
-void WebSocketUIServer::println( const char * line ) const {
-   _ui->enqueue( [ this, line ] () { _ui->println( line ); });
+size_t WebSocketUIServer::print( unsigned char value, int base ) const {
+   return print((long)value, base );
+}
+
+size_t WebSocketUIServer::print( int value, int base ) const {
+   return print((long)value, base );
+}
+
+size_t WebSocketUIServer::print( unsigned int value, int base ) const{
+   return print((unsigned long)value, base );
+}
+
+size_t WebSocketUIServer::print( long value, int base ) const{
+   _ui->enqueue( [ this, value, base ] () {
+      std::stringstream ss;
+      if( base == OCT ) {
+         ss << std::oct << value;
+      }
+      else if( base == HEX ) {
+         ss << std::hex << value;
+      }
+      else {
+         ss << value;
+      }
+      _ui->print( ss.str());
+   });
+   return ::log( abs( value ));
+}
+
+size_t WebSocketUIServer::print( unsigned long value, int base ) const{
+   _ui->enqueue( [ this, value, base ] () {
+      std::stringstream ss;
+      if( base == OCT ) {
+         ss << std::oct << value;
+      }
+      else if( base == HEX ) {
+         ss << std::hex << value;
+      }
+      else {
+         ss << value;
+      }
+      _ui->print( ss.str());
+   });
+   return ::log( abs( value ));
+}
+
+size_t WebSocketUIServer::print( double value, int prec ) const{
+   _ui->enqueue( [ this, value, prec ] () {
+      std::stringstream ss;
+      ss << std::setprecision( prec ) << value;
+      _ui->print( ss.str());
+   });
+   return ::log( abs( value ));
+}
+
+size_t WebSocketUIServer::println( const char value[] ) const {
+   _ui->enqueue( [ this, value ] () { _ui->println( value ); });
+   return ::strlen( value );
+}
+
+size_t WebSocketUIServer::println( unsigned char value, int base ) const {
+   return println((long)value, base );
+}
+
+size_t WebSocketUIServer::println( int value, int base ) const {
+   return println((long)value, base );
+}
+
+size_t WebSocketUIServer::println( unsigned int value, int base ) const{
+   return println((unsigned long)value, base );
+}
+
+size_t WebSocketUIServer::println( long value, int base ) const{
+   _ui->enqueue( [ this, value, base ] () {
+      std::stringstream ss;
+      if( base == OCT ) {
+         ss << std::oct << value;
+      }
+      else if( base == HEX ) {
+         ss << std::hex << value;
+      }
+      else {
+         ss << value;
+      }
+      _ui->println( ss.str());
+   });
+   return ::log( abs( value ));
+}
+
+size_t WebSocketUIServer::println( unsigned long value, int base ) const{
+   _ui->enqueue( [ this, value, base ] () {
+      std::stringstream ss;
+      if( base == OCT ) {
+         ss << std::oct << value;
+      }
+      else if( base == HEX ) {
+         ss << std::hex << value;
+      }
+      else {
+         ss << value;
+      }
+      _ui->println( ss.str());
+   });
+   return ::log( abs( value ));
+}
+
+size_t WebSocketUIServer::println( double value, int prec ) const{
+   _ui->enqueue( [ this, value, prec ] () {
+      std::stringstream ss;
+      ss << std::setprecision( prec ) << value;
+      _ui->println( ss.str());
+   });
+   return ::log( abs( value ));
+}
+
+size_t WebSocketUIServer::println( void ) const{
+   _ui->enqueue( [ this ] () {
+      _ui->println("");
+   });
+   return 1;
 }
 
 //-- Servo -------------------------------------------------------------------

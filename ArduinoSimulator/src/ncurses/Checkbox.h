@@ -4,6 +4,8 @@
 #include "IChangeListener.h"
 #include "utf8len.h"
 
+#undef min
+#undef max
 #include <vector>
 #include <algorithm>
 

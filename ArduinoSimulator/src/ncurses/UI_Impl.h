@@ -6,11 +6,6 @@
 
 #include <Arduino.h>
 
-#include <functional>
-#include <mutex>
-#include <queue>
-#include <thread>
-
 #include "UI.h"
 #include "IChangeListener.h"
 #include "ControlsPane.h"
@@ -18,16 +13,25 @@
 #include "StatusPane.h"
 #include "getFileContents.h"
 
+#undef min
+#undef max
+#include <functional>
+#include <mutex>
+#include <queue>
+#include <thread>
+
 namespace ncurses {
 
    class UI_Impl : public IChangeListener<Checkbox, bool> {
    public:
 
       UI_Impl() :
-         _isr_0_func( 0 ),
-         _isr_0_mode( 0 ),
-         _isr_1_func( 0 ),
-         _isr_1_mode( 0 ),
+         _isr_0_func_rising ( 0 ),
+         _isr_0_func_falling( 0 ),
+         _isr_0_func_change ( 0 ),
+         _isr_1_func_rising ( 0 ),
+         _isr_1_func_falling( 0 ),
+         _isr_1_func_change ( 0 ),
          _ctrl( 0 ),
          _logPane( 0 ),
          _statusPane( 0 ),
@@ -45,36 +49,58 @@ namespace ncurses {
          return status;
       }
 
-      virtual void hasChanged( Checkbox & what, bool, bool after ) {
+      virtual void hasChanged( Checkbox & what, bool/*before*/, bool/*after*/checked ) {
          if( what.getLabel() == L"Reset" ) {
             if( ! what.isChecked()) {
                _status = sim::E_RESET;
             }
          }
-         else if(  ( &what == _ctrl->getCheckbox( 2 ))
-                  &&( _isr_0_func )
-                  &&(  (( _isr_0_mode == RISING  ) &&  after )
-                     ||(( _isr_0_mode == FALLING ) && !after )))
-         {
-            _isr_0_func();
+         else if( &what == _ctrl->getCheckbox( 2 )) {
+            if( _isr_0_func_rising && checked ) {
+               _isr_0_func_rising();
+            }
+            else if( _isr_0_func_falling && ! checked ) {
+               _isr_0_func_falling();
+            }
+            if( _isr_0_func_change ) {
+               _isr_0_func_change();
+            }
          }
-         else if(   ( &what == _ctrl->getCheckbox( 3 ))
-                  &&( _isr_1_func )
-                  &&(  (( _isr_1_mode == RISING  ) &&  after )
-                     ||(( _isr_1_mode == FALLING ) && !after )))
-         {
-            _isr_1_func();
+         else if( &what == _ctrl->getCheckbox( 3 )) {
+            if( _isr_1_func_rising && checked ) {
+               _isr_1_func_rising();
+            }
+            else if( _isr_1_func_falling && !checked ) {
+               _isr_1_func_falling();
+            }
+            if( _isr_1_func_change ) {
+               _isr_1_func_change();
+            }
          }
       }
 
       void attachInterrupt( uint8_t pin, void (* ISR )(void), uint8_t mode ) {
          if( pin == 2 ) {
-            _isr_0_func = ISR;
-            _isr_0_mode = mode;
+            if( mode == RISING ) {
+               _isr_0_func_rising = ISR;
+            }
+            else if( mode == FALLING ) {
+               _isr_0_func_falling = ISR;
+            }
+            else if( mode == CHANGE ) {
+               _isr_0_func_change = ISR;
+            }
          }
          else if( pin == 3 ) {
-            _isr_1_func = ISR;
-            _isr_1_mode = mode;
+            if( mode == RISING ) {
+               _isr_1_func_rising = ISR;
+            }
+            else if( mode == FALLING ) {
+               _isr_1_func_falling = ISR;
+            }
+            else if( mode == CHANGE ) {
+               _isr_1_func_change = ISR;
+            }
          }
       }
 
@@ -111,12 +137,18 @@ namespace ncurses {
          _statusPane =
             new StatusPane( _ctrl->getHeight() - 1, _ctrl->getWidth() + _logPane->getWidth() - 1 );
          _ctrl->addResetListener( this );
-         auto lines = hpms::getFileContents( "instructions.txt" );
-         if( lines.size() > 0 ) {
-            _statusPane->setLine1( lines[0].c_str());
-            if( lines.size() > 1 ) {
-               _statusPane->setLine2( lines[1].c_str());
+         std::vector<std::string> lines;
+         if( hpms::getFileContents( "instructions.txt", lines )) {
+            if( lines.size() > 0 ) {
+               _statusPane->setLine1( lines[0].c_str());
+               if( lines.size() > 1 ) {
+                  _statusPane->setLine2( lines[1].c_str());
+               }
             }
+         }
+         else {
+            _statusPane->setLine1( "Si un fichier nommé 'instructions.txt' existe dans le dossier de" );
+            _statusPane->setLine2( "lancement du simulateur, il sera lu pour renseigner ces deux lignes." );
          }
          _ctrl->setFocus( true );
          MEVENT m;
@@ -188,10 +220,12 @@ namespace ncurses {
          std::function<
             void(void)> > _jobs;
       std::mutex          _jobsLock;
-      void    ( *         _isr_0_func )( void );
-      uint8_t             _isr_0_mode;
-      void    ( *         _isr_1_func )( void );
-      uint8_t             _isr_1_mode;
+      void    ( *         _isr_0_func_rising  )( void );
+      void    ( *         _isr_0_func_falling )( void );
+      void    ( *         _isr_0_func_change  )( void );
+      void    ( *         _isr_1_func_rising  )( void );
+      void    ( *         _isr_1_func_falling )( void );
+      void    ( *         _isr_1_func_change  )( void );
       Controls *          _ctrl;
       LogPane *           _logPane;
       StatusPane *        _statusPane;

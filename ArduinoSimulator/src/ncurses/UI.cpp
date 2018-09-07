@@ -64,12 +64,131 @@ void UI::detachInterrupt( uint8_t pin ) const {
 
 //-- Communication --------------------------------------------------------
 
-void UI::print( const char * line ) const {
-   _ui->enqueue( [ this, line ] () { _ui->log().print( line ); });
+size_t UI::print( const char value[] ) const {
+   _ui->enqueue( [ this, value ] () { _ui->log().print( value ); });
+   return strlen( value );
 }
 
-void UI::println( const char * line ) const {
-   _ui->enqueue( [ this, line ] () { _ui->log().print( std::string( line ) + "\n" ); });
+size_t UI::print( unsigned char value, int base ) const {
+   return print((long)value, base );
+}
+
+size_t UI::print( int value, int base ) const {
+   return print((long)value, base );
+}
+
+size_t UI::print( unsigned int value, int base ) const{
+   return print((unsigned long)value, base );
+}
+
+size_t UI::print( long value, int base ) const{
+   _ui->enqueue( [ this, value, base ] () {
+      std::stringstream ss;
+      if( base == OCT ) {
+         ss << std::oct << value;
+      }
+      else if( base == HEX ) {
+         ss << std::hex << value;
+      }
+      else {
+         ss << value;
+      }
+      _ui->log().print( ss.str());
+   });
+   return ::log( abs( value ));
+}
+
+size_t UI::print( unsigned long value, int base ) const{
+   _ui->enqueue( [ this, value, base ] () {
+      std::stringstream ss;
+      if( base == OCT ) {
+         ss << std::oct << value;
+      }
+      else if( base == HEX ) {
+         ss << std::hex << value;
+      }
+      else {
+         ss << value;
+      }
+      _ui->log().print( ss.str());
+   });
+   return ::log( abs( value ));
+}
+
+size_t UI::print( double value, int prec ) const{
+   _ui->enqueue( [ this, value, prec ] () {
+      std::stringstream ss;
+      ss << std::setprecision( prec ) << value;
+      _ui->log().print( ss.str());
+   });
+   return ::log( abs( value ));
+}
+
+size_t UI::println( const char value[] ) const {
+   _ui->enqueue( [ this, value ] () { _ui->log().print( std::string( value ) + "\n" ); });
+   return strlen( value );
+}
+
+size_t UI::println( unsigned char value, int base ) const {
+   return println((long)value, base );
+}
+
+size_t UI::println( int value, int base ) const {
+   return println((long)value, base );
+}
+
+size_t UI::println( unsigned int value, int base ) const{
+   return println((unsigned long)value, base );
+}
+
+size_t UI::println( long value, int base ) const{
+   _ui->enqueue( [ this, value, base ] () {
+      std::stringstream ss;
+      if( base == OCT ) {
+         ss << std::oct << value;
+      }
+      else if( base == HEX ) {
+         ss << std::hex << value;
+      }
+      else {
+         ss << value;
+      }
+      _ui->log().print( ss.str() + "\n" );
+   });
+   return ::log( abs( value ));
+}
+
+size_t UI::println( unsigned long value, int base ) const{
+   _ui->enqueue( [ this, value, base ] () {
+      std::stringstream ss;
+      if( base == OCT ) {
+         ss << std::oct << value;
+      }
+      else if( base == HEX ) {
+         ss << std::hex << value;
+      }
+      else {
+         ss << value;
+      }
+      _ui->log().print( ss.str() + "\n" );
+   });
+   return ::log( abs( value ));
+}
+
+size_t UI::println( double value, int prec ) const{
+   _ui->enqueue( [ this, value, prec ] () {
+      std::stringstream ss;
+      ss << std::setprecision( prec ) << value;
+      _ui->log().print( ss.str() + "\n" );
+   });
+   return ::log( abs( value ));
+}
+
+size_t UI::println( void ) const{
+   _ui->enqueue( [ this ] () {
+      _ui->log().print( "\n" );
+   });
+   return 1;
 }
 
 //-- Servo -------------------------------------------------------------------

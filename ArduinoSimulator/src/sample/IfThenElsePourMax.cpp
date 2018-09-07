@@ -1,18 +1,16 @@
 #include <Arduino.h>
-#include <Servo.h>
 
 /**
  * Etats du système.
  */
 enum Etat_t {
    ETA_VEILLE,
-   ETA_ACTIF,
+   ETA_MESURE_DU_PREMIER_APPUI,
    ETA_ATTENTE_1,
-   ETA_LED_1,
+   ETA_MESURE_DU_DEUXIEME_APPUI,
    ETA_ATTENTE_2,
-   ETA_LED_2,
-   ETA_ATTENTE_3,
-   ETA_LED_3,
+   ETA_MESURE_DU_TROISIEME_APPUI,
+   ETA_SUCCES,
 };
 
 //--------------------
@@ -22,49 +20,22 @@ static const uint8_t BOUTON_PIN = 2; //!< Bouton branché sur le port n°2
 static const uint8_t LED1_PIN   = 3; //!< DEL branchée sur le port n°3
 static const uint8_t LED2_PIN   = 4; //!< DEL branchée sur le port n°4
 static const uint8_t LED3_PIN   = 5; //!< DEL branchée sur le port n°5
-static const uint8_t MOTEUR_PIN = 6; //!< Moteur branché sur le port n°6 (PWM)
-static const uint8_t BUZZER_PIN = 7; //!< Buzzer branché sur le port n°7
 
 //-----------------------------------
 // Constantes de réglages du système
 //-----------------------------------
-static const unsigned long FREQUENCE_DU_BUZZER            =   220UL; //!< Hz Note "La" octave 3
-static const unsigned long DUREE_DU_BUZZER                =   160UL; //!< ms Durée du bip
-static const unsigned long PERIODE_D_ACTIVATION_DU_BUZZER =   500UL; //!< ms Intervalle entre deux bips
-static const unsigned long DEBUT_DE_FENETRE_1             =  3000UL; //!< s  On doit presser le bouton
-static const unsigned long FIN_DE_FENETRE_1               =  5000UL; //!< s  On doit attendre
-static const unsigned long DEBUT_DE_FENETRE_2             =  7000UL; //!< s  On doit presser le bouton
-static const unsigned long FIN_DE_FENETRE_2               =  9000UL; //!< s  On doit attendre
-static const unsigned long DEBUT_DE_FENETRE_3             = 12000UL; //!< s  On doit presser le bouton
-static const unsigned long FIN_DE_FENETRE_3               = 14000UL; //!< s  On doit attendre
+static const unsigned long DUREE_TOLERANCE       = 1000UL; //!< en milliseconde
+static const unsigned long DUREE_PREMIER_APPUI   = 2000UL; //!< en milliseconde
+static const unsigned long DUREE_DEUXIEME_APPUI  = 2000UL; //!< en milliseconde
+static const unsigned long DUREE_TROISIEME_APPUI = 2000UL; //!< en milliseconde
 
 //----------------------
 // Variables du système
 //----------------------
-static Etat_t        etat           = ETA_VEILLE; //!< Etat du système.
-static volatile bool bouton_relache = false;      //!< Le bouton a été perçu relaché par la routine d'interruption le_bouton_a_ete_presse().
-static unsigned long t0             = 0UL;        //!< Horodatage des événements : temps de départ.
-static unsigned long buzzer_t0      = 0UL;        //!< Horodatage du déclenchement du buzzer.
-static unsigned long buzzer_cycle   = 0UL;        //!< N° de la période du buzzer.
-static Servo         temps_restant;
-
-/**
- * Eteint le buzzer.
- */
-static void desactive_le_buzzer() {
-   // Serial.println( "desactive_le_buzzer" );
-   noTone( BUZZER_PIN );
-}
-
-/**
- * Allume le buzzer et effectue l'horodatage pour gérer son extinction prochaine.
- * @see DUREE_DU_BUZZER
- */
-static void active_le_buzzer() {
-   // Serial.println( "active_le_buzzer" );
-   tone( BUZZER_PIN, FREQUENCE_DU_BUZZER );
-   buzzer_t0 = millis();
-}
+static          Etat_t        etat           = ETA_VEILLE; //!< Etat du système.
+static volatile unsigned long t0             = 0UL;        //!< Horodatage des événements : temps de départ.
+static volatile unsigned long temps_d_appui  = 0UL;        //!< mesure du temps de pression sur le bouton
+static volatile bool          bouton_presse  = false;      //!< L'état du bouton basculé par la routine d'interruption : le_bouton_a_ete_presse().
 
 /**
  * Effectue l'horodatage pour gérer les événements temporels.
@@ -75,7 +46,6 @@ static void active_le_buzzer() {
  */
 static void demarre() {
    Serial.println( "demarre" );
-   t0 = millis();
 }
 
 /**
@@ -85,15 +55,11 @@ static void demarre() {
  */
 static void eteint_tout() {
    Serial.println( "eteint_tout" );
-   etat          = ETA_VEILLE;
-   t0            = 0UL;
-   buzzer_t0     = 0UL;
-   buzzer_cycle  = 0UL;
-   desactive_le_buzzer();
+   etat = ETA_VEILLE;
+   t0   = 0UL;
    digitalWrite( LED1_PIN, LOW );
    digitalWrite( LED2_PIN, LOW );
    digitalWrite( LED3_PIN, LOW );
-   temps_restant.write( 0 );
 }
 
 /**
@@ -107,7 +73,6 @@ static void allume_une_LED() {
    digitalWrite( LED1_PIN, HIGH );
    digitalWrite( LED2_PIN, LOW );
    digitalWrite( LED3_PIN, LOW );
-   temps_restant.write( 0 );
 }
 
 /**
@@ -121,7 +86,6 @@ static void allume_deux_LED() {
    digitalWrite( LED1_PIN, HIGH );
    digitalWrite( LED2_PIN, HIGH );
    digitalWrite( LED3_PIN, LOW );
-   temps_restant.write( 0 );
 }
 
 /**
@@ -143,21 +107,7 @@ static void allume_trois_LED() {
    digitalWrite( LED1_PIN, HIGH );
    digitalWrite( LED2_PIN, HIGH );
    digitalWrite( LED3_PIN, HIGH );
-   temps_restant.write( 0 );
    affiche_l_indice();
-   t0 = 0UL;
-}
-
-/**
- * Retourne 'vrai' quand le bouton a été enfoncé puis relâché.
- * @return true quand le bouton a été enfoncé puis relâché.
- */
-static bool bouton_est_relache() {
-   if( bouton_relache ) {
-      bouton_relache = false;
-      return true;
-   }
-   return false;
 }
 
 /**
@@ -166,19 +116,15 @@ static bool bouton_est_relache() {
  * "https://www.arduino.cc/reference/en/language/functions/external-interrupts/attachinterrupt/"
  * >attachInterrupt()</a>.
  */
-static void le_bouton_a_ete_presse( void ) {
-   bouton_relache = true;
-}
-
-/**
- * Utilise le servo moteur pour montrer qu'il faut presser le bouton.
- */
-static void montre_le_temps_restant(
-   unsigned long temps_ecoule,
-   unsigned long debut,
-   unsigned long fin )
-{
-   temps_restant.write( map( temps_ecoule, debut, fin, 0, 179 ));
+static void le_bouton_a_change( void ) {
+   if( bouton_presse ) {
+      temps_d_appui = millis() - t0;
+      bouton_presse = false;
+   }
+   else {
+      t0            = millis();
+      bouton_presse = true;
+   }
 }
 
 /**
@@ -204,9 +150,8 @@ static void initialise_les_entrees_sorties() {
    pinMode( LED1_PIN  , OUTPUT );
    pinMode( LED2_PIN  , OUTPUT );
    pinMode( LED3_PIN  , OUTPUT );
-   temps_restant.attach( MOTEUR_PIN );
-   pinMode( BUZZER_PIN, OUTPUT );
-   attachInterrupt( digitalPinToInterrupt( BOUTON_PIN ), le_bouton_a_ete_presse, FALLING );
+   bouton_presse = false;
+   attachInterrupt( digitalPinToInterrupt( BOUTON_PIN ), le_bouton_a_change, CHANGE );
 }
 
 /**
@@ -221,107 +166,85 @@ void setup() {
    initialise_les_entrees_sorties();
 }
 
+unsigned long last_tick = 0;
+
 /**
  * L'évolution de l'état du système est confiné ici sous la forme d'un automate
  * état/transition.
- * La gestion du bip périodique est également effectuée ici.
  * Voir aussi la documentation Arduino <a target="arduino-page"
  * href="https://www.arduino.cc/reference/en/language/structure/sketch/loop/"
  * >loop()</a>.
  */
 void loop() {
-   if( buzzer_t0 ) {
-      unsigned long temps_ecoule = millis() - buzzer_t0;
-      if( temps_ecoule >= DUREE_DU_BUZZER ) {
-         desactive_le_buzzer();
-         buzzer_t0 = 0;
-      }
-   }
    unsigned long temps_ecoule = millis() - t0;
-   if( t0 && ( temps_ecoule / PERIODE_D_ACTIVATION_DU_BUZZER ) > buzzer_cycle ) {
-      buzzer_cycle = temps_ecoule / PERIODE_D_ACTIVATION_DU_BUZZER;
-      active_le_buzzer();
-   }
    switch( etat ) {
    case ETA_VEILLE:
-      if( bouton_est_relache()) {
+      if( bouton_presse ) {
          demarre();
-         etat = ETA_ACTIF;
+         etat = ETA_MESURE_DU_PREMIER_APPUI;
       }
       break;
-   case ETA_ACTIF:
-      if( bouton_est_relache()) {
-         eteint_tout();
-         etat = ETA_VEILLE;
+   case ETA_MESURE_DU_PREMIER_APPUI:
+      if( ! bouton_presse ) {
+         if(  ( temps_d_appui > DUREE_PREMIER_APPUI )
+            &&( temps_d_appui < ( DUREE_PREMIER_APPUI + DUREE_TOLERANCE )))
+         {
+            etat = ETA_ATTENTE_1;
+            allume_une_LED();
+         }
+         else {
+            eteint_tout();
+         }
       }
-      else if( temps_ecoule >= DEBUT_DE_FENETRE_1 ) {
-         etat = ETA_ATTENTE_1;
-         Serial.println( "Appui attendu" );
+      else if( temps_ecoule > ( DUREE_PREMIER_APPUI + DUREE_TOLERANCE )) {
+         eteint_tout();
       }
       break;
    case ETA_ATTENTE_1:
-      if( bouton_est_relache()) {
-         etat = ETA_LED_1;
-         allume_une_LED();
-      }
-      else if( temps_ecoule >= FIN_DE_FENETRE_1 ) {
-         eteint_tout();
-         etat = ETA_VEILLE;
-      }
-      else {
-         montre_le_temps_restant( temps_ecoule, DEBUT_DE_FENETRE_1, FIN_DE_FENETRE_1 );
+      if( bouton_presse ) {
+         etat = ETA_MESURE_DU_DEUXIEME_APPUI;
       }
       break;
-   case ETA_LED_1:
-      if( bouton_est_relache()) {
-         eteint_tout();
-         etat = ETA_VEILLE;
+   case ETA_MESURE_DU_DEUXIEME_APPUI:
+      if( ! bouton_presse ) {
+         if(  ( temps_d_appui > DUREE_DEUXIEME_APPUI )
+            &&( temps_d_appui < ( DUREE_DEUXIEME_APPUI + DUREE_TOLERANCE )))
+         {
+            etat = ETA_ATTENTE_2;
+            allume_deux_LED();
+         }
+         else {
+            eteint_tout();
+         }
       }
-      else if( temps_ecoule >= DEBUT_DE_FENETRE_2 ) {
-         etat = ETA_ATTENTE_2;
-         Serial.println( "Appui attendu" );
+      else if( temps_ecoule > ( DUREE_DEUXIEME_APPUI + DUREE_TOLERANCE )) {
+         eteint_tout();
       }
       break;
    case ETA_ATTENTE_2:
-      if( bouton_est_relache()) {
-         etat = ETA_LED_2;
-         allume_deux_LED();
-      }
-      else if( temps_ecoule >= FIN_DE_FENETRE_2 ) {
-         eteint_tout();
-         etat = ETA_VEILLE;
-      }
-      else {
-         montre_le_temps_restant( temps_ecoule, DEBUT_DE_FENETRE_2, FIN_DE_FENETRE_2 );
+      if( bouton_presse ) {
+         etat = ETA_MESURE_DU_TROISIEME_APPUI;
       }
       break;
-   case ETA_LED_2:
-      if( bouton_est_relache()) {
-         eteint_tout();
-         etat = ETA_VEILLE;
+   case ETA_MESURE_DU_TROISIEME_APPUI:
+      if( ! bouton_presse ) {
+         if(  ( temps_d_appui > DUREE_TROISIEME_APPUI )
+            &&( temps_d_appui < ( DUREE_TROISIEME_APPUI + DUREE_TOLERANCE )))
+         {
+            etat = ETA_SUCCES;
+            allume_trois_LED();
+         }
+         else {
+            eteint_tout();
+         }
       }
-      else if( temps_ecoule >= DEBUT_DE_FENETRE_3 ) {
-         etat = ETA_ATTENTE_3;
-         Serial.println( "Appui attendu" );
+      else if( temps_ecoule > ( DUREE_TROISIEME_APPUI + DUREE_TOLERANCE )) {
+         eteint_tout();
       }
       break;
-   case ETA_ATTENTE_3:
-      if( bouton_est_relache()) {
-         etat = ETA_LED_3;
-         allume_trois_LED();
-      }
-      else if( temps_ecoule >= FIN_DE_FENETRE_3 ) {
+   case ETA_SUCCES:
+      if( bouton_presse ) {
          eteint_tout();
-         etat = ETA_VEILLE;
-      }
-      else {
-         montre_le_temps_restant( temps_ecoule, DEBUT_DE_FENETRE_3, FIN_DE_FENETRE_3 );
-      }
-      break;
-   case ETA_LED_3:
-      if( bouton_est_relache()) {
-         eteint_tout();
-         etat = ETA_VEILLE;
       }
       break;
    }

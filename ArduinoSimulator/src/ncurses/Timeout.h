@@ -3,6 +3,8 @@
 #include "Control.h"
 #include "IChangeListener.h"
 
+#undef min
+#undef max
 #include <vector>
 
 namespace ncurses {

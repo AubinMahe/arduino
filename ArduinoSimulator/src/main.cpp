@@ -12,6 +12,8 @@
 #include <pthread.h>
 #include <sys/time.h>
 
+#undef min
+#undef max
 #include <iostream>
 
 #define UI_PROXY_PORT 2416
@@ -137,12 +139,24 @@ void detachInterrupt( uint8_t interrupt ) {
 
 //-- Communication -----------------------------------------------------------
 
-void Print::print( const char * s ) {
-   proxy->print( s );
+size_t Print::print( const char value[] ) {
+   return proxy->print( value );
 }
 
-void Print::println( const char * s ) {
-   proxy->println( s );
+size_t Print::print( unsigned long value, int base /* = DEC */ ) {
+   return proxy->print( value, base );
+}
+
+size_t Print::println( const char value[] ) {
+   return proxy->println( value );
+}
+
+size_t Print::println( unsigned long value, int base /* = DEC */ ) {
+   return proxy->println( value, base );
+}
+
+size_t Print::println( void ) {
+   return proxy->println();
 }
 
 void HardwareSerial::begin( unsigned long, uint8_t ) {

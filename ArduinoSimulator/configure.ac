@@ -20,14 +20,16 @@ AC_CHECK_HEADERS([stdlib.h])
 AC_CHECK_HEADERS([string.h])
 AC_CHECK_HEADERS([sys/socket.h])
 AC_CHECK_HEADERS([sys/time.h])
+AC_CHECK_HEADERS([stddef.h])
 AC_CHECK_HEADER_STDBOOL
 AC_C_INLINE
 AC_FUNC_STRTOD
 AC_TYPE_SIZE_T
 AC_TYPE_UINT8_T
 AC_SEARCH_LIBS([lws_create_context], [websockets], [], [AC_MSG_ERROR([library 'libwebsockets' is required for ArduinoSim])])
-AC_SEARCH_LIBS([initscr], [ncursesw], [], [AC_MSG_ERROR([library 'cursesw' is required for ArduinoSim])])
-AC_SEARCH_LIBS([pthread_create], [pthread], [], [AC_MSG_ERROR([library 'pthread' is required for ArduinoSim])])
+AC_SEARCH_LIBS([initscr], [ncursesw], [], [AC_MSG_ERROR([library 'ncursesw' is required for ArduinoSim])])
+AC_SEARCH_LIBS([pthread_create], [pthread], [], [AC_MSG_ERROR([library 'Posix Thread' is required for ArduinoSim])])
+AC_SEARCH_LIBS([malloc], [efence], [], [AC_MSG_ERROR([library 'Electric Fence' is required for ArduinoSim])])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_FILES([Makefile src/Makefile])
 AC_SUBST([CXXFLAGS], ['-g0 -O3 -std=c++11'])

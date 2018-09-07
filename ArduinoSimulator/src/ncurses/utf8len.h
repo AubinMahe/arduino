@@ -1,5 +1,7 @@
 #pragma once
 
+#undef min
+#undef max
 #include <string>
 
 namespace hpms {

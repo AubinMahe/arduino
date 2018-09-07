@@ -2,6 +2,8 @@
 
 #include "Window.h"
 
+#undef min
+#undef max
 #include <string>
 #include <vector>
 #include <algorithm>
@@ -14,8 +16,8 @@ namespace ncurses {
 
       StatusPane( int y, int width ) :
          Window( 0, y, width, 4, ACS_LTEE, ACS_RTEE ),
-         _line1( "Si un fichier nommé 'instructions.txt' existe dans le dossier de" ),
-         _line2( "lancement du simulateur, il sera lu pour renseigner ces deux lignes." )
+         _line1( "" ),
+         _line2( "" )
       {}
 
    public:
