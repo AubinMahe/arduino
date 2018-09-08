@@ -38,17 +38,6 @@ static volatile unsigned long temps_d_appui  = 0UL;        //!< mesure du temps 
 static volatile bool          bouton_presse  = false;      //!< L'état du bouton basculé par la routine d'interruption : le_bouton_a_ete_presse().
 
 /**
- * Effectue l'horodatage pour gérer les événements temporels.
- * @see DUREE_DU_BUZZER
- * Met en oeuvre l'API Arduino <a target="arduino-page"
- * href="https://www.arduino.cc/reference/en/language/functions/time/millis/"
- * >millis()</a>
- */
-static void demarre() {
-   Serial.println( "demarre" );
-}
-
-/**
  * Remet le système en attente, éteint les DEL, le buzzer, réinitialise l'état
  * interne.
  * @see etat, Etat_t.
@@ -111,8 +100,8 @@ static void allume_trois_LED() {
 }
 
 /**
- * Routine d'interruption attachée au front descendant du bouton (pin 2) au
- * moyen de l'API Arduino <a target="arduino-page" href=
+ * Routine d'interruption attachée au bouton (pin 2) au moyen de l'API Arduino
+ * <a target="arduino-page" href=
  * "https://www.arduino.cc/reference/en/language/functions/external-interrupts/attachinterrupt/"
  * >attachInterrupt()</a>.
  */
@@ -140,10 +129,11 @@ static void initialise_la_liaison_serie() {
  * Configure les entrées/sorties au moyen de l'API Arduino <a target="arduino-page"
  * href="https://www.arduino.cc/reference/en/language/functions/digital-io/pinmode/"
  * >pinMode()</a>.
- * Enregistre la routine d'interruption le_bouton_a_ete_presse() attachée au
- * front descendant du bouton (pin 2) au moyen de l'API Arduino <a target="arduino-page"
+ * Enregistre la routine d'interruption le_bouton_a_change() attachée au
+ * bouton (pin 2) au moyen de l'API Arduino <a target="arduino-page"
  * href="https://www.arduino.cc/reference/en/language/functions/external-interrupts/attachinterrupt/"
- * >attachInterrupt()</a>.
+ * >attachInterrupt()</a> avec l'argument CHANGE, c'est à dire qu'elle est
+ * appelée sur les deux fronts (montant et descendant) du signal.
  */
 static void initialise_les_entrees_sorties() {
    pinMode( BOUTON_PIN, INPUT  );
@@ -166,8 +156,6 @@ void setup() {
    initialise_les_entrees_sorties();
 }
 
-unsigned long last_tick = 0;
-
 /**
  * L'évolution de l'état du système est confiné ici sous la forme d'un automate
  * état/transition.
@@ -176,11 +164,10 @@ unsigned long last_tick = 0;
  * >loop()</a>.
  */
 void loop() {
-   unsigned long temps_ecoule = millis() - t0;
+   unsigned long inaction_de_l_operateur = millis() - t0;
    switch( etat ) {
    case ETA_VEILLE:
       if( bouton_presse ) {
-         demarre();
          etat = ETA_MESURE_DU_PREMIER_APPUI;
       }
       break;
@@ -196,7 +183,7 @@ void loop() {
             eteint_tout();
          }
       }
-      else if( temps_ecoule > ( DUREE_PREMIER_APPUI + DUREE_TOLERANCE )) {
+      else if( inaction_de_l_operateur > ( DUREE_PREMIER_APPUI + DUREE_TOLERANCE )) {
          eteint_tout();
       }
       break;
@@ -217,7 +204,7 @@ void loop() {
             eteint_tout();
          }
       }
-      else if( temps_ecoule > ( DUREE_DEUXIEME_APPUI + DUREE_TOLERANCE )) {
+      else if( inaction_de_l_operateur > ( DUREE_DEUXIEME_APPUI + DUREE_TOLERANCE )) {
          eteint_tout();
       }
       break;
@@ -238,7 +225,7 @@ void loop() {
             eteint_tout();
          }
       }
-      else if( temps_ecoule > ( DUREE_TROISIEME_APPUI + DUREE_TOLERANCE )) {
+      else if( inaction_de_l_operateur > ( DUREE_TROISIEME_APPUI + DUREE_TOLERANCE )) {
          eteint_tout();
       }
       break;

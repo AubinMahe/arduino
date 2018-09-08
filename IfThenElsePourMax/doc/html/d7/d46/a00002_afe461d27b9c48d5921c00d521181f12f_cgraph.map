@@ -1,0 +1,7 @@
+<map id="loop" name="loop">
+<area shape="rect" id="node2" href="$d7/d46/a00002.html#ae7bc60cc6f30cfeb2aec48d7ed2ed9b4" title="Utilise l&#39;API Arduino pour allumer la DEL n°1. " alt="" coords="103,5,225,32"/>
+<area shape="rect" id="node3" href="$d7/d46/a00002.html#ac7d7b30fcc3f4469d3a6b4d6e6c0ddaf" title="Remet le système en attente, éteint les DEL, le buzzer, réinitialise l&#39;état interne. " alt="" coords="123,56,205,83"/>
+<area shape="rect" id="node4" href="$d7/d46/a00002.html#af5016232deae83d338453879a46489d6" title="Utilise l&#39;API Arduino pour allumer les DEL n°1 et n°2. " alt="" coords="100,107,228,133"/>
+<area shape="rect" id="node5" href="$d7/d46/a00002.html#a4fac0448487379a273d00320ce664bd7" title="Utilise l&#39;API Arduino pour allumer les DEL n°1, n°2 et n°3. " alt="" coords="101,157,227,184"/>
+<area shape="rect" id="node6" href="$d7/d46/a00002.html#ae07989acf4bffd608b03f61532fddf51" title="Cette fonction devra, à terme, contrôler un afficheur pour diffuser un message constituant un indice ..." alt="" coords="276,157,388,184"/>
+</map>
