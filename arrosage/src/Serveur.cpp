@@ -1,67 +1,54 @@
 #include "Serveur.h"
 
-struct DemarrerArreter : private json::IJSonData {
-
-   DemarrerArreter() :
-      demarrer( false )
-   {}
-
-   virtual json::Status decode( const char * name, json::Decoder & decoder ) {
-      if( 0 == strcmp( name, "demarrer" )) {
-         return decoder.get( demarrer );
-      }
-      return json::UNEXPECTED_ATTRIBUTE;
-   }
-
-   virtual json::Status encode( json::Encoder & encoder ) const {
-      return json::SUCCESS;
-   }
-
+struct DemarrerArreterCodec;
+struct DemarrerArreter : public json::IJSonData {
+   DemarrerArreter() : demarrer( false ) {}
+   virtual const json::CoDec & getCoDec() const;
    bool demarrer;
 };
+struct DemarrerArreterCoDec : public json::CoDec {
+   static const DemarrerArreterCoDec codec;
+   DemarrerArreterCoDec() : json::CoDec( new json::Boolean( "demarrer", &DemarrerArreter::demarrer )) {}
+};
+const DemarrerArreterCoDec DemarrerArreterCoDec::codec;
+const json::CoDec & DemarrerArreter::getCoDec() const {
+   return DemarrerArreterCoDec::codec;
+}
 
-struct CommanderUneVanne : private json::IJSonData {
-
-   CommanderUneVanne() :
-      pin( 0 ),
-      ouvrir( false )
-   {}
-
-   json::Status decode( const char * name, json::Decoder & decoder ) {
-      if( 0 == strcmp( name, "pin" )) {
-         return decoder.get( pin );
-      }
-      if( 0 == strcmp( name, "ouvrir" )) {
-         return decoder.get( ouvrir );
-      }
-      return json::UNEXPECTED_ATTRIBUTE;
-   }
-
-   virtual json::Status encode( json::Encoder & encoder ) const {
-      return json::SUCCESS;
-   }
-
+struct CommanderUneVanneCoDec;
+struct CommanderUneVanne : public json::IJSonData {
+   CommanderUneVanne() : pin( 0 ), ouvrir( false ) {}
+   virtual const json::CoDec & getCoDec() const;
    uint8_t pin;
    bool    ouvrir;
 };
+struct CommanderUneVanneCoDec : public json::CoDec {
+   static const CommanderUneVanneCoDec codec;
+   CommanderUneVanneCoDec() :
+      json::CoDec(
+         new json::Byte   ( "pin"   , &CommanderUneVanne::pin,
+         new json::Boolean( "ouvrir", &CommanderUneVanne::ouvrir )))
+   {}
+};
+const CommanderUneVanneCoDec CommanderUneVanneCoDec::codec;
+const json::CoDec & CommanderUneVanne::getCoDec() const {
+   return CommanderUneVanneCoDec::codec;
+}
 
-struct CommanderLesVannes : private json::IJSonData {
-
-   CommanderLesVannes() {}
-
-   json::Status decode( const char * name, json::Decoder & decoder ) {
-      if( 0 == strcmp( name, "vannes" )) {
-         return decoder.decode( vannes, sizeof( vannes )/sizeof( vannes[0] ));
-      }
-      return json::UNEXPECTED_ATTRIBUTE;
-   }
-
-   virtual json::Status encode( json::Encoder & encoder ) const {
-      return json::SUCCESS;
-   }
-
+struct CommanderLesVannesCoDec;
+struct CommanderLesVannes : public json::IJSonData {
+   virtual const json::CoDec & getCoDec() const;
    CommanderUneVanne vannes[100];
 };
+struct CommanderLesVannesCoDec : public json::CoDec {
+   static const CommanderLesVannesCoDec codec;
+   CommanderLesVannesCoDec() : json::CoDec( new json::ObjectArray( "vannes", &CommanderLesVannes::vannes )) {}
+   CommanderUneVanne vannes[100];
+};
+const CommanderLesVannesCoDec CommanderLesVannesCoDec::codec;
+const json::CoDec & CommanderLesVannes::getCoDec() const {
+   return CommanderLesVannesCoDec::codec;
+}
 
 using namespace hpms;
 

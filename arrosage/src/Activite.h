@@ -4,24 +4,24 @@
 
 namespace hpms {
 
-   class Activite : private json::IJSonData {
+   class Activite : public json::IJSonData {
    public:
 
-      Activite( const Instant & o = Instant(), const Instant & f = Instant());
+      Activite( const Instant & o = Instant(), uint8_t duree = 30 );
+
+   public:
+
+      virtual const json::CoDec & getCoDec() const;
 
    public:
 
       bool est( const Instant & maintenant ) const;
 
-   public:
-
-      json::Status decode( const char * name, json::Decoder & decoder );
-
-      json::Status encode( json::Encoder & encoder ) const;
-
    private:
 
       Instant ouverture;
-      Instant fermeture;
+      uint8_t duree;
+
+   friend struct ActiviteCodec;
    };
 }

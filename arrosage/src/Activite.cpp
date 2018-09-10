@@ -2,34 +2,33 @@
 
 #include <ESP8266WiFi.h>
 
+namespace hpms {
+
+   struct ActiviteCodec : public json::CoDec {
+
+      static ActiviteCodec codec;
+
+      ActiviteCodec() :
+         json::CoDec(
+            new json::Object( "ouverture", &Activite::ouverture,
+            new json::Byte  ( "duree"    , &Activite::duree )))
+      {}
+   };
+}
+
 using namespace hpms;
 
-Activite::Activite( const Instant & o, const Instant & f ) :
+ActiviteCodec ActiviteCodec::codec;
+
+Activite::Activite( const Instant & o, uint8_t d ) :
    ouverture( o ),
-   fermeture( f )
+   duree( d & 0x3F ) // 1 heure maximum soit 6 bits 2^6 = 64
 {}
 
 bool Activite::est( const Instant & maintenant ) const {
-   return( maintenant > ouverture )&&( maintenant < fermeture );
+   return( maintenant > ouverture )&&( maintenant < ouverture + duree );
 }
 
-json::Status Activite::decode( const char * name, json::Decoder & decoder ) {
-   if( 0 == strcmp( name, "ouverture" )) {
-      return decoder.decode( ouverture );
-   }
-   if( 0 == strcmp( name, "fermeture" )) {
-      return decoder.decode( fermeture );
-   }
-   return json::UNEXPECTED_ATTRIBUTE;
-}
-
-json::Status Activite::encode( json::Encoder & encoder ) const {
-   json::Status status = json::SUCCESS;
-   if( status == json::SUCCESS ) {
-      status = encoder.encodeObject( "ouverture", ouverture );
-   }
-   if( status == json::SUCCESS ) {
-      status = encoder.encodeObject( "fermeture", fermeture );
-   }
-   return status;
+const json::CoDec & Activite::getCoDec() const {
+   return ActiviteCodec::codec;
 }

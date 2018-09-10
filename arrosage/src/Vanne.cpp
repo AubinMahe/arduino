@@ -2,7 +2,25 @@
 
 #include <ESP8266WiFi.h>
 
+namespace hpms {
+
+   struct VanneCodec : public json::CoDec {
+
+      static const VanneCodec codec;
+
+      VanneCodec() :
+         json::CoDec(
+            new json::Byte   ( "pin"    , &Vanne::pin,
+            new json::Boolean( "ouverte", &Vanne::ouverte,
+            new json::Object ( "matin"  , &Vanne::matin,
+            new json::Object ( "soir"   , &Vanne::soir )))))
+      {}
+   };
+}
+
 using namespace hpms;
+
+const VanneCodec VanneCodec::codec;
 
 bool Vanne::pin_est_valide( uint8_t pin ) {
    return pin > 0 && pin <= MAX_PIN;
@@ -19,6 +37,10 @@ Vanne::Vanne( uint8_t p, const Activite & m, const Activite & s ) :
    matin( m ),
    soir( s )
 {}
+
+const json::CoDec & Vanne::getCoDec( void ) const {
+   return VanneCodec::codec;
+}
 
 bool Vanne::est( uint8_t p ) const {
    return pin == p;
@@ -49,37 +71,4 @@ void Vanne::evaluer( const Instant & maintenant ) {
          ouvrir();
       }
    }
-}
-
-json::Status Vanne::decode( const char * name, json::Decoder & decoder ) {
-   if( 0 == strcmp( name, "pin" )) {
-      return decoder.get( pin );
-   }
-   if( 0 == strcmp( name, "ouverte" )) {
-      return decoder.get( ouverte );
-   }
-   if( 0 == strcmp( name, "matin" )) {
-      return decoder.decode( matin );
-   }
-   if( 0 == strcmp( name, "soir" )) {
-      return decoder.decode( soir );
-   }
-   return json::UNEXPECTED_ATTRIBUTE;
-}
-
-json::Status Vanne::encode( json::Encoder & encoder ) const {
-   json::Status status = json::SUCCESS;
-   if( status == json::SUCCESS ) {
-      status = encoder.encode( "pin", pin );
-   }
-   if( status == json::SUCCESS ) {
-      status = encoder.encode( "ouverte", ouverte );
-   }
-   if( status == json::SUCCESS ) {
-      status = encoder.encodeObject( "matin", matin );
-   }
-   if( status == json::SUCCESS ) {
-      status = encoder.encodeObject( "soir", soir );
-   }
-   return status;
 }

@@ -5,10 +5,14 @@
 
 namespace hpms {
 
-   class Instant : private json::IJSonData {
+   class Instant : public json::IJSonData {
    public:
 
       Instant( int h = 0, int m = 0 );
+
+   public:
+
+      virtual const json::CoDec & getCoDec() const;
 
    public:
 
@@ -16,15 +20,13 @@ namespace hpms {
 
       bool operator < ( const Instant & r ) const;
 
-   public:
-
-      json::Status decode( const char * name, json::Decoder & decoder );
-
-      json::Status encode( json::Encoder & encoder ) const;
+      Instant operator + ( uint8_t duree ) const;
 
    protected:
 
       unsigned char heure;  // 0..23
       unsigned char minute; // 0..59
+
+   friend struct InstantCodec;
    };
 }

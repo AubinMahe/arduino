@@ -7,10 +7,14 @@
 
 namespace hpms {
 
-   class Arrosage : private json::IJSonData {
+   class Arrosage : public json::IJSonData {
    public:
 
       Arrosage();
+
+   public:
+
+      const json::CoDec & getCoDec( void ) const;
 
    public:
 
@@ -20,15 +24,11 @@ namespace hpms {
 
       void evaluer( Horloge & horloge );
 
-   public:
-
-      json::Status decode( const char * name, json::Decoder & decoder );
-
-      json::Status encode( json::Encoder & encoder ) const;
-
    private:
 
       bool  est_en_marche;
       Vanne vannes[4];
+
+   friend struct ArrosageCoDec;
    };
 }

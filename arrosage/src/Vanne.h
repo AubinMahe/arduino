@@ -6,7 +6,7 @@
 
 namespace hpms {
 
-   class Vanne : private json::IJSonData {
+   class Vanne : public json::IJSonData {
    public:
 
       static bool pin_est_valide( uint8_t pin );
@@ -19,6 +19,10 @@ namespace hpms {
 
    public:
 
+      const json::CoDec & getCoDec( void ) const;
+
+   public:
+
       bool est( uint8_t pin ) const;
 
       void ouvrir( void );
@@ -26,12 +30,6 @@ namespace hpms {
       void fermer( void );
 
       void evaluer( const Instant & maintenant );
-
-   public:
-
-      json::Status decode( const char * name, json::Decoder & decoder );
-
-      json::Status encode( json::Encoder & encoder ) const;
 
    private:
 
@@ -41,5 +39,7 @@ namespace hpms {
       bool     ouverte;
       Activite matin;
       Activite soir;
+
+   friend struct VanneCodec;
    };
 }

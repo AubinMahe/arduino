@@ -53,22 +53,22 @@ namespace hpms {
        *            ,"ouverte": <boolean>
        *            ,"matin":
        *               {"ouverture": {"heure": <integer>, "minute": <integer>}
-       *               ,"fermeture": {"heure": <integer>, "minute": <integer>}
+       *               ,"duree": <integer>
        *               }
        *            ,"soir":
        *               {"ouverture": {"heure": <integer>, "minute": <integer>}
-       *               ,"fermeture": {"heure": <integer>, "minute": <integer>}
+       *               ,"duree": <integer>
        *               }
        *            }
        *           ,{"pin": <integer>
        *            ,"ouverte": <boolean>
        *            ,"matin":
        *               {"ouverture": {"heure": <integer>, "minute": <integer>}
-       *               ,"fermeture": {"heure": <integer>, "minute": <integer>}
+       *               ,"duree": <integer>
        *               }
        *            ,"soir":
        *               {"ouverture": {"heure": <integer>, "minute": <integer>}
-       *               ,"fermeture": {"heure": <integer>, "minute": <integer>}
+       *               ,"duree": <integer>
        *               }
        *            },
        *            ...

@@ -6,185 +6,62 @@
 
 #include <type_traits>
 
-#include "IJSonData.h"
+#include "Attributes.h"
 
 namespace json {
 
    class Encoder {
    public:
 
-      Encoder( char * buffer, size_t size ) :
-         _buffer( buffer ),
-         _size( size ),
-         _end( buffer + _size ),
-         _work( buffer )
-      {
-         memset( _buffer, 0, _size );
-      }
+      Encoder( char * buffer, size_t size );
 
-      template<typename T, typename std::enable_if<std::is_base_of<IJSonData, T>::value>::type* = nullptr>
-      Status encode( const T & t ) {
-         assert( _work[0] == '\0' );
-         if( _work + 1 > _end ) {
-            return BUFFER_OVERFLOW;
-         }
-         strcat( _buffer, "{" );
-         ++_work;
-         Status status = t.encode( *this );
-         if( status != SUCCESS ) {
-            return status;
-         }
-         if( _work + 1 > _end ) {
-            return BUFFER_OVERFLOW;
-         }
-         strcat( _buffer, "}" );
-         ++_work;
-         assert( _work[0] == '\0' );
-         return SUCCESS;
-      }
+   public:
 
-      template<class T, typename std::enable_if<std::is_scalar<T>::value>::type* = nullptr>
-      Status encode( const char * name, T t ) {
-         assert( _work[0] == '\0' );
-         const char * value = format( t );
-         bool first = ( _work[-1] == '{' );
-         size_t len = ( first ? 0 : 1 ) + 1 + strlen( name ) + 2 + strlen( value );
-         if( _work < _end + len ) {
-            if( ! first ) {
-               strcat( _buffer, "," );
-            }
-            strcat( _buffer, "\"" );
-            strcat( _buffer, name );
-            strcat( _buffer, "\":" );
-            strcat( _buffer, value );
-            _work += len;
-            assert( _work[0] == '\0' );
-            return SUCCESS;
-         }
-         return BUFFER_OVERFLOW;
-      }
-
-      template<typename T, typename std::enable_if<std::is_base_of<IJSonData, T>::value>::type* = nullptr>
-      Status encodeObject( const char * name, const T & value ) {
-         assert( _work[0] == '\0' );
-         bool first = ( _work[-1] == '{' );
-         size_t len = ( first ? 0 : 1 ) + 1 + strlen( name ) + 2;
-         if( _work + len >= _end ) {
-            return BUFFER_OVERFLOW;
-         }
-         if( ! first ) {
-            strcat( _buffer, "," );
-         }
-         strcat( _buffer, "\"" );
-         strcat( _buffer, name );
-         strcat( _buffer, "\":" );
-         _work += len;
-         return encode( value );
-      }
-
-      template<typename T, typename std::enable_if<std::is_scalar<T>::value>::type* = nullptr>
-      Status encodeArray( const char * name, T value[], size_t size ) {
-         assert( _work[0] == '\0' );
-         bool first = ( _work[-1] == '{' );
-         size_t len = ( first ? 0 : 1 ) + 1 + strlen( name ) + 3;
-         if( _work + len >= _end ) {
-            return BUFFER_OVERFLOW;
-         }
-         if( ! first ) {
-            strcat( _buffer, "," );
-         }
-         strcat( _buffer, "\"" );
-         strcat( _buffer, name );
-         strcat( _buffer, "\":[" );
-         _work += len;
-         for( size_t i = 0; _work < _end && i < size; ++i ) {
-            if( i ) {
-               if( _work + 1 >= _end ) {
-                  return BUFFER_OVERFLOW;
-               }
-               strcat( _buffer, "," );
-               ++_work;
-            }
-            char * item = format( value[i] );
-            strcat( _buffer, item );
-            _work += strlen( item );
-         }
-         if( _work + 1 >= _end ) {
-            return BUFFER_OVERFLOW;
-         }
-         strcat( _buffer, "]" );
-         ++_work;
-         assert( _work[0] == '\0' );
-         return SUCCESS;
-      }
-
-      template<class T, typename std::enable_if<std::is_base_of<IJSonData, T>::value>::type* = nullptr>
-      Status encodeObjectArray( const char * name, const T value[], size_t size ) {
-         assert( _work[0] == '\0' );
-         bool first = ( _work[-1] == '{' );
-         size_t len = ( first ? 0 : 1 ) + 1 + strlen( name ) + 3;
-         if( _work + len >= _end ) {
-            return BUFFER_OVERFLOW;
-         }
-         if( ! first ) {
-            strcat( _buffer, "," );
-         }
-         strcat( _buffer, "\"" );
-         strcat( _buffer, name );
-         strcat( _buffer, "\":[" );
-         _work += len;
-         for( size_t i = 0; i < size; ++i ) {
-            if( i ) {
-               if( _work + 1 >= _end ) {
-                  return BUFFER_OVERFLOW;
-               }
-               strcat( _buffer, "," );
-               ++_work;
-            }
-            Status status = encode( value[i] );
-            if( status ) {
-               return status;
-            }
-         }
-         if( _work + 1 >= _end ) {
-            return BUFFER_OVERFLOW;
-         }
-         strcat( _buffer, "]" );
-         ++_work;
-         assert( _work[0] == '\0' );
-         return SUCCESS;
-      }
+      Status encode( const IJSonData & data );
 
    private:
 
-      const char * format( bool value ) {
-         return value ? "true" : "false";
+      Status openObject();
+      Status closeObject();
+      Status openArray();
+      Status closeArray();
+      Status property( const char * name, bool              value );
+      Status property( const char * name, long              value );
+      Status property( const char * name, double            value );
+      Status property( const char * name, const char *      value );
+      Status property( const char * name, const IJSonData & value );
+      Status property( const char * name, const IJSonData * value, size_t size, size_t itemSize );
+
+      template<class T, typename std::enable_if<std::is_scalar<T>::value>::type* = nullptr>
+      Status property( const char * name, const T * value, size_t size ) {
+         Status retVal = beginProperty( name );
+         if( retVal == SUCCESS ) {
+            Status retVal = openArray();
+            for( size_t i = 0; retVal == SUCCESS && i < size; ++i ) {
+               if( i > 0 ) {
+                  retVal = separator();
+               }
+               if( retVal == SUCCESS ) {
+                  auto & item = value[i];
+                  retVal = append( item );
+               }
+            }
+            if( retVal == SUCCESS ) {
+               retVal = closeArray();
+            }
+         }
+         return retVal;
       }
 
-      const char * format( unsigned char value ) {
-         snprintf( _tmp, sizeof( _tmp ), "%d", value );
-         return _tmp;
-      }
+      Status separator( void );
 
-      const char * format( short value ) {
-         snprintf( _tmp, sizeof( _tmp ), "%d", value );
-         return _tmp;
-      }
+      Status beginProperty( const char * name );
 
-      const char * format( int value ) {
-         snprintf( _tmp, sizeof( _tmp ), "%d", value );
-         return _tmp;
-      }
-
-      const char * format( float value ) {
-         snprintf( _tmp, sizeof( _tmp ), "%G", value );
-         return _tmp;
-      }
-
-      const char * format( double value ) {
-         snprintf( _tmp, sizeof( _tmp ), "%G", value );
-         return _tmp;
-      }
+      Status append( bool          value );
+      Status append( long          value );
+      Status append( double        value );
+      Status append( const char *  value );
+      Status append( const char * string, size_t len );
 
    private:
 
@@ -193,5 +70,25 @@ namespace json {
       char * const _end;
       char *       _work;
       char         _tmp[100];
+
+   friend class CoDec;
+   friend class Boolean;
+   friend class Byte;
+   friend class Short;
+   friend class Integer;
+   friend class Long;
+   friend class Float;
+   friend class Double;
+   friend class String;
+   friend class BooleanArray;
+   friend class ByteArray;
+   friend class ShortArray;
+   friend class IntegerArray;
+   friend class LongArray;
+   friend class FloatArray;
+   friend class DoubleArray;
+   friend class StringArray;
+   friend class Object;
+   friend class ObjectArray;
    };
 }

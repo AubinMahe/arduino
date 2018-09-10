@@ -3,12 +3,32 @@
 #include <ctype.h>
 #include <ESP8266WiFi.h>
 
+namespace hpms {
+
+   struct InstantCodec : public json::CoDec {
+
+      static const InstantCodec codec;
+
+      InstantCodec() :
+         json::CoDec(
+            new json::Byte( "heure" , &Instant::heure,
+            new json::Byte( "minute", &Instant::minute )))
+      {}
+   };
+}
+
 using namespace hpms;
+
+const InstantCodec InstantCodec::codec;
 
 Instant::Instant( int h, int m ) :
    heure ( h ),
    minute( m )
 {}
+
+const json::CoDec & Instant::getCoDec() const {
+   return InstantCodec::codec;
+}
 
 bool Instant::operator > ( const Instant & r ) const {
    if( heure > r.heure ) {
@@ -30,23 +50,14 @@ bool Instant::operator < ( const Instant & r ) const {
    return minute < r.minute;
 }
 
-json::Status Instant::decode( const char * name, json::Decoder & decoder ) {
-   if( 0 == strcmp( name, "heure" )) {
-      return decoder.get( heure );
+Instant Instant::operator + ( uint8_t duree ) const {
+   uint8_t m = minute + duree;
+   uint8_t h = heure + m / 60;
+   m %= 60;
+   h %= 24;
+   if( h < heure ) {
+      h = 23;
+      m = 59;
    }
-   if( 0 == strcmp( name, "minute" )) {
-      return decoder.get( minute );
-   }
-   return json::UNEXPECTED_ATTRIBUTE;
-}
-
-json::Status Instant::encode( json::Encoder & encoder ) const {
-   json::Status status = json::SUCCESS;
-   if( status == json::SUCCESS ) {
-      status = encoder.encode( "heure", heure );
-   }
-   if( status == json::SUCCESS ) {
-      status = encoder.encode( "minute", minute );
-   }
-   return status;
+   return Instant( h, m );
 }

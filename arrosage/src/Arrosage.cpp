@@ -1,14 +1,34 @@
 #include "Arrosage.h"
 
+namespace hpms {
+
+   struct ArrosageCoDec : public json::CoDec {
+
+      static ArrosageCoDec codec;
+
+      ArrosageCoDec() :
+         json::CoDec(
+            new json::Boolean    ( "est_en_marche", &Arrosage::est_en_marche,
+            new json::ObjectArray( "vannes"       , &Arrosage::vannes )))
+      {}
+   };
+}
+
 using namespace hpms;
+
+ArrosageCoDec ArrosageCoDec::codec;
 
 Arrosage::Arrosage() :
    est_en_marche( false ),
-   vannes{{ 1, {{ 8,  0 },{ 8, 15 }}, {{ 22,  0 },{ 22, 15 }}},
-          { 2, {{ 8, 15 },{ 8, 30 }}, {{ 22, 15 },{ 22, 30 }}},
-          { 3, {{ 8, 30 },{ 8, 45 }}, {{ 22, 30 },{ 22, 45 }}},
-          { 4, {{ 8, 45 },{ 9,  0 }}, {{ 22, 45 },{ 23,  0 }}} }
+   vannes{{ 1, {{ 8,  0 }, 20 }, {{ 22,  0 }, 20 }},
+          { 2, {{ 8, 15 }, 20 }, {{ 22, 15 }, 20 }},
+          { 3, {{ 8, 30 }, 20 }, {{ 22, 30 }, 20 }},
+          { 4, {{ 8, 45 }, 20 }, {{ 22, 45 }, 20 }} }
 {}
+
+const json::CoDec & Arrosage::getCoDec( void ) const {
+   return ArrosageCoDec::codec;
+}
 
 void Arrosage::demarrer( bool demarrer ) {
    est_en_marche = demarrer;
@@ -33,26 +53,4 @@ void Arrosage::evaluer( Horloge & horloge ) {
          vannes[i].evaluer( horloge );
       }
    }
-}
-
-json::Status Arrosage::decode( const char * name, json::Decoder & decoder ) {
-   if( 0 == strcmp( name, "est_en_marche" )) {
-      return decoder.get( est_en_marche );
-   }
-   if( 0 == strcmp( name, "vannes" )) {
-      return decoder.decode( vannes, sizeof( vannes ) / sizeof( vannes[0] ));
-   }
-   return json::UNEXPECTED_ATTRIBUTE;
-}
-
-json::Status Arrosage::encode( json::Encoder & encoder ) const {
-   json::Status status = json::SUCCESS;
-   if( status == json::SUCCESS ) {
-      status = encoder.encode( "est_en_marche", est_en_marche );
-   }
-   if( status == json::SUCCESS ) {
-      status = encoder.encodeObjectArray<Vanne>(
-         "vannes", vannes, sizeof( vannes ) / sizeof( vannes[0] ));
-   }
-   return status;
 }
