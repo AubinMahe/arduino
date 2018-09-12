@@ -17,11 +17,11 @@ namespace hpms {
          refMinute( 0 )
       {}
 
-      void actualiser();
+      void actualiser( void );
+
+      void actualiser( uint8_t heure, uint8_t minute );
 
    private:
-
-      static const unsigned long UNE_JOURNEE = 24*60*60*1000; // en ms
 
       unsigned long derniere_mise_a_l_heure;
       unsigned char refHeure;  // 0..23 la dernière heure  NTP

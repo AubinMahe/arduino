@@ -1,54 +1,5 @@
 #include "Serveur.h"
-
-struct DemarrerArreterCodec;
-struct DemarrerArreter : public json::IJSonData {
-   DemarrerArreter() : demarrer( false ) {}
-   virtual const json::CoDec & getCoDec() const;
-   bool demarrer;
-};
-struct DemarrerArreterCoDec : public json::CoDec {
-   static const DemarrerArreterCoDec codec;
-   DemarrerArreterCoDec() : json::CoDec( new json::Boolean( "demarrer", &DemarrerArreter::demarrer )) {}
-};
-const DemarrerArreterCoDec DemarrerArreterCoDec::codec;
-const json::CoDec & DemarrerArreter::getCoDec() const {
-   return DemarrerArreterCoDec::codec;
-}
-
-struct CommanderUneVanneCoDec;
-struct CommanderUneVanne : public json::IJSonData {
-   CommanderUneVanne() : pin( 0 ), ouvrir( false ) {}
-   virtual const json::CoDec & getCoDec() const;
-   uint8_t pin;
-   bool    ouvrir;
-};
-struct CommanderUneVanneCoDec : public json::CoDec {
-   static const CommanderUneVanneCoDec codec;
-   CommanderUneVanneCoDec() :
-      json::CoDec(
-         new json::Byte   ( "pin"   , &CommanderUneVanne::pin,
-         new json::Boolean( "ouvrir", &CommanderUneVanne::ouvrir )))
-   {}
-};
-const CommanderUneVanneCoDec CommanderUneVanneCoDec::codec;
-const json::CoDec & CommanderUneVanne::getCoDec() const {
-   return CommanderUneVanneCoDec::codec;
-}
-
-struct CommanderLesVannesCoDec;
-struct CommanderLesVannes : public json::IJSonData {
-   virtual const json::CoDec & getCoDec() const;
-   CommanderUneVanne vannes[100];
-};
-struct CommanderLesVannesCoDec : public json::CoDec {
-   static const CommanderLesVannesCoDec codec;
-   CommanderLesVannesCoDec() : json::CoDec( new json::ObjectArray( "vannes", &CommanderLesVannes::vannes )) {}
-   CommanderUneVanne vannes[100];
-};
-const CommanderLesVannesCoDec CommanderLesVannesCoDec::codec;
-const json::CoDec & CommanderLesVannes::getCoDec() const {
-   return CommanderLesVannesCoDec::codec;
-}
+#include "Commandes.h"
 
 using namespace hpms;
 
@@ -130,8 +81,20 @@ void Serveur::sendHTTPResponse( WiFiClient & client, json::Status status, const 
 void Serveur::lire_la_configuration( WiFiClient & client ) const {
    char buffer[10*1024];
    json::Encoder generator( buffer, sizeof( buffer ));
-   json::Status status = generator.encode( arrosage );
+   Configuration cfg( horloge, arrosage );
+   json::Status status = generator.encode( cfg );
    sendHTTPResponse( client, status, buffer );
+}
+
+void Serveur::mettre_a_l_heure( WiFiClient & client ) {
+   char payload[1024];
+   if( client.readBytes( payload, sizeof( payload )) > 0 ) {
+      json::Decoder parser( payload );
+      Instant commande;
+      json::Status status = parser.decode( commande );
+      horloge.actualiser( commande.get_heure(), commande.get_minute());
+      sendHTTPResponse( client, status );
+   }
 }
 
 void Serveur::demarrer_arreter( WiFiClient & client ) {
@@ -140,6 +103,7 @@ void Serveur::demarrer_arreter( WiFiClient & client ) {
       json::Decoder parser( payload );
       DemarrerArreter commande;
       json::Status status = parser.decode( commande );
+      arrosage.demarrer( commande.demarrer );
       sendHTTPResponse( client, status );
    }
 }
@@ -148,13 +112,15 @@ void Serveur::commander_les_vannes( WiFiClient & client ) {
    char payload[1024];
    if( client.readBytes( payload, sizeof( payload )) > 0 ) {
       json::Decoder parser( payload );
-      CommanderLesVannes commande;
-      json::Status status = parser.decode( commande );
+      const int count = 100;
+      CommanderUneVanne vannes[count];
+//      json::Status status = parser.decode( vannes );
+      json::Status status = parser.decode<CommanderUneVanne, count>( vannes );
       if( json::SUCCESS == status ) {
-         for( size_t i = 0; i < sizeof(commande.vannes)/sizeof(commande.vannes[0]); ++i ) {
-            uint8_t pin = commande.vannes[0].pin;
+         for( size_t i = 0; i < count; ++i ) {
+            uint8_t pin = vannes[0].pin;
             if( Vanne::pin_est_valide( pin )) {
-               arrosage.commander_une_vanne( pin, commande.vannes[0].ouvrir );
+               arrosage.commander_une_vanne( pin, vannes[0].ouvrir );
             }
             else {
                break;

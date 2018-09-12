@@ -30,6 +30,12 @@ namespace hpms {
 
       /**
        * L'objet encodé en JSON à envoyer par HTTP est :
+       *        {"heure":<integer>, "minute": <integer>}
+       */
+      void mettre_a_l_heure( WiFiClient & client );
+
+      /**
+       * L'objet encodé en JSON à envoyer par HTTP est :
        *        {est_en_marche: <boolean>}
        */
       void demarrer_arreter( WiFiClient & client );

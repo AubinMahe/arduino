@@ -22,6 +22,10 @@ namespace hpms {
 
       Instant operator + ( uint8_t duree ) const;
 
+      unsigned char get_heure() const { return heure; }
+
+      unsigned char get_minute() const { return minute; }
+
    protected:
 
       unsigned char heure;  // 0..23

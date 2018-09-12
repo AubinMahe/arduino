@@ -6,8 +6,10 @@
 
 using namespace hpms;
 
+static const unsigned long PRESQUE_UNE_JOURNEE = 23*60*60*1000; // en ms
+
 void Horloge::actualiser() {
-   if( millis() - derniere_mise_a_l_heure > UNE_JOURNEE ) {
+   if( millis() - derniere_mise_a_l_heure > PRESQUE_UNE_JOURNEE ) {
       Serial.println( "Mise à jour de l'heure par NTP." );
       WiFiUDP   ntpUDP;
       NTPClient ntpClient( ntpUDP, "europe.pool.ntp.org", 3600, 60000 );
@@ -25,4 +27,10 @@ void Horloge::actualiser() {
       heure  = refHeure  + min;
       minute = refMinute + heu;
    }
+}
+
+void Horloge::actualiser( uint8_t h, uint8_t m ) {
+   heure  = h;
+   minute = m;
+   derniere_mise_a_l_heure = millis();
 }

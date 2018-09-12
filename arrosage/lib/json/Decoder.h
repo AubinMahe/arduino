@@ -21,6 +21,11 @@ namespace json {
       Status decode( IJSonData & target );
       Status decode( IJSonData * array, size_t card, size_t itemSize );
 
+      template<typename T, size_t C, typename std::enable_if<std::is_base_of<IJSonData, T>::value>::type* = nullptr>
+      Status decode( T array[C] ) {
+         return decode( array, C, sizeof( array[0] ));
+      }
+
       template<class T, typename std::enable_if<std::is_scalar<T>::value>::type* = nullptr>
       Status decode( T & array, size_t card ) {
          ++_work;
