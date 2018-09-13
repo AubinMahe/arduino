@@ -19,7 +19,6 @@ namespace json {
       Decoder( const char * begin, size_t len = 0 );
 
       Status decode( IJSonData & target );
-      Status decode( IJSonData * array, size_t card, size_t itemSize );
 
       template<typename T, size_t C, typename std::enable_if<std::is_base_of<IJSonData, T>::value>::type* = nullptr>
       Status decode( T array[C] ) {
@@ -70,6 +69,7 @@ namespace json {
       Status decode( float &             target ) const;
       Status decode( double &            target ) const;
       Status decode( size_t card, char * target ) const;
+      Status decode( char *              target, size_t capacity, size_t card );
 
       const char * getError() const;
 
@@ -79,6 +79,8 @@ namespace json {
 
       Status get_string( char * target, size_t tgtSize );
       Status get_value();
+
+      Status decode( IJSonData * array, size_t card, size_t itemSize );
 
    private:
 
@@ -101,5 +103,7 @@ namespace json {
       int    _int;
       double _double;
       char   _string[1024];
+
+      friend class ObjectArray;
    };
 }

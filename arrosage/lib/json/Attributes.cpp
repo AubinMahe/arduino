@@ -28,11 +28,11 @@ Status Short::set( IJSonData & o, Decoder & decoder ) const {
    return decoder.decode( o.*_member );
 }
 
-Status Integer::put( const IJSonData & o, Encoder & encoder ) const {
+Status Int::put( const IJSonData & o, Encoder & encoder ) const {
    return encoder.property( _name, (long)( o.*_member ));
 }
 
-Status Integer::set( IJSonData & o, Decoder & decoder ) const {
+Status Int::set( IJSonData & o, Decoder & decoder ) const {
    return decoder.decode( o.*_member );
 }
 
@@ -62,6 +62,56 @@ Status String::set( IJSonData & o, Decoder & decoder ) const {
    return decoder.decode( _size, target );
 }
 
+Status BooleanArray::put( const IJSonData & o, Encoder & encoder ) const {
+   const bool * source = &( o.*_member );
+   return encoder.property( _name, source, _size );
+}
+
+Status BooleanArray::set( IJSonData & o, Decoder & decoder ) const {
+   bool * target = &( o.*_member );
+   return decoder.decode( target, _size );
+}
+
+Status ByteArray::put( const IJSonData & o, Encoder & encoder ) const {
+   const unsigned char * source = &( o.*_member );
+   return encoder.property( _name, source, _size );
+}
+
+Status ByteArray::set( IJSonData & o, Decoder & decoder ) const {
+   unsigned char * target = &( o.*_member );
+   return decoder.decode( target, _size );
+}
+
+Status ShortArray::put( const IJSonData & o, Encoder & encoder ) const {
+   const short * source = &( o.*_member );
+   return encoder.property( _name, source, _size );
+}
+
+Status ShortArray::set( IJSonData & o, Decoder & decoder ) const {
+   short * target = &( o.*_member );
+   return decoder.decode( target, _size );
+}
+
+Status IntArray::put( const IJSonData & o, Encoder & encoder ) const {
+   const int * source = &( o.*_member );
+   return encoder.property( _name, source, _size );
+}
+
+Status IntArray::set( IJSonData & o, Decoder & decoder ) const {
+   int * target = &( o.*_member );
+   return decoder.decode( target, _size );
+}
+
+Status FloatArray::put( const IJSonData & o, Encoder & encoder ) const {
+   const float * source = &( o.*_member );
+   return encoder.property( _name, source, _size );
+}
+
+Status FloatArray::set( IJSonData & o, Decoder & decoder ) const {
+   float * target = &( o.*_member );
+   return decoder.decode( target, _size );
+}
+
 Status DoubleArray::put( const IJSonData & o, Encoder & encoder ) const {
    const double * source = &( o.*_member );
    return encoder.property( _name, source, _size );
@@ -70,6 +120,16 @@ Status DoubleArray::put( const IJSonData & o, Encoder & encoder ) const {
 Status DoubleArray::set( IJSonData & o, Decoder & decoder ) const {
    double * target = &( o.*_member );
    return decoder.decode( target, _size );
+}
+
+Status StringArray::put( const IJSonData & o, Encoder & encoder ) const {
+   const char * source = (const char *)&( o.*_member );
+   return encoder.property( _name, source, _capacity, _size );
+}
+
+Status StringArray::set( IJSonData & o, Decoder & decoder ) const {
+   char * target = (char *)&( o.*_member );
+   return decoder.decode( target, _capacity, _size );
 }
 
 Status Object::put( const IJSonData & o, Encoder & encoder ) const {

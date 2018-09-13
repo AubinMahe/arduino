@@ -147,15 +147,15 @@ Status Decoder::decode( int & target ) const {
 }
 
 Status Decoder::decode( float & target ) const {
-   if( _decodedValueType != DOUBLE ) {
+   if(( _decodedValueType != DOUBLE )&&( _decodedValueType != INTEGER )) {
       return TYPE_MISMATCH;
    }
-   target = _double;
+   target = (float)_double;
    return SUCCESS;
 }
 
 Status Decoder::decode( double & target ) const {
-   if( _decodedValueType != DOUBLE ) {
+   if(( _decodedValueType != DOUBLE )&&( _decodedValueType != INTEGER )) {
       return TYPE_MISMATCH;
    }
    target = _double;
@@ -166,9 +166,37 @@ Status Decoder::decode( size_t card, char * target ) const {
    if( _decodedValueType != STRING ) {
       return TYPE_MISMATCH;
    }
-   strncpy((char *)target, _string, card );
+   strncpy( target, _string, card );
    target[card-1] = '\0';
    return SUCCESS;
+}
+
+Status Decoder::decode( char * target, size_t capacity, size_t card ) {
+   Status retVal = OPEN_BRACKET_EXPECTED;
+   int c = skip_spaces();
+   if( c == '[' ) {
+      ++_work;
+      size_t i = 0;
+      retVal = SUCCESS;
+      char * s = target;
+      while(( retVal == SUCCESS )&&( _work < _end )&&( c != ']' )&&( i < card )) {
+         c = skip_spaces();
+         if( c == ',' ) {
+            ++_work;
+            c = skip_spaces();
+         }
+         retVal = get_string( s, capacity );
+         if( retVal == SUCCESS ) {
+            s += capacity;
+            c = skip_spaces();
+         }
+      }
+      if( c == ']' ) {
+         ++_work;
+         retVal = SUCCESS;
+      }
+   }
+   return retVal;
 }
 
 int Decoder::skip_spaces() {

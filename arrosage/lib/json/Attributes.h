@@ -70,11 +70,11 @@ namespace json {
       virtual Status set( IJSonData & o, Decoder & decoder ) const;
    };
 
-   class Integer : public Attribute<int> {
+   class Int : public Attribute<int> {
    public:
 
       template<class C>
-      Integer( const char * name, int ( C::* member ), AttributeBase * next = 0 ) :
+      Int( const char * name, int ( C::* member ), AttributeBase * next = 0 ) :
          Attribute<int>( name, (Attribute::member_t)member, next )
       {}
 
@@ -135,6 +135,106 @@ namespace json {
       size_t _size;
    };
 
+   class BooleanArray : public Attribute<bool> {
+   public:
+
+      template<class C, size_t S>
+      BooleanArray( const char * name, bool( C::* member )[S], AttributeBase * next = 0 ) :
+         Attribute<bool>( name, (Attribute::member_t)member, next ),
+         _size( S )
+      {}
+
+   public:
+
+      virtual Status put( const IJSonData & o, Encoder & encoder ) const;
+
+      virtual Status set( IJSonData & o, Decoder & decoder ) const;
+
+   private:
+
+      const size_t _size;
+   };
+
+   class ByteArray : public Attribute<unsigned char> {
+   public:
+
+      template<class C, size_t S>
+      ByteArray( const char * name, unsigned char( C::* member )[S], AttributeBase * next = 0 ) :
+         Attribute<unsigned char>( name, (Attribute::member_t)member, next ),
+         _size( S )
+      {}
+
+   public:
+
+      virtual Status put( const IJSonData & o, Encoder & encoder ) const;
+
+      virtual Status set( IJSonData & o, Decoder & decoder ) const;
+
+   private:
+
+      const size_t _size;
+   };
+
+   class ShortArray : public Attribute<short> {
+   public:
+
+      template<class C, size_t S>
+      ShortArray( const char * name, short( C::* member )[S], AttributeBase * next = 0 ) :
+         Attribute<short>( name, (Attribute::member_t)member, next ),
+         _size( S )
+      {}
+
+   public:
+
+      virtual Status put( const IJSonData & o, Encoder & encoder ) const;
+
+      virtual Status set( IJSonData & o, Decoder & decoder ) const;
+
+   private:
+
+      const size_t _size;
+   };
+
+   class IntArray : public Attribute<int> {
+   public:
+
+      template<class C, size_t S>
+      IntArray( const char * name, int( C::* member )[S], AttributeBase * next = 0 ) :
+         Attribute<int>( name, (Attribute::member_t)member, next ),
+         _size( S )
+      {}
+
+   public:
+
+      virtual Status put( const IJSonData & o, Encoder & encoder ) const;
+
+      virtual Status set( IJSonData & o, Decoder & decoder ) const;
+
+   private:
+
+      const size_t _size;
+   };
+
+   class FloatArray : public Attribute<float> {
+   public:
+
+      template<class C, size_t S>
+      FloatArray( const char * name, float( C::* member )[S], AttributeBase * next = 0 ) :
+         Attribute<float>( name, (Attribute::member_t)member, next ),
+         _size( S )
+      {}
+
+   public:
+
+      virtual Status put( const IJSonData & o, Encoder & encoder ) const;
+
+      virtual Status set( IJSonData & o, Decoder & decoder ) const;
+
+   private:
+
+      const size_t _size;
+   };
+
    class DoubleArray : public Attribute<double> {
    public:
 
@@ -152,6 +252,28 @@ namespace json {
 
    private:
 
+      const size_t _size;
+   };
+
+   class StringArray : public Attribute<const char *> {
+   public:
+
+      template<class C, size_t L, size_t S>
+      StringArray( const char * name, char( C::* member )[S][L], AttributeBase * next = 0 ) :
+         Attribute<const char *>( name, (Attribute::member_t)member, next ),
+         _capacity( L ),
+         _size( S )
+      {}
+
+   public:
+
+      virtual Status put( const IJSonData & o, Encoder & encoder ) const;
+
+      virtual Status set( IJSonData & o, Decoder & decoder ) const;
+
+   private:
+
+      const size_t _capacity;
       const size_t _size;
    };
 

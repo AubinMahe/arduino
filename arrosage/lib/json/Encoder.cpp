@@ -58,13 +58,7 @@ Status Encoder::property( const char * name, double value ) {
 Status Encoder::property( const char * name, const char * value ) {
    Status retVal = beginProperty( name );
    if( retVal == SUCCESS ) {
-      retVal = append( "\"", 1 );
-   }
-   if( retVal == SUCCESS ) {
-      retVal = append( value, ::strlen( value ));
-   }
-   if( retVal == SUCCESS ) {
-      retVal = append( "\"", 1 );
+      retVal = append( value);
    }
    return retVal;
 }
@@ -99,6 +93,26 @@ Status Encoder::property( const char * name, const IJSonData * value, size_t siz
    return retVal;
 }
 
+Status Encoder::property( const char * name, const char * value, size_t capacity, size_t size ) {
+   Status retVal = beginProperty( name );
+   if( retVal == SUCCESS ) {
+      Status retVal = openArray();
+      for( size_t i = 0; retVal == SUCCESS && i < size; ++i ) {
+         if( i > 0 ) {
+            retVal = separator();
+         }
+         if( retVal == SUCCESS ) {
+            retVal = append( value );
+            value += capacity;
+         }
+      }
+      if( retVal == SUCCESS ) {
+         retVal = closeArray();
+      }
+   }
+   return retVal;
+}
+
 Status Encoder::separator( void ) {
    return append( ",", 1 );
 }
@@ -118,9 +132,25 @@ Status Encoder::append( bool value ) {
    return value ? append( "true", 4 ) : append( "false", 5 );
 }
 
+Status Encoder::append( unsigned char value ) {
+   return append((long)value );
+}
+
+Status Encoder::append( short value ) {
+   return append((long)value );
+}
+
+Status Encoder::append( int value ) {
+   return append((long)value );
+}
+
 Status Encoder::append( long value ) {
    snprintf( _tmp, sizeof( _tmp ), "%ld", value );
    return append( _tmp, ::strlen( _tmp ));
+}
+
+Status Encoder::append( float value ) {
+   return append((double)value );
 }
 
 Status Encoder::append( double value ) {

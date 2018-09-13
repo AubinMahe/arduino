@@ -52,16 +52,21 @@ namespace json {
          }
          return retVal;
       }
+      Status property( const char * name, const char * value, size_t capacity, size_t size );
 
       Status separator( void );
 
       Status beginProperty( const char * name );
 
       Status append( bool          value );
+      Status append( unsigned char value );
+      Status append( short         value );
+      Status append( int           value );
       Status append( long          value );
+      Status append( float         value );
       Status append( double        value );
       Status append( const char *  value );
-      Status append( const char * string, size_t len );
+      Status append( const char *  string, size_t len );
 
    private:
 
@@ -75,7 +80,7 @@ namespace json {
    friend class Boolean;
    friend class Byte;
    friend class Short;
-   friend class Integer;
+   friend class Int;
    friend class Long;
    friend class Float;
    friend class Double;
@@ -83,7 +88,7 @@ namespace json {
    friend class BooleanArray;
    friend class ByteArray;
    friend class ShortArray;
-   friend class IntegerArray;
+   friend class IntArray;
    friend class LongArray;
    friend class FloatArray;
    friend class DoubleArray;
