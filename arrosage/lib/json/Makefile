@@ -1,6 +1,6 @@
 CXX      = g++
 LINK.o   = $(LINK.cc)
-CXXFLAGS = -std=c++11 -pedantic -W -Wall -g3 -O0
+CXXFLAGS = -std=c++11 -pedantic -W -Wall -g3 -O0 -DTESTS_UNITAIRES
 LDFLAGS  = -lefence
 SRCS     = Attributes.cpp Decoder.cpp Encoder.cpp IJSonData.cpp JSonTests.cpp
 OBJS     = $(SRCS:%.cpp=%.o)

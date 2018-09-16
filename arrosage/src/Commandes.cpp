@@ -51,3 +51,19 @@ const CommanderUneVanneCoDec CommanderUneVanneCoDec::codec;
 const json::CoDec & CommanderUneVanne::getCoDec() const {
    return CommanderUneVanneCoDec::codec;
 }
+
+struct CommanderLesVannesCoDec : public json::CoDec {
+
+   static const CommanderLesVannesCoDec codec;
+
+   CommanderLesVannesCoDec() :
+      json::CoDec(
+         new json::ObjectArray( "les_vannes", &CommanderLesVannes::les_vannes ))
+   {}
+};
+
+const CommanderLesVannesCoDec CommanderLesVannesCoDec::codec;
+
+const json::CoDec & CommanderLesVannes::getCoDec() const {
+   return CommanderLesVannesCoDec::codec;
+}

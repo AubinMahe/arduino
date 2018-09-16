@@ -3,6 +3,7 @@
 
 #include <string.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 #include <type_traits>
 
@@ -10,7 +11,7 @@ using namespace json;
 
 Decoder::Decoder( const char * begin, size_t len /* = 0 */) :
    _begin( begin ),
-   _end( 0 ),
+   _end(( len == 0 ) ? ( _begin + ::strlen( _begin )) : (_begin + len )),
    _work( _begin ),
    _decodedValueType( NONE ),
    _boolean( false ),
@@ -18,12 +19,15 @@ Decoder::Decoder( const char * begin, size_t len /* = 0 */) :
    _double( 0.0 )
 {
    memset( _string, 0, sizeof( _string ));
-   if( len == 0 ) {
-      _end = _begin + ::strlen( _begin );
-   }
-   else {
-      _end = _begin + len;
-   }
+}
+
+void Decoder::reset() {
+   _work             = _begin;
+   _decodedValueType = NONE;
+   _boolean          = false;
+   _int              = 0L;
+   _double           = 0.0;
+   memset( _string, 0, sizeof( _string ));
 }
 
 Status Decoder::decode( IJSonData & target ) {
@@ -88,17 +92,14 @@ Status Decoder::decode( IJSonData * array, size_t card, size_t itemSize ) {
    int c = skip_spaces();
    if( c == '[' ) {
       ++_work;
-      size_t i = 0;
-      char * raw = (char *)array;
       retVal = SUCCESS;
-      while(( retVal == SUCCESS )&&( _work < _end )&&( c != ']' )&&( i < card )) {
+      for( size_t i = 0; (retVal == SUCCESS)&&(_work < _end)&&(c != ']')&&(i < card); ++i ) {
          c = skip_spaces();
          if( c == ',' ) {
             ++_work;
             c = skip_spaces();
          }
-         raw += i++*itemSize;
-         IJSonData * item = (IJSonData *)raw;
+         IJSonData * item = (IJSonData *)(((char *)array)+i*itemSize);
          retVal = decode( *item );
          c = skip_spaces();
       }
@@ -112,6 +113,36 @@ Status Decoder::decode( IJSonData * array, size_t card, size_t itemSize ) {
 
 const char * Decoder::getError() const {
    return _work;
+}
+
+bool Decoder::dump( const char * buffer, size_t count, char * target, size_t targetSize ) {
+   ::memset( target, 0, targetSize );
+   char line [4+2+3*16+1];
+   char ascii[16+1];
+   ascii[16] = '\0';
+   *target = '\0';
+   for( size_t i = 0; i < count; i += 16 ) {
+      ::snprintf( line, sizeof( line ), "%04X: ", (unsigned int)i );
+      for( size_t col = 0; col < 16; ++col ) {
+         char   tmp[4];
+         size_t ndx = i + col;
+         if( ndx < count ) {
+            unsigned char c = buffer[ndx];
+            ::snprintf( tmp, sizeof( tmp ), "%02X ", c );
+            ascii[col] = (( c > 31 )&&(c < 127 )) ? c : '.';
+         }
+         else {
+            ::snprintf( tmp, sizeof( tmp ), "   " );
+            ascii[col] = ' ';
+         }
+         ::strcat( line, tmp );
+      }
+      ::strncat( target, line , targetSize );
+      ::strncat( target, "- " , targetSize );
+      ::strncat( target, ascii, targetSize );
+      ::strncat( target, "\r\n" , targetSize );
+   }
+   return ::strlen( target ) < targetSize;
 }
 
 Status Decoder::decode( bool & target ) const {

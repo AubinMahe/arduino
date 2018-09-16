@@ -18,6 +18,8 @@ namespace json {
 
       Decoder( const char * begin, size_t len = 0 );
 
+      void reset();
+
       Status decode( IJSonData & target );
 
       template<typename T, size_t C, typename std::enable_if<std::is_base_of<IJSonData, T>::value>::type* = nullptr>
@@ -73,6 +75,12 @@ namespace json {
 
       const char * getError() const;
 
+      static bool dump(
+         const char * buffer,
+         size_t       count,
+         char *       target,
+         size_t       targetSize );
+
    private:
 
       int skip_spaces();
@@ -84,9 +92,9 @@ namespace json {
 
    private:
 
-      const char * _begin;
-      const char * _end;
-      const char * _work;
+      const char * const _begin;
+      const char * const _end;
+      const char *       _work;
 
       enum Type {
 

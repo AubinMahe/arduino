@@ -988,6 +988,8 @@
                                     <listOptionValue builtIn="false" value="LWIP_OPEN_SRC"/>
                                     									
                                     <listOptionValue builtIn="false" value="VTABLES_IN_FLASH"/>
+                                    									
+                                    <listOptionValue builtIn="false" value="TESTS_UNITAIRES"/>
                                     								
                                 </option>
                                 								
@@ -1118,18 +1120,6 @@
     <storageModule moduleId="cdtBuildSystem" version="4.0.0">
         		
         <project id="arrosage.null.189551033" name="arrosage"/>
-        	
-    </storageModule>
-    	
-    <storageModule moduleId="scannerConfiguration">
-        		
-        <autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
-        		
-        <scannerConfigBuildInfo instanceId="0.910961921">
-            			
-            <autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
-            		
-        </scannerConfigBuildInfo>
         	
     </storageModule>
     	
@@ -1282,6 +1272,24 @@
             </target>
             		
         </buildTargets>
+        	
+    </storageModule>
+    	
+    <storageModule moduleId="scannerConfiguration">
+        		
+        <autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+        		
+        <scannerConfigBuildInfo instanceId="0.910961921">
+            			
+            <autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+            		
+        </scannerConfigBuildInfo>
+        		
+        <scannerConfigBuildInfo instanceId="0.910961921.1363900502.2135039830">
+            			
+            <autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+            		
+        </scannerConfigBuildInfo>
         	
     </storageModule>
     

@@ -4,3 +4,5 @@
 .gcc-flags.json
 compile_flags.txt
 /doc/
+/reponses/
+/http-requests.txt

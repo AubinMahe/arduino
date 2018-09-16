@@ -36,9 +36,9 @@ namespace hpms {
       static const uint8_t MAX_PIN = 8;
 
       uint8_t  pin;
-      bool     ouverte;
       Activite matin;
       Activite soir;
+      bool     ouverte;
 
    friend struct VanneCodec;
    };

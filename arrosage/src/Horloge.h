@@ -11,11 +11,7 @@ namespace hpms {
    class Horloge : public Instant {
    public:
 
-      Horloge() :
-         derniere_mise_a_l_heure( 0 ),
-         refHeure ( 0 ),
-         refMinute( 0 )
-      {}
+      Horloge();
 
       void actualiser( void );
 

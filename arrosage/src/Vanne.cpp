@@ -11,9 +11,9 @@ namespace hpms {
       VanneCodec() :
          json::CoDec(
             new json::Byte   ( "pin"    , &Vanne::pin,
-            new json::Boolean( "ouverte", &Vanne::ouverte,
             new json::Object ( "matin"  , &Vanne::matin,
-            new json::Object ( "soir"   , &Vanne::soir )))))
+            new json::Object ( "soir"   , &Vanne::soir,
+            new json::Boolean( "ouverte", &Vanne::ouverte )))))
       {}
    };
 }
@@ -33,9 +33,9 @@ Vanne::Vanne( void ) :
 
 Vanne::Vanne( uint8_t p, const Activite & m, const Activite & s ) :
    pin( p ),
-   ouverte( false ),
    matin( m ),
-   soir( s )
+   soir( s ),
+   ouverte( false )
 {}
 
 const json::CoDec & Vanne::getCoDec( void ) const {
