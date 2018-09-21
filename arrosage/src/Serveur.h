@@ -1,9 +1,9 @@
 #pragma once
 
-#include <ESP8266WiFi.h>
-
 #include "Horloge.h"
 #include "Arrosage.h"
+
+#include <ESP8266WiFi.h>
 
 namespace hpms {
 
@@ -36,7 +36,8 @@ namespace hpms {
       static const char *   SSID;
       static const char *   WIFI_PWD;
       static const uint8_t  WIFI_CONNEXION_ESSAIS = 10;
-      static const uint16_t HTTP_PORT             = 80;
+      static const uint16_t HTTP_PORT             = 8080;
+      static /* */ bool     DUMP;
 
       WiFiServer serveur;
       Horloge    horloge;

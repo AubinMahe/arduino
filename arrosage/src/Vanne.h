@@ -2,8 +2,6 @@
 
 #include "Activite.h"
 
-#include <Arduino.h>
-
 namespace hpms {
 
    class Vanne : public json::IJSonData {

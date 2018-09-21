@@ -19,20 +19,22 @@
 #undef max
 #include <iomanip>
 #include <sstream>
+#include <string>
+#include <vector>
 
 #define UI_PROXY_PORT 2416
 
 struct JavaUIProxyAttributes {
 
-   int             socket;
-   sockaddr_in     addr;
-   uint8_t         digital[16];
-   int             analog [16];
-   void    ( *     isr_0_func )( void );
-   uint8_t         isr_0_mode;
-   void    ( *     isr_1_func )( void );
-   uint8_t         isr_1_mode;
-   sim::SimuStatus status;
+   int                      socket;
+   sockaddr_in              addr;
+   uint8_t                  digital[16];
+   int                      analog [16];
+   uint8_t                  isr_0_mode;
+   void( *                  isr_0_func )( void );
+   uint8_t                  isr_1_mode;
+   void( *                  isr_1_func )( void );
+   sim::SimuStatus          status;
 };
 
 enum verb_t {
@@ -78,10 +80,10 @@ enum verb_t {
 JavaUIProxy::JavaUIProxy( unsigned short port ) {
    a = new JavaUIProxyAttributes();
    ::memset( a, 0, sizeof( JavaUIProxyAttributes ));
-   a->isr_0_func = 0;
    a->isr_0_mode = 0;
    a->isr_0_func = 0;
    a->isr_1_mode = 0;
+   a->isr_1_func = 0;
    a->socket = ::socket( AF_INET, SOCK_DGRAM, 0 );
    if( a->socket < 0 ) {
       ::perror("socket()");
@@ -195,33 +197,53 @@ void JavaUIProxy::tone( uint8_t pin, unsigned int frequency, unsigned long durat
 
 void JavaUIProxy::attachInterrupt( uint8_t pin, void (* ISR )(void), uint8_t mode ) const {
    if( pin == 2 ) {
-      a->isr_0_func = ISR;
-      a->isr_0_mode = mode;
+      if( mode == RISING || mode == FALLING || mode == CHANGE ) {
+         a->isr_0_mode = mode;
+         a->isr_0_func = ISR;
+      }
+      else {
+         a->isr_0_mode = 0;
+         a->isr_0_func = 0;
+      }
    }
    else if( pin == 3 ) {
-      a->isr_1_func = ISR;
-      a->isr_1_mode = mode;
+      if( mode == RISING || mode == FALLING || mode == CHANGE ) {
+         a->isr_1_mode = mode;
+         a->isr_1_func = ISR;
+      }
+      else {
+         a->isr_1_mode = 0;
+         a->isr_1_func = 0;
+      }
    }
 }
 
 void JavaUIProxy::detachInterrupt( uint8_t pin ) const {
    if( pin == 2 ) {
-      a->isr_0_func = 0;
       a->isr_0_mode = 0;
+      a->isr_0_func = 0;
    }
    else if( pin == 3 ) {
-      a->isr_1_func = 0;
       a->isr_1_mode = 0;
+      a->isr_1_func = 0;
    }
 }
 
 //-- Communication --------------------------------------------------------
 
 size_t JavaUIProxy::print( const char value[] ) const {
+   if( _serialTeeStderr ) {
+      ::fprintf( stderr, "%s", value );
+   }
    return send( E_PRINT, value );
 }
 
-size_t JavaUIProxy::print( unsigned char value, int base ) const {
+size_t JavaUIProxy::print( char value ) const {
+   char tmp[2] = { value, '\0' };
+   return print( tmp );
+}
+
+size_t JavaUIProxy::print( uint8_t value, int base ) const {
    return print((long)value, base );
 }
 
@@ -248,20 +270,33 @@ size_t JavaUIProxy::print( unsigned long value, int base ) const {
    else {
       ss << value;
    }
-   return send( E_PRINT, ss.str().c_str());
+   const char * str = ss.str().c_str();
+   if( _serialTeeStderr ) {
+      ::fprintf( stderr, "%s", str );
+   }
+   return send( E_PRINT, str );
 }
 
 size_t JavaUIProxy::print( double value, int prec ) const {
    std::stringstream ss;
    ss << std::setprecision( prec ) << value;
-   return send( E_PRINT, ss.str().c_str());
+   const char * str = ss.str().c_str();
+   if( _serialTeeStderr ) {
+      ::fprintf( stderr, "%s", str );
+   }
+   return send( E_PRINT, str );
 }
 
 size_t JavaUIProxy::println( const char value[] ) const {
    return send( E_PRINTLN, value );
 }
 
-size_t JavaUIProxy::println( unsigned char value, int base ) const {
+size_t JavaUIProxy::println( char value ) const {
+   char tmp[2] = { value, '\0' };
+   return println( tmp );
+}
+
+size_t JavaUIProxy::println( uint8_t value, int base ) const {
    return println((long)value, base );
 }
 
@@ -288,17 +323,25 @@ size_t JavaUIProxy::println( unsigned long value, int base ) const {
    else {
       ss << value;
    }
-   return send( E_PRINTLN, ss.str().c_str());
+   const char * str = ss.str().c_str();
+   if( _serialTeeStderr ) {
+      ::fprintf( stderr, "%s", str );
+   }
+   return send( E_PRINTLN, str );
 }
 
 size_t JavaUIProxy::println( double value, int prec ) const {
    std::stringstream ss;
    ss << std::setprecision( prec ) << value;
-   return send( E_PRINTLN, ss.str().c_str());
+   const char * str = ss.str().c_str();
+   if( _serialTeeStderr ) {
+      ::fprintf( stderr, "%s", str );
+   }
+   return send( E_PRINTLN, str );
 }
 
 size_t JavaUIProxy::println( void ) const {
-   return send( E_PRINTLN, "" );
+   return println( "" );
 }
 
 //-- Servo -------------------------------------------------------------------
@@ -350,17 +393,20 @@ void JavaUIProxy::_recv() const {
          int pin    = buffer[1];
          int status = buffer[2];
          a->digital[pin] = status;
-         if(  ( pin == 2 )
-            &&( a->isr_0_func )
+         if(( pin == 2 )
+            &&(     a->isr_0_func )
             &&(  (( a->isr_0_mode == RISING  ) &&  status )
-               ||(( a->isr_0_mode == FALLING ) && !status )))
+               ||(( a->isr_0_mode == FALLING ) && !status )
+               ||(  a->isr_0_mode == CHANGE               )))
          {
             a->isr_0_func();
          }
-         else if(  ( pin == 3 )
-                 &&( a->isr_1_func )
-                 &&(  (( a->isr_1_mode == RISING  ) &&  status )
-                    ||(( a->isr_1_mode == FALLING ) && !status )))
+         else if(
+            ( pin == 3 )
+            &&(     a->isr_1_func )
+            &&(  (( a->isr_1_mode == RISING  ) &&  status )
+               ||(( a->isr_1_mode == FALLING ) && !status )
+               ||(  a->isr_1_mode == CHANGE               )))
          {
             a->isr_1_func();
          }

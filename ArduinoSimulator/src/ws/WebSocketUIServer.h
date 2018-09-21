@@ -47,7 +47,8 @@ namespace ws {
       //-- Communication --------------------------------------------------------
 
       virtual size_t print( const char    value[]         ) const;
-      virtual size_t print( unsigned char value, int base ) const;
+      virtual size_t print( char          value           ) const;
+      virtual size_t print( uint8_t       value, int base ) const;
       virtual size_t print( int           value, int base ) const;
       virtual size_t print( unsigned int  value, int base ) const;
       virtual size_t print( long          value, int base ) const;
@@ -55,7 +56,8 @@ namespace ws {
       virtual size_t print( double        value, int prec ) const;
 
       virtual size_t println( const char    value[]         ) const;
-      virtual size_t println( unsigned char value, int base ) const;
+      virtual size_t println( char          value           ) const;
+      virtual size_t println( uint8_t       value, int base ) const;
       virtual size_t println( int           value, int base ) const;
       virtual size_t println( unsigned int  value, int base ) const;
       virtual size_t println( long          value, int base ) const;

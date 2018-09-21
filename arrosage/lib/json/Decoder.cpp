@@ -9,6 +9,8 @@
 
 using namespace json;
 
+char Decoder:: _errMsg[200];
+
 Decoder::Decoder( const char * begin, size_t len /* = 0 */) :
    _begin( begin ),
    _end(( len == 0 ) ? ( _begin + ::strlen( _begin )) : (_begin + len )),
@@ -121,7 +123,7 @@ bool Decoder::dump( const char * buffer, size_t count, char * target, size_t tar
    char ascii[16+1];
    ascii[16] = '\0';
    *target = '\0';
-   for( size_t i = 0; i < count; i += 16 ) {
+   for( size_t i = 0; ( i < count )&&( ::strlen( target ) < targetSize ); i += 16 ) {
       ::snprintf( line, sizeof( line ), "%04X: ", (unsigned int)i );
       for( size_t col = 0; col < 16; ++col ) {
          char   tmp[4];
@@ -138,9 +140,15 @@ bool Decoder::dump( const char * buffer, size_t count, char * target, size_t tar
          ::strcat( line, tmp );
       }
       ::strncat( target, line , targetSize );
-      ::strncat( target, "- " , targetSize );
-      ::strncat( target, ascii, targetSize );
-      ::strncat( target, "\r\n" , targetSize );
+      if( ::strlen( target ) < targetSize ) {
+         ::strncat( target, "- " , targetSize );
+      }
+      if( ::strlen( target ) < targetSize ) {
+         ::strncat( target, ascii, targetSize );
+      }
+      if( ::strlen( target ) < targetSize ) {
+         ::strncat( target, "\n" , targetSize );
+      }
    }
    return ::strlen( target ) < targetSize;
 }

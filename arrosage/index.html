@@ -79,6 +79,17 @@ text-align: right;
 var http     = new XMLHttpRequest();
 var arrosage = null;
 
+function hhmm( instant ) {
+   let hh = instant.heure;
+   if( hh < 10 ) {
+      hh = '0' + hh;
+   }
+   let mm = instant.minute;
+   if( mm < 10 ) {
+      mm = '0' + mm;
+   }
+   return hh + ':' + mm;
+}
 function lire_la_configuration() {
    let cmd = {commande: "Lire la configuration"};
    console.log( "Commande : %o", cmd );
@@ -87,23 +98,32 @@ function lire_la_configuration() {
       if( this.readyState === XMLHttpRequest.DONE ) {
          if( this.status === 200 ) {
             let configuration = JSON.parse( this.responseText );
-            let hm = configuration.heure + ':' + configuration.minute;
-            document.getElementById( "heure" ).value = hm; 
-            document.getElementById( "heure_de_la_configuration" ).value = hm; 
-            document.getElementById( "est_en_marche" ).value = configuration.arrosage.est_en_marche; 
-            arrosage = configuration.arrosage;
-            for( let i = 0; i < arrosage.vannes.length; ++i ) {
-               let vanne = arrosage.vannes[i];
-               document.getElementById( "vanne-1-pin"             ).value = vanne.pin; 
-               document.getElementById( "vanne-1-matin-ouverture" ).value = vanne.matin.ouverture.heure + ':' + vanne.matin.ouverture.minute;
-               document.getElementById( "vanne-1-matin-duree"     ).value = vanne.matin.duree;
-               document.getElementById( "vanne-1-soir-ouverture"  ).value = vanne.soir .ouverture.heure + ':' + vanne.soir .ouverture.minute;
-               document.getElementById( "vanne-1-soir-duree"      ).value = vanne.soir.duree;
+            if( configuration.code === 0 ) {
+               let heure    = configuration.data.heure;
+               let arrosage = configuration.data.arrosage;
+               let ts       = heure.heure + ':' + heure.minute;
+               document.getElementById( "heure" ).value = ts; 
+               document.getElementById( "heure_de_la_configuration" ).value = ts;
+               document.getElementById( "est_en_marche" ).value = arrosage.est_en_marche;
+               for( let i = 0; i < arrosage.vannes.length; ++i ) {
+                  let vanne = arrosage.vannes[i];
+                  let ndx   = i + 1;
+                  let pin   = document.getElementById( "vanne-" + ndx + "-pin"             );
+                  let mo    = document.getElementById( "vanne-" + ndx + "-matin-ouverture" );
+                  let md    = document.getElementById( "vanne-" + ndx + "-matin-duree"     );
+                  let so    = document.getElementById( "vanne-" + ndx + "-soir-ouverture"  );
+                  let sd    = document.getElementById( "vanne-" + ndx + "-soir-duree"      );
+                  pin.value = vanne.pin;
+                  mo .value = hhmm( vanne.matin.ouverture );
+                  md .value = vanne.matin.duree;
+                  so .value = hhmm( vanne.soir .ouverture );
+                  sd .value = vanne.soir.duree;
+               }
             }
          }
       }
    };
-   http.open( 'POST', 'http://192.168.1.24', true );
+   http.open( 'POST', location.host, true );
    http.setRequestHeader( "Content-type", "application/json" );
    http.send( JSON.stringify( cmd ));
 }
@@ -111,7 +131,7 @@ function lire_la_configuration() {
 function send( cmd ) {
    console.log( "send: -%o-", cmd );
    http.onreadystatechange = function( event ) {};
-   http.open( 'POST', 'http://192.168.1.24', true );
+   http.open( 'POST', location.host, true );
    http.setRequestHeader( "Content-type", "application/json" );
    http.send( JSON.stringify( cmd ));
 }
@@ -131,20 +151,25 @@ function mettre_a_l_heure() {
 }
 
 function ouvrir_ou_fermer_les_vannes() {
-   let les_vannes = [];
+   let msg = {
+      commande: "Ouvrir ou fermer les vannes",
+      argument: {
+         les_vannes: [],
+      },
+   };
    for( let i = 1; i < 100; ++i ) {
       let pin = document.getElementById( "of-vanne-" + i + "-pin" );
       if( ! pin ) {
          break;
       }
       if( pin.value > 0 ) {
-         les_vannes.push({
+         msg.argument.les_vannes.push({
             pin   : parseInt( pin.value ),
             ouvrir: document.getElementById( "of-vanne-" + i + "-etat" ).checked,
          });
       }
    }
-   send({commande: "Ouvrir ou fermer les vannes", argument: les_vannes});   
+   send( msg );   
 }
 
 function charger_une_configuration() {
@@ -153,7 +178,7 @@ function charger_une_configuration() {
       heure : parseInt( hm[0] ),
       minute: parseInt( hm[1] )
    };
-   let vannes = [];
+   let les_vannes = [];
    for( let i = 1; i < 100; ++i ) {
       let pin = document.getElementById( "vanne-" + i + "-pin" );
       if( ! pin ) {
@@ -185,7 +210,7 @@ function charger_une_configuration() {
       heure   : instant,
       arrosage: {
          est_en_marche: document.getElementById( "est_en_marche" ).checked,
-         vannes       : vannes
+         vannes       : les_vannes
       }
    };
    send({commande: "Charger une configuration", argument: cfg});

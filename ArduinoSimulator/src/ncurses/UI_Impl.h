@@ -26,12 +26,10 @@ namespace ncurses {
    public:
 
       UI_Impl() :
-         _isr_0_func_rising ( 0 ),
-         _isr_0_func_falling( 0 ),
-         _isr_0_func_change ( 0 ),
-         _isr_1_func_rising ( 0 ),
-         _isr_1_func_falling( 0 ),
-         _isr_1_func_change ( 0 ),
+         _isr_0_mode( 0 ),
+         _isr_0_func( 0 ),
+         _isr_1_mode( 0 ),
+         _isr_1_func( 0 ),
          _ctrl( 0 ),
          _logPane( 0 ),
          _statusPane( 0 ),
@@ -56,56 +54,65 @@ namespace ncurses {
             }
          }
          else if( &what == _ctrl->getCheckbox( 2 )) {
-            if( _isr_0_func_rising && checked ) {
-               _isr_0_func_rising();
-            }
-            else if( _isr_0_func_falling && ! checked ) {
-               _isr_0_func_falling();
-            }
-            if( _isr_0_func_change ) {
-               _isr_0_func_change();
+            if( _isr_0_func ) {
+               if(      _isr_0_mode == RISING && checked ) {
+                  _isr_0_func();
+               }
+               else if( _isr_0_mode == FALLING && ! checked ) {
+                  _isr_0_func();
+               }
+               if(      _isr_0_mode == CHANGE ) {
+                  _isr_0_func();
+               }
             }
          }
          else if( &what == _ctrl->getCheckbox( 3 )) {
-            if( _isr_1_func_rising && checked ) {
-               _isr_1_func_rising();
-            }
-            else if( _isr_1_func_falling && !checked ) {
-               _isr_1_func_falling();
-            }
-            if( _isr_1_func_change ) {
-               _isr_1_func_change();
+            if( _isr_1_func ) {
+               if(      _isr_1_mode == RISING && checked ) {
+                  _isr_1_func();
+               }
+               else if( _isr_1_mode == FALLING && ! checked ) {
+                  _isr_1_func();
+               }
+               if(      _isr_1_mode == CHANGE ) {
+                  _isr_1_func();
+               }
             }
          }
       }
 
       void attachInterrupt( uint8_t pin, void (* ISR )(void), uint8_t mode ) {
          if( pin == 2 ) {
-            if( mode == RISING ) {
-               _isr_0_func_rising = ISR;
+            if( mode == RISING || mode == FALLING || mode == CHANGE ) {
+               _isr_0_mode = mode;
+               _isr_0_func = ISR;
             }
-            else if( mode == FALLING ) {
-               _isr_0_func_falling = ISR;
-            }
-            else if( mode == CHANGE ) {
-               _isr_0_func_change = ISR;
+            else {
+               _isr_0_mode = 0;
+               _isr_0_func = 0;
             }
          }
          else if( pin == 3 ) {
-            if( mode == RISING ) {
-               _isr_1_func_rising = ISR;
+            if( mode == RISING || mode == FALLING || mode == CHANGE ) {
+               _isr_1_mode = mode;
+               _isr_1_func = ISR;
             }
-            else if( mode == FALLING ) {
-               _isr_1_func_falling = ISR;
-            }
-            else if( mode == CHANGE ) {
-               _isr_1_func_change = ISR;
+            else {
+               _isr_1_mode = 0;
+               _isr_1_func = 0;
             }
          }
       }
 
       void detachInterrupt( uint8_t pin ) {
-         attachInterrupt( pin, 0, 0 );
+         if( pin == 2 ) {
+            _isr_0_mode = 0;
+            _isr_0_func = 0;
+         }
+         else if( pin == 3 ) {
+            _isr_1_mode = 0;
+            _isr_1_func = 0;
+         }
       }
 
       Controls & ctrl() {
@@ -220,12 +227,10 @@ namespace ncurses {
          std::function<
             void(void)> > _jobs;
       std::mutex          _jobsLock;
-      void    ( *         _isr_0_func_rising  )( void );
-      void    ( *         _isr_0_func_falling )( void );
-      void    ( *         _isr_0_func_change  )( void );
-      void    ( *         _isr_1_func_rising  )( void );
-      void    ( *         _isr_1_func_falling )( void );
-      void    ( *         _isr_1_func_change  )( void );
+      uint8_t             _isr_0_mode;
+      void    ( *         _isr_0_func )( void );
+      uint8_t             _isr_1_mode;
+      void    ( *         _isr_1_func )( void );
       Controls *          _ctrl;
       LogPane *           _logPane;
       StatusPane *        _statusPane;

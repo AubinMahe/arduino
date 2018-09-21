@@ -11,7 +11,7 @@ namespace hpms {
       ActiviteCodec() :
          json::CoDec(
             new json::Object( "ouverture", &Activite::ouverture,
-            new json::Byte  ( "duree"    , &Activite::duree )))
+            new json::Byte  ( "duree"    , &Activite::duree_minutes )))
       {}
    };
 }
@@ -22,11 +22,13 @@ ActiviteCodec ActiviteCodec::codec;
 
 Activite::Activite( const Instant & o, uint8_t d ) :
    ouverture( o ),
-   duree( d & 0x3F ) // 1 heure maximum soit 6 bits 2^6 = 64
+   duree_minutes( d & 0x3F ) // 1 heure maximum soit 6 bits 2^6-1 = 0..63
 {}
 
-bool Activite::est( const Instant & maintenant ) const {
-   return( maintenant > ouverture )&&( maintenant < ouverture + duree );
+bool Activite::est_activable( const Instant & maintenant ) const {
+   bool after  = ( ouverture < maintenant );
+   bool before = ( maintenant < ( ouverture + duree_minutes ));
+   return after && before;
 }
 
 const json::CoDec & Activite::getCoDec() const {

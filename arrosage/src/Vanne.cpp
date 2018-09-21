@@ -62,12 +62,16 @@ void Vanne::fermer() {
 
 void Vanne::evaluer( const Instant & maintenant ) {
    if( ouverte ) {
-      if( matin.est( maintenant ) || soir.est( maintenant )) {
+      if(  ( ! matin.est_activable( maintenant ))
+         &&( ! soir .est_activable( maintenant )))
+      {
          fermer();
       }
    }
    else {
-      if( matin.est( maintenant ) || soir.est( maintenant )) {
+      if(   matin.est_activable( maintenant )
+         || soir .est_activable( maintenant ))
+      {
          ouvrir();
       }
    }

@@ -9,26 +9,21 @@ function check {
    fi
 }
 
-mkdir -p /home/aubin/Dev/Arduino/arduino/ArduinoSimulator/build/build/build
-check cd /home/aubin/Dev/Arduino/arduino/ArduinoSimulator/build/build/build
-chmod -fR 777 arduinosim-1.0 src
-rm -fr arduinosim-1.0
-rm -f config.h
-rm -f config.log
-rm -f config.status
-rm -f Makefile
-rm -fr src
-rm -f stamp-h1
+rm -fr build
+mkdir -p build/build/build
+check cd build/build/build
+chmod -fR 777 src
 (cd ../../.. ; check autoreconf --install --force)
 check ../../../configure
 check make distcheck
-check mv arduinosim-1.0.tar.gz ../../download
+rm -fr ../../download
+check mkdir -p ../../download
+check mv arduinosim-*.tar.gz ../../download
 check cd ../../download
-check chmod -R 777 arduinosim-1.0
-check rm -fr arduinosim-1.0
-check tar xzf arduinosim-1.0.tar.gz
-check cd arduinosim-1.0
-check ./configure --prefix /home/aubin/Dev/Arduino/arduino/ArduinoSimulator/build/download/arduinosim-1.0/install-dir
+check tar xzf arduinosim-*.tar.gz
+check cd $(find -type d -name 'arduinosim-*')
+check ./configure --prefix $(readlink -f .)/install-dir
 check make
 check make install
 check find install-dir
+

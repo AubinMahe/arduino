@@ -44,14 +44,14 @@ bool Instant::operator < ( const Instant & r ) const {
    if( heure < r.heure ) {
       return true;
    }
-   if( heure < r.heure ) {
+   if( heure > r.heure ) {
       return false;
    }
    return minute < r.minute;
 }
 
-Instant Instant::operator + ( uint8_t duree ) const {
-   uint8_t m = minute + duree;
+Instant Instant::operator + ( uint8_t duree_minutes ) const {
+   uint8_t m = minute + duree_minutes;
    uint8_t h = heure + m / 60;
    m %= 60;
    h %= 24;

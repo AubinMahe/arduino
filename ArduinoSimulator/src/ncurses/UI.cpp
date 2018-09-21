@@ -1,5 +1,7 @@
 #include "UI_Impl.h"
 
+#include <stdio.h>
+
 using namespace ncurses;
 
 UI::UI() :
@@ -65,11 +67,22 @@ void UI::detachInterrupt( uint8_t pin ) const {
 //-- Communication --------------------------------------------------------
 
 size_t UI::print( const char value[] ) const {
+   if( _serialTeeStderr ) {
+      ::fprintf( stderr, "%s", value );
+   }
    _ui->enqueue( [ this, value ] () { _ui->log().print( value ); });
    return strlen( value );
 }
 
-size_t UI::print( unsigned char value, int base ) const {
+size_t UI::print( char value ) const {
+   if( _serialTeeStderr ) {
+      ::fprintf( stderr, "%c", value );
+   }
+   _ui->enqueue( [ this, value ] () { char tmp[] = { value, '\0' }; _ui->log().print( tmp ); });
+   return 1;
+}
+
+size_t UI::print( uint8_t value, int base ) const {
    return print((long)value, base );
 }
 
@@ -82,6 +95,19 @@ size_t UI::print( unsigned int value, int base ) const{
 }
 
 size_t UI::print( long value, int base ) const{
+   if( _serialTeeStderr ) {
+      std::stringstream ss;
+      if( base == OCT ) {
+         ss << std::oct << value;
+      }
+      else if( base == HEX ) {
+         ss << std::hex << value;
+      }
+      else {
+         ss << value;
+      }
+      ::fprintf( stderr, "%s", ss.str().c_str());
+   }
    _ui->enqueue( [ this, value, base ] () {
       std::stringstream ss;
       if( base == OCT ) {
@@ -99,6 +125,19 @@ size_t UI::print( long value, int base ) const{
 }
 
 size_t UI::print( unsigned long value, int base ) const{
+   if( _serialTeeStderr ) {
+      std::stringstream ss;
+      if( base == OCT ) {
+         ss << std::oct << value;
+      }
+      else if( base == HEX ) {
+         ss << std::hex << value;
+      }
+      else {
+         ss << value;
+      }
+      ::fprintf( stderr, "%s", ss.str().c_str());
+   }
    _ui->enqueue( [ this, value, base ] () {
       std::stringstream ss;
       if( base == OCT ) {
@@ -116,6 +155,11 @@ size_t UI::print( unsigned long value, int base ) const{
 }
 
 size_t UI::print( double value, int prec ) const{
+   if( _serialTeeStderr ) {
+      std::stringstream ss;
+      ss << std::setprecision( prec ) << value;
+      ::fprintf( stderr, "%s", ss.str().c_str());
+   }
    _ui->enqueue( [ this, value, prec ] () {
       std::stringstream ss;
       ss << std::setprecision( prec ) << value;
@@ -125,11 +169,22 @@ size_t UI::print( double value, int prec ) const{
 }
 
 size_t UI::println( const char value[] ) const {
+   if( _serialTeeStderr ) {
+      ::fprintf( stderr, "%s\n", value );
+   }
    _ui->enqueue( [ this, value ] () { _ui->log().print( std::string( value ) + "\n" ); });
    return strlen( value );
 }
 
-size_t UI::println( unsigned char value, int base ) const {
+size_t UI::println( char value ) const {
+   if( _serialTeeStderr ) {
+      ::fprintf( stderr, "%c\n", value );
+   }
+   _ui->enqueue( [ this, value ] () { char tmp[3] = { value, '\n', '\0' }; _ui->log().print( tmp ); });
+   return 2;
+}
+
+size_t UI::println( uint8_t value, int base ) const {
    return println((long)value, base );
 }
 
@@ -142,6 +197,19 @@ size_t UI::println( unsigned int value, int base ) const{
 }
 
 size_t UI::println( long value, int base ) const{
+   if( _serialTeeStderr ) {
+      std::stringstream ss;
+      if( base == OCT ) {
+         ss << std::oct << value;
+      }
+      else if( base == HEX ) {
+         ss << std::hex << value;
+      }
+      else {
+         ss << value;
+      }
+      ::fprintf( stderr, "%s\n", ss.str().c_str());
+   }
    _ui->enqueue( [ this, value, base ] () {
       std::stringstream ss;
       if( base == OCT ) {
@@ -159,6 +227,19 @@ size_t UI::println( long value, int base ) const{
 }
 
 size_t UI::println( unsigned long value, int base ) const{
+   if( _serialTeeStderr ) {
+      std::stringstream ss;
+      if( base == OCT ) {
+         ss << std::oct << value;
+      }
+      else if( base == HEX ) {
+         ss << std::hex << value;
+      }
+      else {
+         ss << value;
+      }
+      ::fprintf( stderr, "%s\n", ss.str().c_str());
+   }
    _ui->enqueue( [ this, value, base ] () {
       std::stringstream ss;
       if( base == OCT ) {
@@ -176,6 +257,11 @@ size_t UI::println( unsigned long value, int base ) const{
 }
 
 size_t UI::println( double value, int prec ) const{
+   if( _serialTeeStderr ) {
+      std::stringstream ss;
+      ss << std::setprecision( prec ) << value;
+      ::fprintf( stderr, "%s\n", ss.str().c_str());
+   }
    _ui->enqueue( [ this, value, prec ] () {
       std::stringstream ss;
       ss << std::setprecision( prec ) << value;
@@ -185,10 +271,7 @@ size_t UI::println( double value, int prec ) const{
 }
 
 size_t UI::println( void ) const{
-   _ui->enqueue( [ this ] () {
-      _ui->log().print( "\n" );
-   });
-   return 1;
+   return println("");
 }
 
 //-- Servo -------------------------------------------------------------------

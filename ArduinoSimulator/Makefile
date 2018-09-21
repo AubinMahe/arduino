@@ -1,3 +1,5 @@
+# Makefile for Eclipse
+#----------------------
 CXX      = g++
 CXXFLAGS = -W -Wall -g3 -O0 -std=c++11 -I src/arduinosim -DDEBUG
 #CXXFLAGS = -W -Wall -g3 -O3 -std=c++11 -I src/arduinosim -DDEBUG
@@ -5,19 +7,19 @@ CXXFLAGS = -W -Wall -g3 -O0 -std=c++11 -I src/arduinosim -DDEBUG
 LDFLAGS  = -L BUILD -lsim -lncursesw -lm -lwebsockets -lpthread -lefence
 OBJS     =\
  BUILD/main.o\
+ BUILD/IUI.o\
+ BUILD/arduinosim/ESP8266WiFiClass.o\
+ BUILD/arduinosim/EspClass.o\
+ BUILD/arduinosim/IPAddress.o\
+ BUILD/arduinosim/NTPClient.o\
+ BUILD/arduinosim/WiFiClient.o\
+ BUILD/arduinosim/WiFiServer.o\
  BUILD/java/UIProxy.o\
  BUILD/ncurses/UI.o\
  BUILD/ncurses/getFileContents.o\
  BUILD/ncurses/utf8len.o\
  BUILD/ws/WebSocketUIServer.o\
  BUILD/ws/jsontest.o
-
-DISTRIBUTED =\
- BUILD/main.o\
- BUILD/java/UIProxy.o\
- BUILD/ncurses/UI.o\
- BUILD/ncurses/getFileContents.o\
- BUILD/ws/WebSocketUIServer.o
 
 all: BUILD/arduinosimsample $(OBJS)
 
@@ -31,7 +33,7 @@ BUILD/IfThenElsePourMax.o: src/sample/IfThenElsePourMax.cpp
 	@mkdir -p $$(dirname $@)
 	$(CXX) $(CXXFLAGS) $< -c -o $@
 
-BUILD/libsim.a: $(DISTRIBUTED)
+BUILD/libsim.a: $(OBJS)
 	ar -rcs $@ $?
 
 BUILD/%.o: src/%.cpp

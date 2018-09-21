@@ -8,6 +8,7 @@ lib_LIBRARIES = libarduinosim.a
 libarduinosim_a_SOURCES = \
  main.cpp \
  IUI.h \
+ IUI.cpp \
  java/UIProxy.h \
  java/UIProxy.cpp \
  ncurses/UI.cpp \

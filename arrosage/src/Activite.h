@@ -15,12 +15,12 @@ namespace hpms {
 
    public:
 
-      bool est( const Instant & maintenant ) const;
+      bool est_activable( const Instant & maintenant ) const;
 
    private:
 
       Instant ouverture;
-      uint8_t duree;
+      uint8_t duree_minutes;
 
    friend struct ActiviteCodec;
    };

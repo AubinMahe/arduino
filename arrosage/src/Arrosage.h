@@ -1,7 +1,5 @@
 #pragma once
 
-#include <ESP8266WiFi.h>
-
 #include "Horloge.h"
 #include "Vanne.h"
 

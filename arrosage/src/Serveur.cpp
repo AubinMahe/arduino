@@ -1,6 +1,8 @@
 #include "Serveur.h"
 #include "Commandes.h"
-#include "index.h"
+#include "index.html.h"
+
+#include <strings.h>
 
 #define DEMARRER_OU_ARRETER            "Démarrer ou arrêter"
 #define METTRE_A_L_HEURE               "Mettre à l'heure"
@@ -10,9 +12,11 @@
 
 #define countof(A) (sizeof(A)/sizeof((A)[0]))
 
-#define DUMP_ACTIF true
-
 using namespace hpms;
+
+const uint8_t  Serveur::WIFI_CONNEXION_ESSAIS;
+const uint16_t Serveur::HTTP_PORT;
+bool           Serveur::DUMP = false;
 
 Serveur::Serveur() :
    serveur( HTTP_PORT )
@@ -54,6 +58,7 @@ json::Status Serveur::mettre_a_l_heure( json::Decoder & parser ) {
 }
 
 json::Status Serveur::ouvrir_ou_fermer_les_vannes( json::Decoder & parser ) {
+   Serial.println( "Serveur::ouvrir_ou_fermer_les_vannes" );
    static Commande<CommanderLesVannes> commander_les_vannes;
    json::Status status = parser.decode( commander_les_vannes );
    if( json::SUCCESS == status ) {
@@ -71,10 +76,14 @@ json::Status Serveur::ouvrir_ou_fermer_les_vannes( json::Decoder & parser ) {
 }
 
 json::Status Serveur::charger_une_configuration( json::Decoder & parser ) {
-   Commande<Arrosage> configurationComplete;
+   Serial.println( "Serveur::charger_une_configuration" );
+   Commande<Configuration> configurationComplete;
    json::Status status( parser.decode( configurationComplete ));
    if( json::SUCCESS == status ) {
-      arrosage = configurationComplete.argument;
+      arrosage = configurationComplete.argument.arrosage;
+      horloge.actualiser(
+         configurationComplete.argument.heure.get_heure(),
+         configurationComplete.argument.heure.get_minute());
    }
    return status;
 }
@@ -107,7 +116,8 @@ void Serveur::sendJSonResponse( WiFiClient & client, json::Status status, const 
       snprintf( json, sizeof( json ), "{\"code\":%d,\"msg\":\"%s\"}", status, data );
    }
    else {
-      snprintf( json, sizeof( json ), "{\"code\":%d,\"msg\":\"internal server error\"}", status );
+      snprintf( json, sizeof( json ), "{\"code\":%d,\"msg\":\"%s\"}",
+         status, json::Decoder::_errMsg );
    }
    client.println( "HTTP/1.1 200 OK" );
    client.println( "Connection: close" );
@@ -123,27 +133,33 @@ void Serveur::handleJSonCommands( WiFiClient & client, json::Decoder & parser ) 
    const char *              response = 0;
    if( commande.commande[0] ) {
       parser.reset();
-      if(      0 == ::strcmp( commande.commande, DEMARRER_OU_ARRETER )) {
+      if(      0 == ::strcasecmp( commande.commande, DEMARRER_OU_ARRETER )) {
          arrosage.demarrer( commande.argument.demarrer );
+         status = json::SUCCESS;
       }
-      else if( 0 == ::strcmp( commande.commande, METTRE_A_L_HEURE )) {
+      else if( 0 == ::strcasecmp( commande.commande, METTRE_A_L_HEURE )) {
          status = mettre_a_l_heure( parser );
       }
-      else if( 0 == ::strcmp( commande.commande, OUVRIR_OU_FERMER_LES_VANNES )) {
+      else if( 0 == ::strcasecmp( commande.commande, OUVRIR_OU_FERMER_LES_VANNES )) {
          status = ouvrir_ou_fermer_les_vannes( parser );
       }
-      else if( 0 == ::strcmp( commande.commande, CHARGER_UNE_CONFIGURATION )) {
+      else if( 0 == ::strcasecmp( commande.commande, CHARGER_UNE_CONFIGURATION )) {
          status = charger_une_configuration( parser );
       }
-      else if( 0 == ::strcmp( commande.commande, LIRE_LA_CONFIGURATION )) {
+      else if( 0 == ::strcasecmp( commande.commande, LIRE_LA_CONFIGURATION )) {
          status = lire_la_configuration( response );
       }
       else {
-         Serial.print( "Commande inattendue : '" );
-         Serial.print( commande.commande );
-         Serial.println( "'" );
+         Serial.print  ( "Commande '" );
+         Serial.print  ( commande.commande );
+         Serial.println( "' inattendue." );
          status   = json::UNEXPECTED_ATTRIBUTE;
          response = "Commande inattendue";
+      }
+      if( status == json::SUCCESS ) {
+         Serial.print  ( "Commande '" );
+         Serial.print  ( commande.commande );
+         Serial.println( "' exécutée." );
       }
    }
    sendJSonResponse( client, status, response );
@@ -165,6 +181,11 @@ void Serveur::send404( WiFiClient & client ) const {
    client.println( "Connection: close" );
 }
 
+static char buffer[4000];
+// 0000: 50 4F 53 54 20 2F 31 39 32 2E 31 36 38 2E 31 2E - POST /192.168.1.
+// 1234112312312312312312312312312312312312312312312312312312345678901234561
+static char db[40*(4+1+16*3+3+16+1)];
+
 void Serveur::loop() {
    WiFiClient client = serveur.available();
    if( client ) {
@@ -172,11 +193,9 @@ void Serveur::loop() {
       while( ! ( client.available() && client.connected())) {
          delay( 4 );
       }
-      static char buffer[2000];
       memset( buffer, 0, sizeof( buffer ));
       size_t receivedBytesCount = client.readBytes( buffer, sizeof( buffer ));
-      if( DUMP_ACTIF ) {
-         static char db[25*(4+1+16*3+3+16)];
+      if( DUMP ) {
          json::Decoder::dump( buffer, receivedBytesCount, db, sizeof( db ));
          Serial.print( receivedBytesCount );
          Serial.println( " octets reçus" );
@@ -194,27 +213,15 @@ void Serveur::loop() {
          }
       }
       if( content ) {
-         const char * type = ::strstr( buffer, "Content-type:" );
-         if( ! type ) {
-            type = ::strstr( buffer, "Content-Type:" );
-         }
-         if( ! type ) {
-            type = ::strstr( buffer, "content-type:" );
-         }
-         if( ! type ) {
-            type = ::strstr( buffer, "CONTENT-TYPE:" );
-         }
+         bool         isPost = ( buffer == ::strstr( buffer, "POST /" ));
+         const char * type   = ::strcasestr( buffer, "content-type:" );
          if( type ) {
             type += 13;
             while( *type == ' ' ) {
                ++type;
             }
          }
-         bool isPost = ( buffer == ::strstr( buffer, "POST / " ));
-         bool isJSon = type && ( 0 == ::strncmp( type, "application/json", 16 ));
-         Serial.print( "isPost :" ); Serial.println( isPost );
-         Serial.print( "isJSon :" ); Serial.println( isJSon );
-         Serial.print( "content:" ); Serial.println( content );
+         bool isJSon = type && ( 0 == ::strncasecmp( type, "application/json", 16 ));
          if( isPost && isJSon ) {
             json::Decoder parser( content );
             handleJSonCommands( client, parser );
@@ -249,8 +256,15 @@ void Serveur::loop() {
 
 static hpms::Serveur theServeur;
 
+#ifdef HPMS_TESTS
+void executeAutoTestsIfAny( void );
+#endif
+
 void setup() {
    theServeur.setup();
+#ifdef HPMS_TESTS
+   executeAutoTestsIfAny();
+#endif
 }
 
 void loop() {

@@ -1,7 +1,9 @@
 #include "IJSonData.h"
 #include "Encoder.h"
+#include "Decoder.h"
 
 #include <string.h>
+#include <typeinfo>
 
 using namespace json;
 
@@ -49,5 +51,7 @@ Status CoDec::decode( const char * name, IJSonData & data, Decoder & decoder ) c
          return attr->set( data, decoder );
       }
    }
+   snprintf( Decoder::_errMsg, sizeof( Decoder::_errMsg ),
+      "Attribute '%s' not found in class '%s'!", name, typeid(*this).name());
    return ATTRIBUTE_NOT_FOUND;
 }

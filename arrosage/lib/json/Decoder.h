@@ -16,6 +16,10 @@ namespace json {
    class Decoder {
    public:
 
+      static char _errMsg[200];
+
+   public:
+
       Decoder( const char * begin, size_t len = 0 );
 
       void reset();

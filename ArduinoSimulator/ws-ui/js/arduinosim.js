@@ -39,7 +39,7 @@ var ardsim = {
          title.textContent = "Arduino simulator : déconnecté";
       };
       ardsim.ws.onmessage = function( msg ) {
-//            console.log( "%o", msg.data );
+         console.log( "%o", msg.data );
          let m = JSON.parse( msg.data );
          switch( m.verb ) {
          //-- Digital I/O -------------------------------------------------

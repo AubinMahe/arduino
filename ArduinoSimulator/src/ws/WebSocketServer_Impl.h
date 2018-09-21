@@ -91,6 +91,7 @@ namespace ws {
    static bool _isRunning = false;
 
    static void exit_requested( int ) {
+      lwsl_err( "exit_requested\n" );
       _isRunning = false;
       printf( "\n" );
    }
@@ -98,7 +99,7 @@ namespace ws {
    struct Message {
 
       unsigned char header[LWS_PRE];
-      unsigned char payload[1024];
+      unsigned char payload[3000];
 
       bool write( lws * wsi, const std::string & m ) {
          int len = m.length();
@@ -113,10 +114,10 @@ namespace ws {
       WebSocketServer_Impl( int port ) :
          _context( 0 ),
          _wsi( 0 ),
-         _isr_0_func( 0 ),
          _isr_0_mode( 0 ),
-         _isr_1_func( 0 ),
+         _isr_0_func( 0 ),
          _isr_1_mode( 0 ),
+         _isr_1_func( 0 ),
          _status( sim::E_RUNNING ),
          _clientCount( 0U ),
          _thread( [ this, port ] () { run( port ); })
@@ -184,23 +185,23 @@ namespace ws {
 
       void attachInterrupt( uint8_t pin, void (* ISR )(void), uint8_t mode ) {
          if( pin == 2 ) {
-            _isr_0_func = ISR;
             _isr_0_mode = mode;
+            _isr_0_func = ISR;
          }
          else if( pin == 3 ) {
-            _isr_1_func = ISR;
             _isr_1_mode = mode;
+            _isr_1_func = ISR;
          }
       }
 
       void detachInterrupt( uint8_t pin ) {
          if( pin == 2 ) {
-            _isr_0_func = 0;
             _isr_0_mode = 0;
+            _isr_0_func = 0;
          }
          else if( pin == 3 ) {
-            _isr_1_func = 0;
             _isr_1_mode = 0;
+            _isr_1_func = 0;
          }
       }
 
@@ -253,17 +254,19 @@ namespace ws {
 
       void digitalChanged( int pin, bool after ) {
          if(  ( pin == 2 )
-            &&( _isr_0_func )
+            &&(     _isr_0_func )
             &&(  (( _isr_0_mode == RISING  ) &&  after )
-               ||(( _isr_0_mode == FALLING ) && !after )))
+               ||(( _isr_0_mode == FALLING ) && !after )
+               ||(  _isr_0_mode == CHANGE              )))
          {
             _isr_0_func();
          }
          else if(
               ( pin == 3 )
-            &&( _isr_1_func )
+            &&(     _isr_1_func )
             &&(  (( _isr_1_mode == RISING  ) &&  after )
-               ||(( _isr_1_mode == FALLING ) && !after )))
+               ||(( _isr_1_mode == FALLING ) && !after )
+               ||(  _isr_1_mode == CHANGE              )))
          {
             _isr_1_func();
          }
@@ -344,9 +347,9 @@ namespace ws {
             ::_lws_log( LLL_NOTICE, "CLOSED\n" );
             /* remove our closing pss from the list of live pss */
             lws_ll_fwd_remove( per_session_data__minimal, pss_list, pss, vhd->pss_list );
-            if( --(ui->_clientCount) == 0 ) {
-               _isRunning = false;
-            }
+//            if( --(ui->_clientCount) == 0 ) {
+//               _isRunning = false;
+//            }
             break;
 
          case LWS_CALLBACK_SERVER_WRITEABLE: return ui->send( wsi );
@@ -405,10 +408,10 @@ namespace ws {
       Message                 _message;
       std::queue<std::string> _msgQueue;
       int                     _digital[CHECKBOX_COUNT];
-      void    ( *             _isr_0_func )( void );
       uint8_t                 _isr_0_mode;
-      void    ( *             _isr_1_func )( void );
+      void    ( *             _isr_0_func )( void );
       uint8_t                 _isr_1_mode;
+      void    ( *             _isr_1_func )( void );
       int                     _analog[SLIDER_COUNT];
       sim::SimuStatus         _status;
       unsigned                _clientCount;

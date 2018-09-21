@@ -146,28 +146,38 @@ void detachInterrupt( uint8_t interrupt );
 #endif
 #define BIN 2
 
+class Print;
+
+class Printable {
+public:
+   virtual ~ Printable() {}
+   virtual size_t printTo(Print& p) const = 0;
+};
+
 class Print {
 public:
 
    virtual ~ Print() {}
 
-   size_t print( const char    value[] );
-   size_t print( char          value );
-   size_t print( unsigned char value, int base = DEC );
-   size_t print( int           value, int base = DEC );
-   size_t print( unsigned int  value, int base = DEC );
-   size_t print( long          value, int base = DEC );
-   size_t print( unsigned long value, int base = DEC );
-   size_t print( double        value, int prec = 2   );
+   size_t print( const char        value[] );
+   size_t print( char              value );
+   size_t print( unsigned char     value, int base = DEC );
+   size_t print( int               value, int base = DEC );
+   size_t print( unsigned int      value, int base = DEC );
+   size_t print( long              value, int base = DEC );
+   size_t print( unsigned long     value, int base = DEC );
+   size_t print( double            value, int prec = 2   );
+   size_t print( const Printable & value );
 
-   size_t println( const char    value[] );
-   size_t println( char          value );
-   size_t println( unsigned char value, int base = DEC );
-   size_t println( int           value, int base = DEC );
-   size_t println( unsigned int  value, int base = DEC );
-   size_t println( long          value, int base = DEC );
-   size_t println( unsigned long value, int base = DEC );
-   size_t println( double        value, int prec = 2   );
+   size_t println( const char        value[] );
+   size_t println( char              value );
+   size_t println( unsigned char     value, int base = DEC );
+   size_t println( int               value, int base = DEC );
+   size_t println( unsigned int      value, int base = DEC );
+   size_t println( long              value, int base = DEC );
+   size_t println( unsigned long     value, int base = DEC );
+   size_t println( double            value, int prec = 2   );
+   size_t println( const Printable & value );
    size_t println( void );
 
    virtual void flush() { /* Empty implementation for backward compatibility */ }

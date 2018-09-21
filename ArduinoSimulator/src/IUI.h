@@ -3,6 +3,11 @@
 #include <stdint.h>
 #include <stddef.h>
 
+#undef min
+#undef max
+#include <string>
+#include <vector>
+
 namespace sim {
 
    enum SimuStatus {
@@ -15,9 +20,25 @@ namespace sim {
    class IUI {
    public:
 
-      IUI( void ) {}
+      IUI( void ) :
+         _serialTeeStderr( false )
+      {
+         _theUI = this;
+      }
 
       virtual ~ IUI() {}
+
+      void serialTeeStderr( bool tee ) {
+         _serialTeeStderr = tee;
+      }
+
+      void addArgument( const char * argument ) {
+         _arguments.push_back( argument );
+      }
+
+      const std::vector<std::string> & getArguments( void ) {
+         return _arguments;
+      }
 
    public:
 
@@ -54,7 +75,8 @@ namespace sim {
       //-- Communication --------------------------------------------------------
 
       virtual size_t print( const char    value[]         ) const = 0;
-      virtual size_t print( unsigned char value, int base ) const = 0;
+      virtual size_t print( char          value           ) const = 0;
+      virtual size_t print( uint8_t       value, int base ) const = 0;
       virtual size_t print( int           value, int base ) const = 0;
       virtual size_t print( unsigned int  value, int base ) const = 0;
       virtual size_t print( long          value, int base ) const = 0;
@@ -62,7 +84,8 @@ namespace sim {
       virtual size_t print( double        value, int prec ) const = 0;
 
       virtual size_t println( const char    value[]         ) const = 0;
-      virtual size_t println( unsigned char value, int base ) const = 0;
+      virtual size_t println( char          value           ) const = 0;
+      virtual size_t println( uint8_t       value, int base ) const = 0;
       virtual size_t println( int           value, int base ) const = 0;
       virtual size_t println( unsigned int  value, int base ) const = 0;
       virtual size_t println( long          value, int base ) const = 0;
@@ -77,6 +100,15 @@ namespace sim {
       virtual void servoWrite( uint8_t pin, int value ) const = 0;
 
       virtual void servoDetach( uint8_t pin ) const = 0;
+
+   public:
+
+      static IUI * _theUI;
+
+   protected:
+
+      bool                     _serialTeeStderr;
+      std::vector<std::string> _arguments;
 
    private:
       IUI( const IUI & );

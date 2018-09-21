@@ -3,6 +3,8 @@
 #include "json/Encoder.h"
 #include "json/Decoder.h"
 
+#include <Arduino.h>
+
 namespace hpms {
 
    class Instant : public json::IJSonData {
@@ -20,16 +22,16 @@ namespace hpms {
 
       bool operator < ( const Instant & r ) const;
 
-      Instant operator + ( uint8_t duree ) const;
+      Instant operator + ( uint8_t duree_minutes ) const;
 
-      unsigned char get_heure() const { return heure; }
+      uint8_t get_heure() const { return heure; }
 
-      unsigned char get_minute() const { return minute; }
+      uint8_t get_minute() const { return minute; }
 
    protected:
 
-      unsigned char heure;  // 0..23
-      unsigned char minute; // 0..59
+      uint8_t heure;  // 0..23
+      uint8_t minute; // 0..59
 
    friend struct InstantCodec;
    };

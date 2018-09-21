@@ -33,7 +33,7 @@ void Horloge::actualiser() {
    {
       Serial.println( "Horloge::actualiser|Mise à jour de l'heure par NTP." );
       WiFiUDP   ntpUDP;
-      NTPClient ntpClient( ntpUDP, "europe.pool.ntp.org", 7200, 60000 );
+      NTPClient ntpClient( ntpUDP, "europe.pool.ntp.org", 7200 );
       ntpClient.begin();
       ntpClient.update();
       refHeure  = heure  = ntpClient.getHours();
