@@ -9,7 +9,7 @@ namespace hpms {
       static ActiviteCodec codec;
 
       ActiviteCodec() :
-         json::CoDec(
+         json::CoDec( "Activite",
             new json::Object( "ouverture", &Activite::ouverture,
             new json::Byte  ( "duree"    , &Activite::duree_minutes )))
       {}

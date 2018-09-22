@@ -9,11 +9,10 @@ namespace hpms {
       static const VanneCodec codec;
 
       VanneCodec() :
-         json::CoDec(
-            new json::Byte   ( "pin"    , &Vanne::pin,
+         json::CoDec( "Vanne",
             new json::Object ( "matin"  , &Vanne::matin,
             new json::Object ( "soir"   , &Vanne::soir,
-            new json::Boolean( "ouverte", &Vanne::ouverte )))))
+            new json::Boolean( "ouverte", &Vanne::ouverte ))))
       {}
    };
 }
@@ -22,17 +21,11 @@ using namespace hpms;
 
 const VanneCodec VanneCodec::codec;
 
-bool Vanne::pin_est_valide( uint8_t pin ) {
-   return pin > 0 && pin <= MAX_PIN;
-}
-
 Vanne::Vanne( void ) :
-   pin( 0 ),
    ouverte( false )
 {}
 
-Vanne::Vanne( uint8_t p, const Activite & m, const Activite & s ) :
-   pin( p ),
+Vanne::Vanne( const Activite & m, const Activite & s ) :
    matin( m ),
    soir( s ),
    ouverte( false )
@@ -42,37 +35,33 @@ const json::CoDec & Vanne::getCoDec( void ) const {
    return VanneCodec::codec;
 }
 
-bool Vanne::est( uint8_t p ) const {
-   return pin == p;
-}
-
-void Vanne::ouvrir() {
+void Vanne::ouvrir( uint8_t pin ) {
    ouverte = true;
    digitalWrite( pin, HIGH );
    Serial.print( "Ouverture de la vanne n°" );
    Serial.println( pin );
 }
 
-void Vanne::fermer() {
+void Vanne::fermer( uint8_t pin ) {
    ouverte = false;
    digitalWrite( pin, LOW );
    Serial.print( "Fermeture de la vanne n°" );
    Serial.println( pin );
 }
 
-void Vanne::evaluer( const Instant & maintenant ) {
+void Vanne::evaluer( uint8_t pin, const Instant & maintenant ) {
    if( ouverte ) {
       if(  ( ! matin.est_activable( maintenant ))
          &&( ! soir .est_activable( maintenant )))
       {
-         fermer();
+         fermer( pin );
       }
    }
    else {
       if(   matin.est_activable( maintenant )
          || soir .est_activable( maintenant ))
       {
-         ouvrir();
+         ouvrir( pin );
       }
    }
 }

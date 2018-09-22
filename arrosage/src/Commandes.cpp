@@ -7,7 +7,7 @@ struct ConfigurationCoDec : public json::CoDec {
    static const ConfigurationCoDec codec;
 
    ConfigurationCoDec() :
-      json::CoDec(
+      json::CoDec( "Configuration",
          new json::Object( "arrosage", &Configuration::arrosage,
          new json::Object( "heure"   , &Configuration::heure )))
    {}
@@ -24,7 +24,7 @@ struct DemarrerArreterCoDec : public json::CoDec {
    static const DemarrerArreterCoDec codec;
 
    DemarrerArreterCoDec() :
-      json::CoDec(
+      json::CoDec( "DemarrerArreter",
          new json::Boolean( "demarrer", &DemarrerArreter::demarrer ))
    {}
 };
@@ -40,7 +40,7 @@ struct CommanderUneVanneCoDec : public json::CoDec {
    static const CommanderUneVanneCoDec codec;
 
    CommanderUneVanneCoDec() :
-      json::CoDec(
+      json::CoDec( "CommanderUneVanne",
          new json::Byte   ( "pin"   , &CommanderUneVanne::pin,
          new json::Boolean( "ouvrir", &CommanderUneVanne::ouvrir )))
    {}
@@ -57,7 +57,7 @@ struct CommanderLesVannesCoDec : public json::CoDec {
    static const CommanderLesVannesCoDec codec;
 
    CommanderLesVannesCoDec() :
-      json::CoDec(
+      json::CoDec( "CommanderLesVannes",
          new json::ObjectArray( "les_vannes", &CommanderLesVannes::les_vannes ))
    {}
 };

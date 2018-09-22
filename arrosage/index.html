@@ -2,17 +2,22 @@
 <html>
 <head>
 <meta charset="utf-8" />
-<title>Arrosage</title>
+<meta name="viewport" content="width=device-width" />
+<title>Contrôle de l'arrosage</title>
 <style>
 * {
 margin:0;
 padding:0;
 box-sizing: border-box;
-font: 12px Arial, sans-serif;
+font: 14px Arial, sans-serif;
 }
 body {
 margin: 2px;
+text-align: center;
+}
+.content {
 display: inline-block;
+width: 316px;
 }
 .pane {
 border: 1px solid darkgray;
@@ -23,7 +28,7 @@ margin:4px;
 display: block;
 background-color: lightgray;
 padding: 4px;
-font-size: 14px;
+font-size: 18px;
 font-weight: bold;
 cursor: pointer; 
 }
@@ -62,58 +67,62 @@ td > input {
 width: 100%;
 vertical-align: middle;
 }
-th:nth-child(3), td:nth-child(3), th:nth-child(5), td:nth-child(5) {
+th:nth-child(1), td:nth-child(1) {
 width: 32px;
 }   
-th:nth-child(4), td:nth-child(4), th:nth-child(6), td:nth-child(6) {
+th:nth-child(2), td:nth-child(2), th:nth-child(4), td:nth-child(4) {
+width: 32px;
+}   
+th:nth-child(3), td:nth-child(3), th:nth-child(5), td:nth-child(5) {
 width: 42px;
 }
-td:nth-child(4) > input, td:nth-child(6) > input {
+td:nth-child(1) > input {
 height: 24px;
 }
-td:nth-child(4) > input, td:nth-child(6) > input {
+td:nth-child(3) > input, td:nth-child(5) > input {
+height: 24px;
+}
+td:nth-child(3) > input, td:nth-child(5) > input {
 text-align: right;
 }
 </style>
-<script type="text/javascript">
-var http     = new XMLHttpRequest();
-var arrosage = null;
+<script type="text/javascript"> 
+var arrosage  = null;
+var http      = new XMLHttpRequest();
 
 function hhmm( instant ) {
-   let hh = instant.heure;
+   var hh = instant.heure;
    if( hh < 10 ) {
       hh = '0' + hh;
    }
-   let mm = instant.minute;
+   var mm = instant.minute;
    if( mm < 10 ) {
       mm = '0' + mm;
    }
    return hh + ':' + mm;
 }
 function lire_la_configuration() {
-   let cmd = {commande: "Lire la configuration"};
+   var cmd = {commande: "Lire la configuration"};
    console.log( "Commande : %o", cmd );
    
    http.onreadystatechange = function( event ) {
       if( this.readyState === XMLHttpRequest.DONE ) {
          if( this.status === 200 ) {
-            let configuration = JSON.parse( this.responseText );
+            //console.log( this.responseText );
+            var configuration = JSON.parse( this.responseText );
             if( configuration.code === 0 ) {
-               let heure    = configuration.data.heure;
-               let arrosage = configuration.data.arrosage;
-               let ts       = heure.heure + ':' + heure.minute;
+               var heure    = configuration.data.heure;
+               var arrosage = configuration.data.arrosage;
+               var ts       = hhmm( heure );
                document.getElementById( "heure" ).value = ts; 
                document.getElementById( "heure_de_la_configuration" ).value = ts;
                document.getElementById( "est_en_marche" ).value = arrosage.est_en_marche;
-               for( let i = 0; i < arrosage.vannes.length; ++i ) {
-                  let vanne = arrosage.vannes[i];
-                  let ndx   = i + 1;
-                  let pin   = document.getElementById( "vanne-" + ndx + "-pin"             );
-                  let mo    = document.getElementById( "vanne-" + ndx + "-matin-ouverture" );
-                  let md    = document.getElementById( "vanne-" + ndx + "-matin-duree"     );
-                  let so    = document.getElementById( "vanne-" + ndx + "-soir-ouverture"  );
-                  let sd    = document.getElementById( "vanne-" + ndx + "-soir-duree"      );
-                  pin.value = vanne.pin;
+               for( var pin = 0; pin < arrosage.vannes.length; ++pin ) {
+                  var vanne = arrosage.vannes[pin];
+                  var mo    = document.getElementById( "vanne-" + pin + "-matin-ouverture" );
+                  var md    = document.getElementById( "vanne-" + pin + "-matin-duree"     );
+                  var so    = document.getElementById( "vanne-" + pin + "-soir-ouverture"  );
+                  var sd    = document.getElementById( "vanne-" + pin + "-soir-duree"      );
                   mo .value = hhmm( vanne.matin.ouverture );
                   md .value = vanne.matin.duree;
                   so .value = hhmm( vanne.soir .ouverture );
@@ -137,13 +146,13 @@ function send( cmd ) {
 }
 
 function demarrer_ou_arreter() {
-   let on_off = document.getElementById( "on-off" ).checked;
+   var on_off = document.getElementById( "on-off" ).checked;
    send({commande: "Démarrer ou arrêter", argument: {demarrer: on_off }});   
 }
 
 function mettre_a_l_heure() {
-   let hm = document.getElementById( "heure" ).value.split(':');
-   let instant = {
+   var hm = document.getElementById( "heure" ).value.split(':');
+   var instant = {
       heure : parseInt( hm[0] ),
       minute: parseInt( hm[1] )
    };
@@ -151,21 +160,18 @@ function mettre_a_l_heure() {
 }
 
 function ouvrir_ou_fermer_les_vannes() {
-   let msg = {
+   var msg = {
       commande: "Ouvrir ou fermer les vannes",
       argument: {
          les_vannes: [],
       },
    };
-   for( let i = 1; i < 100; ++i ) {
-      let pin = document.getElementById( "of-vanne-" + i + "-pin" );
-      if( ! pin ) {
-         break;
-      }
-      if( pin.value > 0 ) {
+   for( var row = 0; row < 4; ++row ) {
+      var pin = document.getElementById( "of-vanne-" + row + "-pin" );
+      if( pin.value > -1 ) {
          msg.argument.les_vannes.push({
             pin   : parseInt( pin.value ),
-            ouvrir: document.getElementById( "of-vanne-" + i + "-etat" ).checked,
+            ouvrir: document.getElementById( "of-vanne-" + row + "-etat" ).checked,
          });
       }
    }
@@ -173,24 +179,20 @@ function ouvrir_ou_fermer_les_vannes() {
 }
 
 function charger_une_configuration() {
-   let hm = document.getElementById( "heure_de_la_configuration" ).value.split(':');
-   let instant = {
+   var hm = document.getElementById( "heure_de_la_configuration" ).value.split(':');
+   var instant = {
       heure : parseInt( hm[0] ),
       minute: parseInt( hm[1] )
    };
-   let les_vannes = [];
-   for( let i = 1; i < 100; ++i ) {
-      let pin = document.getElementById( "vanne-" + i + "-pin" );
-      if( ! pin ) {
-         break;
-      }
-      hm = document.getElementById( "vanne-" + i + "-matin-ouverture" ).value.split(':');
-      let om = {
+   var les_vannes = [];
+   for( var pin = 0; pin < 4; ++pin ) {
+      hm = document.getElementById( "vanne-" + pin + "-matin-ouverture" ).value.split(':');
+      var om = {
          heure : parseInt( hm[0] ),
          minute: parseInt( hm[1] )
       };
-      hm = document.getElementById( "vanne-" + i + "-soir-ouverture" ).value.split(':');
-      let os = {
+      hm = document.getElementById( "vanne-" + pin + "-soir-ouverture" ).value.split(':');
+      var os = {
          heure : parseInt( hm[0] ),
          minute: parseInt( hm[1] )
       };
@@ -198,15 +200,15 @@ function charger_une_configuration() {
          pin  : parseInt( pin.value ),
          matin: {
             ouverture: om,
-            duree    : parseInt( document.getElementById( "vanne-" + i + "-matin-duree" ).value )
+            duree    : parseInt( document.getElementById( "vanne-" + pin + "-matin-duree" ).value )
          },
          soir : {
             ouverture: os,
-            duree    : parseInt( document.getElementById( "vanne-" + i + "-soir-duree" ).value )
+            duree    : parseInt( document.getElementById( "vanne-" + pin + "-soir-duree" ).value )
          }
       });
    }
-   let cfg = {
+   var cfg = {
       heure   : instant,
       arrosage: {
          est_en_marche: document.getElementById( "est_en_marche" ).checked,
@@ -217,12 +219,12 @@ function charger_une_configuration() {
 }
 
 function expand_or_collapse( p ) {
-   let div = p.nextElementSibling;
+   var div = p.nextElementSibling;
    if( div.style.display != 'block' ) {
       div.style.display = 'block';
-      let panes = document.getElementsByClassName( 'pane' );
-      for( let i = 0; i < panes.length; ++i ) {
-         let pane = panes[i];
+         var panes = document.getElementsByClassName( 'pane' );
+         for( var i = 0; i < panes.length; ++i ) {
+         var pane = panes[i];
          if( pane.firstElementChild != p ) {
             pane.getElementsByTagName('div')[0].style.display = 'none';
          }
@@ -232,29 +234,22 @@ function expand_or_collapse( p ) {
       div.style.display = 'none';
    }
 }
-
-function showValue( slider ) {
-   let text = slider.nextSibling;
-   text.textContent = slider.value;
-}
 </script>
 </head>
 <body onload="lire_la_configuration()">
-
+<div class="content">
 <div class="pane"><p onclick="expand_or_collapse(this)">Démarrer ou arrêter</p><div>
 <label for="on-off">En fonctionnement :</label>
 <input id="on-off" type="checkbox" style="vertical-align: middle;" />
 <br/>
 <button onclick="demarrer_ou_arreter()">Commander</button>
 </div></div>
-
 <div class="pane"><p onclick="expand_or_collapse(this)">Mettre à l'heure</p><div>
 <label for="mettre_a_l_heure">Heure:minute :</label>
 <input id ="heure" type="time" />
 <br/>
 <button onclick="mettre_a_l_heure()">Commander</button>
 </div></div>
-
 <div class="pane"><p onclick="expand_or_collapse(this)">Ouvrir ou fermer les vannes</p><div>
 <table>
 <thead>
@@ -265,27 +260,26 @@ function showValue( slider ) {
 </thead>
 <tbody>
 <tr>
-<td><input id="of-vanne-1-pin"  type="range" min="0" max="8" value="0" onchange="showValue(this)" />0</td>
+<td><input id="of-vanne-0-pin"  type="number" min="-1" max="3" value="-1" /></td>
+<td><input id="of-vanne-0-etat" type="checkbox" /></td>
+</tr>
+<tr>
+<td><input id="of-vanne-1-pin"  type="number" min="-1" max="3" value="-1" /></td>
 <td><input id="of-vanne-1-etat" type="checkbox" /></td>
 </tr>
 <tr>
-<td><input id="of-vanne-2-pin"  type="range" min="0" max="8" value="0" onchange="showValue(this)" />0</td>
+<td><input id="of-vanne-2-pin"  type="number" min="-1" max="3" value="-1" /></td>
 <td><input id="of-vanne-2-etat" type="checkbox" /></td>
 </tr>
 <tr>
-<td><input id="of-vanne-3-pin"  type="range" min="0" max="8" value="0" onchange="showValue(this)" />0</td>
+<td><input id="of-vanne-3-pin"  type="number" min="-1" max="3" value="-1" /></td>
 <td><input id="of-vanne-3-etat" type="checkbox" /></td>
-</tr>
-<tr>
-<td><input id="of-vanne-4-pin"  type="range" min="0" max="8" value="0" onchange="showValue(this)" />0</td>
-<td><input id="of-vanne-4-etat" type="checkbox" /></td>
 </tr>
 </tbody>
 </table>
 <br/>
 <button onclick="ouvrir_ou_fermer_les_vannes()">Commander</button>
 </div></div>
-
 <div class="pane"><p onclick="expand_or_collapse(this)">Lire ou charger une configuration</p><div>
 <label for="heure_de_la_configuration">Heure:minute :</label>
 <input id ="heure_de_la_configuration" type="time" />
@@ -296,8 +290,7 @@ function showValue( slider ) {
 <table>
 <thead>
 <tr>
-<th rowspan="2">Vanne</th>
-<th rowspan="2">Connecteur</th>
+<th rowspan="2">Pin</th>
 <th colspan="2">Matin</th>
 <th colspan="2">Soir</th>
 </tr>
@@ -310,8 +303,14 @@ function showValue( slider ) {
 </thead>
 <tbody>
 <tr>
+<td>0</td>
+<td><input id="vanne-0-matin-ouverture" type="time" /></td>
+<td><input id="vanne-0-matin-duree"     type="number" min="5" max="90" /></td>
+<td><input id="vanne-0-soir-ouverture"  type="time" /></td>
+<td><input id="vanne-0-soir-duree"      type="number" min="5" max="90" /></td>
+</tr>
+<tr>
 <td>1</td>
-<td><input id="vanne-1-pin"             type="range" min="1" max="8" value="1" /></td>
 <td><input id="vanne-1-matin-ouverture" type="time" /></td>
 <td><input id="vanne-1-matin-duree"     type="number" min="5" max="90" /></td>
 <td><input id="vanne-1-soir-ouverture"  type="time" /></td>
@@ -319,7 +318,6 @@ function showValue( slider ) {
 </tr>
 <tr>
 <td>2</td>
-<td><input id="vanne-2-pin"             type="range" min="1" max="8" value="2" /></td>
 <td><input id="vanne-2-matin-ouverture" type="time" /></td>
 <td><input id="vanne-2-matin-duree"     type="number" min="5" max="90" /></td>
 <td><input id="vanne-2-soir-ouverture"  type="time" /></td>
@@ -327,19 +325,10 @@ function showValue( slider ) {
 </tr>
 <tr>
 <td>3</td>
-<td><input id="vanne-3-pin"             type="range" min="1" max="8" value="3" /></td>
 <td><input id="vanne-3-matin-ouverture" type="time" /></td>
 <td><input id="vanne-3-matin-duree"     type="number" min="5" max="90" /></td>
 <td><input id="vanne-3-soir-ouverture"  type="time" /></td>
 <td><input id="vanne-3-soir-duree"      type="number" min="5" max="90" /></td>
-</tr>
-<tr>
-<td>4</td>
-<td><input id="vanne-4-pin"             type="range" min="1" max="8" value="4" /></td>
-<td><input id="vanne-4-matin-ouverture" type="time" /></td>
-<td><input id="vanne-4-matin-duree"     type="number" min="5" max="90" /></td>
-<td><input id="vanne-4-soir-ouverture"  type="time" /></td>
-<td><input id="vanne-4-soir-duree"      type="number" min="5" max="90" /></td>
 </tr>
 </tbody>
 </table>
@@ -347,6 +336,6 @@ function showValue( slider ) {
 <button onclick="lire_la_configuration()">Lire</button>
 <button onclick="charger_une_configuration()">Charger</button>
 </div></div>
-
+</div>
 </body>
 </html>

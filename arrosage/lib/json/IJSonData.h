@@ -50,13 +50,16 @@ namespace json {
    class CoDec {
    public:
 
-      explicit CoDec( AttributeBase * attributes ) :
+      CoDec( const char * classname, AttributeBase * attributes ) :
+         _classname( classname ),
          _attributes( attributes )
       {}
 
-      virtual ~ CoDec( void );
+      virtual ~ CoDec( void ) {}
 
    public:
+
+      const char * getClassname() const { return _classname; }
 
       Status encode( const IJSonData & data, Encoder & encoder ) const;
 
@@ -64,6 +67,7 @@ namespace json {
 
    protected:
 
+      const char *    _classname;
       AttributeBase * _attributes;
 
    private:

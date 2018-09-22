@@ -1,9 +1,11 @@
 #pragma once
 
-#include "json/Encoder.h"
-#include "json/Decoder.h"
+#include <Encoder.h>
+#include <Decoder.h>
 
 #include <Arduino.h>
+
+#define countof(A) (sizeof(A)/sizeof((A)[0]))
 
 namespace hpms {
 

@@ -16,7 +16,7 @@ namespace hpms {
 
       struct CoDec : public json::CoDec {
          CoDec() :
-            json::CoDec(
+            json::CoDec( "Commande<?>",
                new json::String( "commande", &Commande::commande,
                new json::Object( "argument", &Commande::argument )))
          {}

@@ -10,7 +10,7 @@ namespace hpms {
       static const InstantCodec codec;
 
       InstantCodec() :
-         json::CoDec(
+         json::CoDec( "Instant",
             new json::Byte( "heure" , &Instant::heure,
             new json::Byte( "minute", &Instant::minute )))
       {}

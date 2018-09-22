@@ -26,9 +26,6 @@ AttributeBase * AttributeBase::next() {
    return _next;
 }
 
-CoDec:: ~ CoDec( void ) {
-}
-
 Status CoDec::encode( const IJSonData & data, Encoder & encoder ) const {
    Status retVal = encoder.openObject();
    for( auto attr = _attributes; retVal == SUCCESS && attr; attr = attr->next()) {
@@ -52,6 +49,6 @@ Status CoDec::decode( const char * name, IJSonData & data, Decoder & decoder ) c
       }
    }
    snprintf( Decoder::_errMsg, sizeof( Decoder::_errMsg ),
-      "Attribute '%s' not found in class '%s'!", name, typeid(*this).name());
+      "Attribute '%s' not found in class '%s'!", name, getClassname());
    return ATTRIBUTE_NOT_FOUND;
 }

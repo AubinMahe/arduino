@@ -1,6 +1,6 @@
 CXX      = g++
 LINK.o   = $(LINK.cc)
-CXXFLAGS = -std=c++11 -pedantic -W -Wall -g3 -O0 -I lib -I ../ArduinoSimulator/src/arduinosim
+CXXFLAGS = -std=c++11 -pedantic -W -Wall -g3 -O0 -I lib/json -I ../ArduinoSimulator/src/arduinosim
 LDFLAGS  = -L ../ArduinoSimulator/BUILD -lsim -lwebsockets -lpthread -lncursesw -lefence
 SRCS     =\
  lib/json/IJSonData.cpp\
@@ -14,7 +14,7 @@ SRCS     =\
  src/Instant.cpp\
  src/Commandes.cpp\
  src/Activite.cpp
- 
+
 OBJS = $(SRCS:%.cpp=BUILD/%.o)
 
 all: BUILD/arrosage

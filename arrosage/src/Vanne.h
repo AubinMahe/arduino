@@ -7,13 +7,9 @@ namespace hpms {
    class Vanne : public json::IJSonData {
    public:
 
-      static bool pin_est_valide( uint8_t pin );
-
-   public:
-
       Vanne( void );
 
-      Vanne( uint8_t p, const Activite & m, const Activite & s );
+      Vanne( const Activite & m, const Activite & s );
 
    public:
 
@@ -21,19 +17,14 @@ namespace hpms {
 
    public:
 
-      bool est( uint8_t pin ) const;
+      void ouvrir( uint8_t pin );
 
-      void ouvrir( void );
+      void fermer( uint8_t pin );
 
-      void fermer( void );
-
-      void evaluer( const Instant & maintenant );
+      void evaluer( uint8_t pin, const Instant & maintenant );
 
    private:
 
-      static const uint8_t MAX_PIN = 8;
-
-      uint8_t  pin;
       Activite matin;
       Activite soir;
       bool     ouverte;

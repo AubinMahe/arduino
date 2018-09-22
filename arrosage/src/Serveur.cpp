@@ -2,6 +2,13 @@
 #include "Commandes.h"
 #include "index.html.h"
 
+#ifndef ESP8266
+#  include <sys/types.h>
+#  include <sys/stat.h>
+#  include <fcntl.h> // O_RDONLY
+#  include <unistd.h>
+#endif
+
 #include <strings.h>
 
 #define DEMARRER_OU_ARRETER            "Démarrer ou arrêter"
@@ -9,8 +16,6 @@
 #define OUVRIR_OU_FERMER_LES_VANNES    "Ouvrir ou fermer les vannes"
 #define CHARGER_UNE_CONFIGURATION      "Charger une configuration"
 #define LIRE_LA_CONFIGURATION          "Lire la configuration"
-
-#define countof(A) (sizeof(A)/sizeof((A)[0]))
 
 using namespace hpms;
 
@@ -64,7 +69,7 @@ json::Status Serveur::ouvrir_ou_fermer_les_vannes( json::Decoder & parser ) {
    if( json::SUCCESS == status ) {
       for( size_t i = 0; i < countof( commander_les_vannes.argument.les_vannes ); ++i ) {
          CommanderUneVanne & vanne = commander_les_vannes.argument.les_vannes[i];
-         if( Vanne::pin_est_valide( vanne.pin )) {
+         if( vanne.pin < arrosage.NBR_VANNES ) {
             arrosage.commander_une_vanne( vanne.pin, vanne.ouvrir );
          }
          else {
@@ -169,9 +174,29 @@ void Serveur::sendHtmlRootDocument( WiFiClient & client ) const {
    client.println( "HTTP/1.1 200 OK" );
    client.println( "Connection: close" );
    client.println( "Content-type: text/html" );
+#ifdef ESP8266
    client.print  ( "Content-Length: " ); client.println( index_html_len );
    client.println();
-   client.println((const char *)index_html );
+   client.print((const char *)index_html );
+#else
+   int page = open( "index.html", O_RDONLY );
+   if( page ) {
+      struct stat s;
+      ::fstat( page, &s );
+      client.print( "Content-Length: " ); client.println( s.st_size );
+      client.println();
+      char buffer[1000];
+      int count = 0;
+      while( 0 != ( count = read( page, buffer, sizeof( buffer ) - 1 ))) {
+         buffer[count] = '\0';
+         client.print( buffer );
+      }
+      close( page );
+   }
+   else {
+      perror( "index.html" );
+   }
+#endif
    Serial.println( "Serveur::sendHtmlRootDocument: " );
 }
 
@@ -179,6 +204,21 @@ void Serveur::send404( WiFiClient & client ) const {
    Serial.println( "Serveur::send404" );
    client.println( "HTTP/1.1 404 Not Found" );
    client.println( "Connection: close" );
+}
+
+const char * strcasestr( const char * haystack, const char * needle ) {
+   for( size_t h = 0, hlen = ::strlen( haystack ), nlen = ::strlen( needle ); h < hlen; ++h ) {
+      const char * retVal = haystack + h;
+      for( size_t n = 0; retVal && n < nlen; ++n ) {
+         if( tolower( retVal[n] ) != tolower( needle[n] )) {
+            retVal = 0;
+         }
+      }
+      if( retVal ) {
+         return retVal;
+      }
+   }
+   return 0;
 }
 
 static char buffer[4000];

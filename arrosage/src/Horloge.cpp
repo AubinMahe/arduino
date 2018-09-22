@@ -51,6 +51,7 @@ void Horloge::actualiser() {
       unsigned long h = minute / 60;
       minute %= 60;
       heure  = refHeure  + heu + h;
+      heure  %= 24;
    }
 }
 

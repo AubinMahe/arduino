@@ -8,6 +8,8 @@ namespace hpms {
    class Arrosage : public json::IJSonData {
    public:
 
+      static const uint8_t NBR_VANNES = 4;
+
       Arrosage();
 
    public:
@@ -25,7 +27,7 @@ namespace hpms {
    private:
 
       bool  est_en_marche;
-      Vanne vannes[4];
+      Vanne vannes[NBR_VANNES];
 
    friend struct ArrosageCoDec;
    };
