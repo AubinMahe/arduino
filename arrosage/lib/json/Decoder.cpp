@@ -9,7 +9,29 @@
 
 using namespace json;
 
-char Decoder:: _errMsg[200];
+char Decoder::_errMsg[200];
+
+bool Decoder::updateErrorMessage( Status status ) {
+   if( _errMsg[0] == '\0' ) {
+      switch( status ) {
+      case OPEN_BRACE_EXPECTED      : ::strncpy( _errMsg, "{ expected"              , sizeof( _errMsg )); break;
+      case OPEN_BRACKET_EXPECTED    : ::strncpy( _errMsg, "[ expected"              , sizeof( _errMsg )); break;
+      case COMMA_EXPECTED           : ::strncpy( _errMsg, ", expected"              , sizeof( _errMsg )); break;
+      case CLOSE_BRACE_EXPECTED     : ::strncpy( _errMsg, "} expected"              , sizeof( _errMsg )); break;
+      case CLOSE_BRACKET_EXPECTED   : ::strncpy( _errMsg, "] expected"              , sizeof( _errMsg )); break;
+      case BEGIN_OF_STRING_NOT_FOUND: ::strncpy( _errMsg, "begin of string expected", sizeof( _errMsg )); break;
+      case END_OF_STRING_NOT_FOUND  : ::strncpy( _errMsg, "end of string expected"  , sizeof( _errMsg )); break;
+      case ATTRIBUTE_NOT_FOUND      : ::strncpy( _errMsg, "attribute not found"     , sizeof( _errMsg )); break;
+      case ERROR_PARSING_VALUE      : ::strncpy( _errMsg, "error when parsing value", sizeof( _errMsg )); break;
+      case UNEXPECTED               : ::strncpy( _errMsg, "unexpected condition"    , sizeof( _errMsg )); break;
+      case TYPE_MISMATCH            : ::strncpy( _errMsg, "type mismatch"           , sizeof( _errMsg )); break;
+      case BUFFER_OVERFLOW          : ::strncpy( _errMsg, "buffer overflow"         , sizeof( _errMsg )); break;
+      default: return false;
+      }
+      return true;
+   }
+   return false;
+}
 
 Decoder::Decoder( const char * begin, size_t len /* = 0 */) :
    _begin( begin ),
@@ -21,6 +43,7 @@ Decoder::Decoder( const char * begin, size_t len /* = 0 */) :
    _double( 0.0 )
 {
    memset( _string, 0, sizeof( _string ));
+   memset( _errMsg, 0, sizeof( _errMsg ));
 }
 
 void Decoder::reset() {
@@ -30,6 +53,7 @@ void Decoder::reset() {
    _int              = 0L;
    _double           = 0.0;
    memset( _string, 0, sizeof( _string ));
+   memset( _errMsg, 0, sizeof( _errMsg ));
 }
 
 Status Decoder::decode( IJSonData & target ) {

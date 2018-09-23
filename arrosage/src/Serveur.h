@@ -9,26 +9,24 @@ namespace hpms {
    class Serveur {
    public:
 
-      Serveur();
+      Serveur( void );
 
-   public:
-
-      void setup();
-
-      void loop();
+      void loop( void );
 
    private:
 
-      json::Status charger_une_configuration          ( json::Decoder & parser );
-      json::Status lire_la_configuration ( const char * & response );
-      json::Status mettre_a_l_heure    ( json::Decoder & parser );
+      json::Status demarrer                   ( bool demarrer );
+      json::Status demarrer_l_auto_test       ( bool demarrer );
+      json::Status mettre_a_l_heure           ( json::Decoder & parser );
       json::Status ouvrir_ou_fermer_les_vannes( json::Decoder & parser );
+      json::Status lire_la_configuration      ( const char * &  response );
+      json::Status charger_une_configuration  ( json::Decoder & parser );
 
-      void sendJSonResponse  ( WiFiClient & client, json::Status status, const char * buffer = 0 ) const;
-      void handleJSonCommands( WiFiClient & client, json::Decoder & parser );
+      void send_json_response  ( WiFiClient & client, json::Status status, const char * buffer = 0 ) const;
+      void handle_json_commands( WiFiClient & client, json::Decoder & parser );
 
-      void sendHtmlRootDocument( WiFiClient & client ) const;
-      void send404             ( WiFiClient & client ) const;
+      void send_index_html( WiFiClient & client ) const;
+      void send_404       ( WiFiClient & client ) const;
 
    private:
 
@@ -39,7 +37,6 @@ namespace hpms {
       static /* */ bool     DUMP;
 
       WiFiServer serveur;
-      Horloge    horloge;
       Arrosage   arrosage;
    };
 }

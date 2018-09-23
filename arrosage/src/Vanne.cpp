@@ -1,4 +1,5 @@
 #include "Vanne.h"
+#include "Log.h"
 
 #include <ESP8266WiFi.h>
 
@@ -10,9 +11,9 @@ namespace hpms {
 
       VanneCodec() :
          json::CoDec( "Vanne",
-            new json::Object ( "matin"  , &Vanne::matin,
-            new json::Object ( "soir"   , &Vanne::soir,
-            new json::Boolean( "ouverte", &Vanne::ouverte ))))
+            new json::Object( "matin", &Vanne::matin,
+            new json::Object( "soir" , &Vanne::soir,
+            new json::Enum8 ( "etat" , &Vanne::etat ))))
       {}
    };
 }
@@ -22,46 +23,67 @@ using namespace hpms;
 const VanneCodec VanneCodec::codec;
 
 Vanne::Vanne( void ) :
-   ouverte( false )
+   etat( CONFIGUREE_FERMEE )
 {}
 
 Vanne::Vanne( const Activite & m, const Activite & s ) :
    matin( m ),
    soir( s ),
-   ouverte( false )
+   etat( CONFIGUREE_FERMEE )
 {}
 
 const json::CoDec & Vanne::getCoDec( void ) const {
    return VanneCodec::codec;
 }
 
-void Vanne::ouvrir( uint8_t pin ) {
-   ouverte = true;
-   digitalWrite( pin, HIGH );
-   Serial.print( "Ouverture de la vanne n°" );
-   Serial.println( pin );
-}
-
-void Vanne::fermer( uint8_t pin ) {
-   ouverte = false;
-   digitalWrite( pin, LOW );
-   Serial.print( "Fermeture de la vanne n°" );
-   Serial.println( pin );
+void Vanne::forcer_l_etat( uint8_t pin, const Instant & maintenant, Vanne::Etat nouvel_etat ) {
+   Log( "Vanne::forcer_l_etat( %d, %0d:%0d, %d )",
+      pin, maintenant.get_heure(), maintenant.get_minute(), nouvel_etat );
+   if( nouvel_etat == FORCEE_FERMEE ) {
+      etat = FORCEE_FERMEE;
+      fermer( pin, maintenant );
+   }
+   else if( nouvel_etat == FORCEE_OUVERTE ) {
+      etat = FORCEE_OUVERTE;
+      ouvrir( pin, maintenant );
+   }
+   else if(( nouvel_etat == CONFIGUREE_OUVERTE )||( nouvel_etat == CONFIGUREE_FERMEE )) {
+      int r = digitalRead( pin );
+      if( r == LOW ) {
+         etat = CONFIGUREE_FERMEE;
+      }
+      else {
+         etat = CONFIGUREE_OUVERTE;
+      }
+      evaluer( pin, maintenant );
+   }
 }
 
 void Vanne::evaluer( uint8_t pin, const Instant & maintenant ) {
-   if( ouverte ) {
-      if(  ( ! matin.est_activable( maintenant ))
-         &&( ! soir .est_activable( maintenant )))
+   if(( etat == CONFIGUREE_OUVERTE )||( etat == CONFIGUREE_FERMEE )) {
+      if(   matin.doit_etre_ouverte( maintenant )
+         || soir .doit_etre_ouverte( maintenant ))
       {
-         fermer( pin );
+         if( etat == CONFIGUREE_FERMEE ) {
+            etat = CONFIGUREE_OUVERTE;
+            ouvrir( pin, maintenant );
+         }
+      }
+      else {
+         if( etat == CONFIGUREE_OUVERTE ) {
+            etat = CONFIGUREE_FERMEE;
+            fermer( pin, maintenant );
+         }
       }
    }
-   else {
-      if(   matin.est_activable( maintenant )
-         || soir .est_activable( maintenant ))
-      {
-         ouvrir( pin );
-      }
-   }
+}
+
+void Vanne::ouvrir( uint8_t pin, const Instant & maintenant ) {
+   Log( "Vanne::ouvrir( %d, %0d:%0d )", pin, maintenant.get_heure(), maintenant.get_minute());
+   digitalWrite( pin, HIGH );
+}
+
+void Vanne::fermer( uint8_t pin, const Instant & maintenant ) {
+   Log( "Vanne::fermer( %d, %0d:%0d )", pin, maintenant.get_heure(), maintenant.get_minute());
+   digitalWrite( pin, LOW );
 }

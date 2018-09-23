@@ -18,7 +18,7 @@
 
 #define UI_PROXY_PORT 2416
 
-sim::IUI * proxy;
+sim::IUI * proxy = 0;
 
 //-- Digital I/O -------------------------------------------------------------
 
@@ -265,6 +265,7 @@ int main( int argc, char * argv[] ) {
             spec.tv_nsec = 20 * 1000 * 1000; // 20 ms
             nanosleep( &spec, 0 );
          }
+         tear_down();
       }
       fprintf( stderr, "Simulation ended\n" );
    }

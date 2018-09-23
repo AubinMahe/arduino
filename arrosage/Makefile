@@ -7,13 +7,14 @@ SRCS     =\
  lib/json/Attributes.cpp\
  lib/json/Decoder.cpp\
  lib/json/Encoder.cpp\
- src/Vanne.cpp\
- src/Serveur.cpp\
- src/Horloge.cpp\
+ src/Activite.cpp\
  src/Arrosage.cpp\
- src/Instant.cpp\
  src/Commandes.cpp\
- src/Activite.cpp
+ src/Horloge.cpp\
+ src/Instant.cpp\
+ src/Log.cpp\
+ src/Serveur.cpp\
+ src/Vanne.cpp
 
 OBJS = $(SRCS:%.cpp=BUILD/%.o)
 

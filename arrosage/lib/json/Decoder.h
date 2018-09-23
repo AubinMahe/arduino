@@ -18,6 +18,8 @@ namespace json {
 
       static char _errMsg[200];
 
+      static bool updateErrorMessage( Status status );
+
    public:
 
       Decoder( const char * begin, size_t len = 0 );

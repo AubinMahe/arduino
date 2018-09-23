@@ -1,6 +1,6 @@
 #include "Serveur.h"
 #include "Commandes.h"
-#include "index.html.h"
+#include "Log.h"
 
 #ifndef ESP8266
 #  include <sys/types.h>
@@ -12,10 +12,13 @@
 #include <strings.h>
 
 #define DEMARRER_OU_ARRETER            "Démarrer ou arrêter"
+#define AUTO_TEST                      "Auto-test"
 #define METTRE_A_L_HEURE               "Mettre à l'heure"
 #define OUVRIR_OU_FERMER_LES_VANNES    "Ouvrir ou fermer les vannes"
 #define CHARGER_UNE_CONFIGURATION      "Charger une configuration"
 #define LIRE_LA_CONFIGURATION          "Lire la configuration"
+
+#include "index.html.h"
 
 using namespace hpms;
 
@@ -23,16 +26,15 @@ const uint8_t  Serveur::WIFI_CONNEXION_ESSAIS;
 const uint16_t Serveur::HTTP_PORT;
 bool           Serveur::DUMP = false;
 
-Serveur::Serveur() :
+Serveur::Serveur( void ) :
    serveur( HTTP_PORT )
-{}
-
-void Serveur::setup() {
+{
+   pinMode( 0, OUTPUT );
+   pinMode( 1, OUTPUT );
+   pinMode( 2, OUTPUT );
+   pinMode( 3, OUTPUT );
    Serial.begin( 115200 );
-   Serial.println();
-   Serial.println();
-   Serial.print( "Connexion à " );
-   Serial.println( SSID );
+   Log( "Serveur::Serveur|Connexion à %s", SSID );
    WiFi.begin( SSID, WIFI_PWD );
    unsigned essai = 0;
    while( WiFi.status() != WL_CONNECTED ) {
@@ -43,19 +45,30 @@ void Serveur::setup() {
          ESP.deepSleep( 10e6 );
       }
    }
-   Serial.println();
-   Serial.println( "WiFi connecté." );
-   Serial.println( "Adresse IP : " );
-   Serial.println( WiFi.localIP());
    serveur.begin();
-   Serial.println( "Serveur HTTP démarré" );
+   Log( "Serveur::Serveur|http://%s:8080 est à l'écoute", WiFi.localIP().toString().c_str());
+}
+
+json::Status Serveur::demarrer( bool demarrer ) {
+   Log( "Serveur::demarrer( %s )", demarrer ? "true" : "false" );
+   arrosage.demarrer( demarrer );
+   return json::SUCCESS;
+}
+
+json::Status Serveur::demarrer_l_auto_test( bool demarrer ) {
+   Log( "Serveur::demarrer_l_auto_test( %s )", demarrer ? "true" : "false" );
+   if( demarrer ) {
+      arrosage.demarrage_de_l_auto_test();
+   }
+   return json::SUCCESS;
 }
 
 json::Status Serveur::mettre_a_l_heure( json::Decoder & parser ) {
+   Log( "Serveur::mettre_a_l_heure" );
    Commande<Instant> mettre_a_l_heure;
    json::Status status( parser.decode( mettre_a_l_heure ));
    if( json::SUCCESS == status ) {
-      horloge.actualiser(
+      arrosage.actualiser(
          mettre_a_l_heure.argument.get_heure(),
          mettre_a_l_heure.argument.get_minute());
    }
@@ -63,40 +76,27 @@ json::Status Serveur::mettre_a_l_heure( json::Decoder & parser ) {
 }
 
 json::Status Serveur::ouvrir_ou_fermer_les_vannes( json::Decoder & parser ) {
-   Serial.println( "Serveur::ouvrir_ou_fermer_les_vannes" );
-   static Commande<CommanderLesVannes> commander_les_vannes;
+   Log( "Serveur::ouvrir_ou_fermer_les_vannes" );
+   Commande<CommanderLesVannes> commander_les_vannes;
    json::Status status = parser.decode( commander_les_vannes );
    if( json::SUCCESS == status ) {
       for( size_t i = 0; i < countof( commander_les_vannes.argument.les_vannes ); ++i ) {
          CommanderUneVanne & vanne = commander_les_vannes.argument.les_vannes[i];
-         if( vanne.pin < arrosage.NBR_VANNES ) {
-            arrosage.commander_une_vanne( vanne.pin, vanne.ouvrir );
-         }
-         else {
-            break;
+         if(  ( 0 <= vanne.pin )&&( vanne.pin < arrosage.NBR_VANNES )
+            &&( vanne.etat >= Vanne::PREMIER_ETAT )&&( vanne.etat <= Vanne::DERNIER_ETAT ))
+         {
+            arrosage.commander_une_vanne( vanne.pin, vanne.etat );
          }
       }
    }
    return status;
 }
 
-json::Status Serveur::charger_une_configuration( json::Decoder & parser ) {
-   Serial.println( "Serveur::charger_une_configuration" );
-   Commande<Configuration> configurationComplete;
-   json::Status status( parser.decode( configurationComplete ));
-   if( json::SUCCESS == status ) {
-      arrosage = configurationComplete.argument.arrosage;
-      horloge.actualiser(
-         configurationComplete.argument.heure.get_heure(),
-         configurationComplete.argument.heure.get_minute());
-   }
-   return status;
-}
-
 json::Status Serveur::lire_la_configuration( const char * & response ) {
+   Log( "Serveur::lire_la_configuration" );
    static char buffer[1400];
    json::Encoder encoder( buffer, sizeof( buffer ));
-   Configuration cfg    ( horloge, arrosage );
+   Configuration cfg    ( arrosage );
    json::Status  status ( encoder.encode( cfg ));
    if( json::SUCCESS == status ) {
       response = buffer;
@@ -107,7 +107,19 @@ json::Status Serveur::lire_la_configuration( const char * & response ) {
    return status;
 }
 
-void Serveur::sendJSonResponse( WiFiClient & client, json::Status status, const char * data ) const {
+json::Status Serveur::charger_une_configuration( json::Decoder & parser ) {
+   Log( "Serveur::charger_une_configuration" );
+   Commande<Configuration> configurationComplete;
+   json::Status status( parser.decode( configurationComplete ));
+   if( json::SUCCESS == status ) {
+      arrosage = configurationComplete.argument.arrosage;
+      arrosage.a_ete_actualise();
+   }
+   return status;
+}
+
+void Serveur::send_json_response( WiFiClient & client, json::Status status, const char * data ) const {
+   Log( "Serveur::send_json_response" );
    static char json[1500];
    if( status == json::SUCCESS ) {
       if( data ) {
@@ -121,6 +133,7 @@ void Serveur::sendJSonResponse( WiFiClient & client, json::Status status, const 
       snprintf( json, sizeof( json ), "{\"code\":%d,\"msg\":\"%s\"}", status, data );
    }
    else {
+      json::Decoder::updateErrorMessage( status );
       snprintf( json, sizeof( json ), "{\"code\":%d,\"msg\":\"%s\"}",
          status, json::Decoder::_errMsg );
    }
@@ -132,15 +145,18 @@ void Serveur::sendJSonResponse( WiFiClient & client, json::Status status, const 
    client.print( json );
 }
 
-void Serveur::handleJSonCommands( WiFiClient & client, json::Decoder & parser ) {
+void Serveur::handle_json_commands( WiFiClient & client, json::Decoder & parser ) {
+   Log( "Serveur::handle_json_commands" );
    Commande<DemarrerArreter> commande;
    json::Status              status   = parser.decode( commande );
    const char *              response = 0;
    if( commande.commande[0] ) {
       parser.reset();
       if(      0 == ::strcasecmp( commande.commande, DEMARRER_OU_ARRETER )) {
-         arrosage.demarrer( commande.argument.demarrer );
-         status = json::SUCCESS;
+         status = demarrer( commande.argument.demarrer );
+      }
+      else if( 0 == ::strcasecmp( commande.commande, AUTO_TEST )) {
+         status = demarrer_l_auto_test( commande.argument.demarrer );
       }
       else if( 0 == ::strcasecmp( commande.commande, METTRE_A_L_HEURE )) {
          status = mettre_a_l_heure( parser );
@@ -155,22 +171,19 @@ void Serveur::handleJSonCommands( WiFiClient & client, json::Decoder & parser ) 
          status = lire_la_configuration( response );
       }
       else {
-         Serial.print  ( "Commande '" );
-         Serial.print  ( commande.commande );
-         Serial.println( "' inattendue." );
-         status   = json::UNEXPECTED_ATTRIBUTE;
+         Log( "Commande '%s' inattendue.", commande.commande );
+         status   = json::UNEXPECTED;
          response = "Commande inattendue";
       }
       if( status == json::SUCCESS ) {
-         Serial.print  ( "Commande '" );
-         Serial.print  ( commande.commande );
-         Serial.println( "' exécutée." );
+         Log( "Commande '%s' exécutée ou en cours d'exécution.", commande.commande );
       }
    }
-   sendJSonResponse( client, status, response );
+   send_json_response( client, status, response );
 }
 
-void Serveur::sendHtmlRootDocument( WiFiClient & client ) const {
+void Serveur::send_index_html( WiFiClient & client ) const {
+   Log( "Serveur::send_index_html" );
    client.println( "HTTP/1.1 200 OK" );
    client.println( "Connection: close" );
    client.println( "Content-type: text/html" );
@@ -197,11 +210,10 @@ void Serveur::sendHtmlRootDocument( WiFiClient & client ) const {
       perror( "index.html" );
    }
 #endif
-   Serial.println( "Serveur::sendHtmlRootDocument: " );
 }
 
-void Serveur::send404( WiFiClient & client ) const {
-   Serial.println( "Serveur::send404" );
+void Serveur::send_404( WiFiClient & client ) const {
+   Log( ": Serveur::send_404" );
    client.println( "HTTP/1.1 404 Not Found" );
    client.println( "Connection: close" );
 }
@@ -235,10 +247,9 @@ void Serveur::loop() {
       }
       memset( buffer, 0, sizeof( buffer ));
       size_t receivedBytesCount = client.readBytes( buffer, sizeof( buffer ));
+      Log( "Serveur::loop|%d octets reçus.", receivedBytesCount );
       if( DUMP ) {
          json::Decoder::dump( buffer, receivedBytesCount, db, sizeof( db ));
-         Serial.print( receivedBytesCount );
-         Serial.println( " octets reçus" );
          Serial.println( db );
       }
       const char * content = 0;
@@ -263,27 +274,32 @@ void Serveur::loop() {
          }
          bool isJSon = type && ( 0 == ::strncasecmp( type, "application/json", 16 ));
          if( isPost && isJSon ) {
-            json::Decoder parser( content );
-            handleJSonCommands( client, parser );
+            if( arrosage.est_en_auto_test()) {
+               send_json_response( client, json::UNEXPECTED,
+                  "Commande non recevable: auto-test en cours" );
+            }
+            else {
+               json::Decoder parser( content );
+               handle_json_commands( client, parser );
+            }
          }
          else {
-            send404( client );
+            send_404( client );
          }
       }
       else if(( buffer == ::strstr( buffer, "GET / "           ))
          ||   ( buffer == ::strstr( buffer, "GET /index.html " )))
       {
-         sendHtmlRootDocument( client );
+         send_index_html( client );
       }
       else {
-         send404( client );
+         send_404( client );
       }
       client.flush();
       client.stop();
    }
    else {
-      horloge.actualiser();
-      arrosage.evaluer( horloge );
+      arrosage.evaluer();
    }
    delay( 20 );
 }
@@ -294,19 +310,24 @@ void Serveur::loop() {
 // const char * Arrosage::WIFI_PWD = "write your password here";
 #include "WiFi"
 
-static hpms::Serveur theServeur;
+static Serveur * theServeur = 0;
 
 #ifdef HPMS_TESTS
 void executeAutoTestsIfAny( void );
 #endif
 
-void setup() {
-   theServeur.setup();
+void setup( void ) {
+   theServeur = new Serveur();
 #ifdef HPMS_TESTS
    executeAutoTestsIfAny();
 #endif
 }
 
-void loop() {
-   theServeur.loop();
+void loop( void ) {
+   theServeur->loop();
+}
+
+void tear_down( void ) {
+   delete theServeur;
+   theServeur = 0;
 }

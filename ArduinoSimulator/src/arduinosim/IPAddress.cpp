@@ -20,3 +20,10 @@ size_t IPAddress::printTo( Print & p ) const {
    length += p.print( _address.bytes[3] );
    return length;
 }
+
+std::string IPAddress::toString( void ) const {
+   char buffer[80];
+   snprintf( buffer, sizeof( buffer ), "%d.%d.%d.%d",
+      _address.bytes[0], _address.bytes[1], _address.bytes[2], _address.bytes[3] );
+   return buffer;
+}

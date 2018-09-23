@@ -2,6 +2,10 @@
 
 #include <Arduino.h>
 
+#undef min
+#undef max
+#include <string>
+
 struct sockaddr_in;
 class WiFiClient {
 public:
@@ -48,6 +52,8 @@ public:
    IPAddress();
 
    virtual size_t printTo( Print& p ) const;
+
+   std::string toString( void ) const;
 
 private:
 

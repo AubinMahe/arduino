@@ -8,8 +8,7 @@ struct ConfigurationCoDec : public json::CoDec {
 
    ConfigurationCoDec() :
       json::CoDec( "Configuration",
-         new json::Object( "arrosage", &Configuration::arrosage,
-         new json::Object( "heure"   , &Configuration::heure )))
+         new json::Object( "arrosage", &Configuration::arrosage ))
    {}
 };
 
@@ -41,8 +40,8 @@ struct CommanderUneVanneCoDec : public json::CoDec {
 
    CommanderUneVanneCoDec() :
       json::CoDec( "CommanderUneVanne",
-         new json::Byte   ( "pin"   , &CommanderUneVanne::pin,
-         new json::Boolean( "ouvrir", &CommanderUneVanne::ouvrir )))
+         new json::Int  ( "pin" , &CommanderUneVanne::pin,
+         new json::Enum8( "etat", &CommanderUneVanne::etat )))
    {}
 };
 

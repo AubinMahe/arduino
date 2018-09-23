@@ -29,7 +29,9 @@ void WiFiServer::check( bool isOk, const char * file, int line, const char * cal
 #define CHECK_NOT_ZERO(C) check( 0 != (C), __FILE__, __LINE__, #C )
 
 void WiFiServer::begin() {
+   int enable = 1;
    CHECK_NOT_ZERO( _socket = ::socket( PF_INET, SOCK_STREAM, 0 ));
+   CHECK_ZERO( ::setsockopt( _socket, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof( int )));
    CHECK_ZERO( ::fcntl( _socket, F_SETFL, O_NONBLOCK ));
    sockaddr_in addrport;
    addrport.sin_family      = AF_INET;

@@ -55,6 +55,21 @@ namespace json {
       virtual Status set( IJSonData & o, Decoder & decoder ) const;
    };
 
+   class Enum8 : public Attribute<unsigned char> {
+   public:
+
+      template<class C, class E>
+      Enum8( const char * name, E C::* member, AttributeBase * next = 0 ) :
+         Attribute<unsigned char>( name, (Attribute::member_t)member, next )
+      {}
+
+   public:
+
+      virtual Status put( const IJSonData & o, Encoder & encoder ) const;
+
+      virtual Status set( IJSonData & o, Decoder & decoder ) const;
+   };
+
    class Short : public Attribute<short> {
    public:
 

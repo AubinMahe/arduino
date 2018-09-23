@@ -79,6 +79,7 @@ namespace json {
    friend class CoDec;
    friend class Boolean;
    friend class Byte;
+   friend class Enum8;
    friend class Short;
    friend class Int;
    friend class Long;

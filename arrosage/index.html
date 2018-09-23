@@ -19,6 +19,10 @@ text-align: center;
 display: inline-block;
 width: 316px;
 }
+#status-line {
+font-size: 16px;
+font-style: italic;
+}
 .pane {
 border: 1px solid darkgray;
 text-align: center;
@@ -68,7 +72,7 @@ width: 100%;
 vertical-align: middle;
 }
 th:nth-child(1), td:nth-child(1) {
-width: 32px;
+width: 48px;
 }   
 th:nth-child(2), td:nth-child(2), th:nth-child(4), td:nth-child(4) {
 width: 32px;
@@ -85,12 +89,16 @@ height: 24px;
 td:nth-child(3) > input, td:nth-child(5) > input {
 text-align: right;
 }
+td:nth-child(2) > select {
+width: 180px;
+vertical-align: middle;
+}
 </style>
 <script type="text/javascript"> 
 var arrosage  = null;
 var http      = new XMLHttpRequest();
 
-function hhmm( instant ) {
+function instant_to_hhmm( instant ) {
    var hh = instant.heure;
    if( hh < 10 ) {
       hh = '0' + hh;
@@ -99,35 +107,61 @@ function hhmm( instant ) {
    if( mm < 10 ) {
       mm = '0' + mm;
    }
-   return hh + ':' + mm;
+   var hhmm = hh + ':' + mm;
+   for( var i = 1; i < arguments.length; ++i ) {
+      document.getElementById( arguments[i] ).value = hhmm;
+   }
+   return hhmm;
 }
+
+function hhmm_to_instant( id ) {
+   var hm = document.getElementById( id ).value.split(':');
+   return {
+      heure : parseInt( hm[0] ),
+      minute: parseInt( hm[1] )
+   };
+}
+
+function get_duree( id ) {
+   return parseInt( document.getElementById( id ).value );
+}
+
+function set_duree( duree, id ) {
+   document.getElementById( id ).value = duree;
+}
+
 function lire_la_configuration() {
    var cmd = {commande: "Lire la configuration"};
    console.log( "Commande : %o", cmd );
-   
    http.onreadystatechange = function( event ) {
       if( this.readyState === XMLHttpRequest.DONE ) {
          if( this.status === 200 ) {
-            //console.log( this.responseText );
-            var configuration = JSON.parse( this.responseText );
-            if( configuration.code === 0 ) {
-               var heure    = configuration.data.heure;
-               var arrosage = configuration.data.arrosage;
-               var ts       = hhmm( heure );
-               document.getElementById( "heure" ).value = ts; 
-               document.getElementById( "heure_de_la_configuration" ).value = ts;
-               document.getElementById( "est_en_marche" ).value = arrosage.est_en_marche;
-               for( var pin = 0; pin < arrosage.vannes.length; ++pin ) {
-                  var vanne = arrosage.vannes[pin];
-                  var mo    = document.getElementById( "vanne-" + pin + "-matin-ouverture" );
-                  var md    = document.getElementById( "vanne-" + pin + "-matin-duree"     );
-                  var so    = document.getElementById( "vanne-" + pin + "-soir-ouverture"  );
-                  var sd    = document.getElementById( "vanne-" + pin + "-soir-duree"      );
-                  mo .value = hhmm( vanne.matin.ouverture );
-                  md .value = vanne.matin.duree;
-                  so .value = hhmm( vanne.soir .ouverture );
-                  sd .value = vanne.soir.duree;
+            try {
+               console.log( this.responseText );
+               var configuration = JSON.parse( this.responseText );
+               if( configuration.code === 0 ) {
+                  var arrosage = configuration.data.arrosage;
+                  instant_to_hhmm( configuration.data.arrosage.horloge,
+                     "heure", "heure_de_la_configuration" );
+                  document.getElementById( "est_en_marche" ).value = arrosage.est_en_marche;
+                  for( var pin = 0; pin < arrosage.vannes.length; ++pin ) {
+                     var vanne = arrosage.vannes[pin];
+                     var vm    = "vanne-" + pin + "-matin-";
+                     var vs    = "vanne-" + pin + "-soir-";
+                     instant_to_hhmm( vanne.matin.ouverture, vm + "ouverture" );
+                     set_duree      ( vanne.matin.duree    , vm + "duree" );
+                     instant_to_hhmm( vanne.soir .ouverture, vs + "ouverture"  );
+                     set_duree      ( vanne.soir .duree    , vs + "duree"  );
+                  }
+                  document.getElementById( "status-line" ).innerText = "Configuration chargée."; 
                }
+               else {
+                  document.getElementById( "status-line" ).innerText = configuration.msg; 
+               }
+            }
+            catch( x ) {
+               console.error( x );
+               document.getElementById( "status-line" ).innerText = "Erreur interne !";
             }
          }
       }
@@ -139,7 +173,29 @@ function lire_la_configuration() {
 
 function send( cmd ) {
    console.log( "send: -%o-", cmd );
-   http.onreadystatechange = function( event ) {};
+   http.onreadystatechange = function( event ) {
+      if( this.readyState === XMLHttpRequest.DONE ) {
+         if( this.status === 200 ) {
+            try {
+               console.log( this.responseText );
+               var configuration = JSON.parse( this.responseText );
+               if( configuration.code === 0 ) {
+                  document.getElementById( "status-line" ).innerText = "Commande exécutée.";
+               }
+               else if( configuration.msg ) {
+                  document.getElementById( "status-line" ).innerText = configuration.msg; 
+               }
+               else {
+                  document.getElementById( "status-line" ).innerText = "Erreur interne !"; 
+               }
+            }
+            catch( x ) {
+               console.error( x );
+               document.getElementById( "status-line" ).innerText = "Erreur interne !";
+            }
+         }
+      }
+   };
    http.open( 'POST', location.host, true );
    http.setRequestHeader( "Content-type", "application/json" );
    http.send( JSON.stringify( cmd ));
@@ -150,13 +206,12 @@ function demarrer_ou_arreter() {
    send({commande: "Démarrer ou arrêter", argument: {demarrer: on_off }});   
 }
 
+function auto_test() {
+   send({commande: "Auto-test", argument: {demarrer: true }});   
+}
+
 function mettre_a_l_heure() {
-   var hm = document.getElementById( "heure" ).value.split(':');
-   var instant = {
-      heure : parseInt( hm[0] ),
-      minute: parseInt( hm[1] )
-   };
-   send({commande: "Mettre à l'heure", argument: instant});   
+   send({commande: "Mettre à l'heure", argument: hhmm_to_instant( "heure" )});   
 }
 
 function ouvrir_ou_fermer_les_vannes() {
@@ -166,52 +221,37 @@ function ouvrir_ou_fermer_les_vannes() {
          les_vannes: [],
       },
    };
-   for( var row = 0; row < 4; ++row ) {
-      var pin = document.getElementById( "of-vanne-" + row + "-pin" );
-      if( pin.value > -1 ) {
-         msg.argument.les_vannes.push({
-            pin   : parseInt( pin.value ),
-            ouvrir: document.getElementById( "of-vanne-" + row + "-etat" ).checked,
-         });
+   for( var pin = 0; pin < 4; ++pin ) {
+      var etat = parseInt( document.getElementById( "of-vanne-" + pin + "-etat" ).value );
+      if( etat != 0 ) {
+         msg.argument.les_vannes.push({ pin : pin, etat: etat });
       }
    }
-   send( msg );   
+   if( msg.argument.les_vannes.length ) {
+      send( msg );   
+   }
 }
 
 function charger_une_configuration() {
-   var hm = document.getElementById( "heure_de_la_configuration" ).value.split(':');
-   var instant = {
-      heure : parseInt( hm[0] ),
-      minute: parseInt( hm[1] )
-   };
    var les_vannes = [];
    for( var pin = 0; pin < 4; ++pin ) {
-      hm = document.getElementById( "vanne-" + pin + "-matin-ouverture" ).value.split(':');
-      var om = {
-         heure : parseInt( hm[0] ),
-         minute: parseInt( hm[1] )
-      };
-      hm = document.getElementById( "vanne-" + pin + "-soir-ouverture" ).value.split(':');
-      var os = {
-         heure : parseInt( hm[0] ),
-         minute: parseInt( hm[1] )
-      };
+      var vm = "vanne-" + pin + "-matin-";
+      var vs = "vanne-" + pin + "-soir-";
       les_vannes.push({
-         pin  : parseInt( pin.value ),
          matin: {
-            ouverture: om,
-            duree    : parseInt( document.getElementById( "vanne-" + pin + "-matin-duree" ).value )
+            ouverture: hhmm_to_instant( vm + "ouverture" ),
+            duree    : get_duree      ( vm + "duree"     )
          },
          soir : {
-            ouverture: os,
-            duree    : parseInt( document.getElementById( "vanne-" + pin + "-soir-duree" ).value )
+            ouverture: hhmm_to_instant( vs + "ouverture"  ),
+            duree    : get_duree      ( vs + "duree"      )
          }
       });
    }
    var cfg = {
-      heure   : instant,
       arrosage: {
          est_en_marche: document.getElementById( "est_en_marche" ).checked,
+         horloge      : hhmm_to_instant( "heure_de_la_configuration" ),
          vannes       : les_vannes
       }
    };
@@ -244,13 +284,17 @@ function expand_or_collapse( p ) {
 <br/>
 <button onclick="demarrer_ou_arreter()">Commander</button>
 </div></div>
+<div class="pane"><p onclick="expand_or_collapse(this)">Auto-test</p><div>
+<label for="autotest">Auto-test : 24 h en 2 min, 24 sec :</label>
+<button onclick="auto_test()">Commander</button>
+</div></div>
 <div class="pane"><p onclick="expand_or_collapse(this)">Mettre à l'heure</p><div>
 <label for="mettre_a_l_heure">Heure:minute :</label>
-<input id ="heure" type="time" />
+<input id="heure" type="time" />
 <br/>
 <button onclick="mettre_a_l_heure()">Commander</button>
 </div></div>
-<div class="pane"><p onclick="expand_or_collapse(this)">Ouvrir ou fermer les vannes</p><div>
+<div class="pane"><p onclick="expand_or_collapse(this)">Commande manuelle des vannes</p><div>
 <table>
 <thead>
 <tr>
@@ -260,20 +304,40 @@ function expand_or_collapse( p ) {
 </thead>
 <tbody>
 <tr>
-<td><input id="of-vanne-0-pin"  type="number" min="-1" max="3" value="-1" /></td>
-<td><input id="of-vanne-0-etat" type="checkbox" /></td>
+<td>0</td>
+<td><select id="of-vanne-0-etat">
+<option value="0" selected="selected">Ne pas commander</option>
+<option value="1">Selon la configuration</option>
+<option value="3">Ouverte</option>
+<option value="4">Fermée</option>
+</select></td>
 </tr>
 <tr>
-<td><input id="of-vanne-1-pin"  type="number" min="-1" max="3" value="-1" /></td>
-<td><input id="of-vanne-1-etat" type="checkbox" /></td>
+<td>1</td>
+<td><select id="of-vanne-1-etat">
+<option value="0" selected="selected">Ne pas commander</option>
+<option value="1">Selon la configuration</option>
+<option value="3">Ouverte</option>
+<option value="4">Fermée</option>
+</select></td>
 </tr>
 <tr>
-<td><input id="of-vanne-2-pin"  type="number" min="-1" max="3" value="-1" /></td>
-<td><input id="of-vanne-2-etat" type="checkbox" /></td>
+<td>2</td>
+<td><select id="of-vanne-2-etat">
+<option value="0" selected="selected">Ne pas commander</option>
+<option value="1">Selon la configuration</option>
+<option value="3">Ouverte</option>
+<option value="4">Fermée</option>
+</select></td>
 </tr>
 <tr>
-<td><input id="of-vanne-3-pin"  type="number" min="-1" max="3" value="-1" /></td>
-<td><input id="of-vanne-3-etat" type="checkbox" /></td>
+<td>3</td>
+<td><select id="of-vanne-3-etat">
+<option value="0" selected="selected">Ne pas commander</option>
+<option value="1">Selon la configuration</option>
+<option value="3">Ouverte</option>
+<option value="4">Fermée</option>
+</select></td>
 </tr>
 </tbody>
 </table>
@@ -336,6 +400,7 @@ function expand_or_collapse( p ) {
 <button onclick="lire_la_configuration()">Lire</button>
 <button onclick="charger_une_configuration()">Charger</button>
 </div></div>
+<p id="status-line">Lecture de la configuration en cours...</p>
 </div>
 </body>
 </html>

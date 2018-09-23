@@ -208,3 +208,4 @@ extern HardwareSerial Serial;
 
 void loop( void );
 void setup( void );
+void tear_down( void );

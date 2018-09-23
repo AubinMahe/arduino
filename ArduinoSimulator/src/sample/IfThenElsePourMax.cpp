@@ -160,7 +160,7 @@ static void initialise_les_entrees_sorties() {
  * href="https://www.arduino.cc/reference/en/language/structure/sketch/setup/"
  * >setup()</a>.
  */
-void setup() {
+void setup( void ) {
    initialise_la_liaison_serie();
    Serial.println( "setup" );
    initialise_les_entrees_sorties();
@@ -175,7 +175,7 @@ unsigned long last_tick = 0;
  * href="https://www.arduino.cc/reference/en/language/structure/sketch/loop/"
  * >loop()</a>.
  */
-void loop() {
+void loop( void ) {
    unsigned long temps_ecoule = millis() - t0;
    switch( etat ) {
    case ETA_VEILLE:
@@ -248,4 +248,8 @@ void loop() {
       }
       break;
    }
+}
+
+void tear_down( void ) {
+   Serial.println( "fin du programme simulé." );
 }

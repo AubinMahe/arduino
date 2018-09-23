@@ -27,14 +27,12 @@ namespace hpms {
 
    struct Configuration : public json::IJSonData {
 
-      Configuration( const Instant & i = Instant(), const Arrosage & a = Arrosage()) :
-         heure( i ),
+      Configuration( const Arrosage & a = Arrosage()) :
          arrosage( a )
       {}
 
       virtual const json::CoDec & getCoDec() const;
 
-      Instant  heure;
       Arrosage arrosage;
    };
 
@@ -52,14 +50,14 @@ namespace hpms {
    struct CommanderUneVanne : public json::IJSonData {
 
       CommanderUneVanne() :
-         pin( 0 ),
-         ouvrir( false )
+         pin ( -1 ),
+         etat( Vanne::CONFIGUREE_FERMEE )
       {}
 
       virtual const json::CoDec & getCoDec() const;
 
-      uint8_t pin;
-      bool    ouvrir;
+      int         pin;
+      Vanne::Etat etat;
    };
 
    struct CommanderLesVannes : public json::IJSonData {

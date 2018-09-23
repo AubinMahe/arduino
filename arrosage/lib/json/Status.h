@@ -16,7 +16,7 @@ namespace json {
       /*  8 */ ATTRIBUTE_NOT_FOUND,
       /*  9 */ ERROR_PARSING_VALUE,
 
-      /* 10 */ UNEXPECTED_ATTRIBUTE,
+      /* 10 */ UNEXPECTED,
       /* 11 */ TYPE_MISMATCH,
 
       /* 12 */ BUFFER_OVERFLOW,

@@ -15,7 +15,9 @@ namespace hpms {
 
    public:
 
-      bool est_activable( const Instant & maintenant ) const;
+      bool doit_etre_ouverte( const Instant & maintenant ) const;
+
+      bool doit_etre_fermee( const Instant & maintenant ) const;
 
    private:
 

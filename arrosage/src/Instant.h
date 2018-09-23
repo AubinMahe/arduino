@@ -20,11 +20,15 @@ namespace hpms {
 
    public:
 
-      bool operator > ( const Instant & r ) const;
+      bool operator <  ( const Instant & r ) const;
 
-      bool operator < ( const Instant & r ) const;
+      bool operator <= ( const Instant & r ) const;
 
-      Instant operator + ( uint8_t duree_minutes ) const;
+      bool operator >  ( const Instant & r ) const;
+
+      bool operator >= ( const Instant & r ) const;
+
+      Instant operator + ( int duree_minutes ) const;
 
       uint8_t get_heure() const { return heure; }
 

@@ -20,6 +20,14 @@ Status Byte::set( IJSonData & o, Decoder & decoder ) const {
    return decoder.decode( o.*_member );
 }
 
+Status Enum8::put( const IJSonData & o, Encoder & encoder ) const {
+   return encoder.property( _name, (long)( o.*_member ));
+}
+
+Status Enum8::set( IJSonData & o, Decoder & decoder ) const {
+   return decoder.decode( o.*_member );
+}
+
 Status Short::put( const IJSonData & o, Encoder & encoder ) const {
    return encoder.property( _name, (long)( o.*_member ));
 }
