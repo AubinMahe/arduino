@@ -29,7 +29,9 @@ Arrosage::Arrosage() :
           {{{ 8, 15 }, 20 }, {{ 22, 15 }, 20 }},
           {{{ 8, 30 }, 20 }, {{ 22, 30 }, 20 }},
           {{{ 8, 45 }, 20 }, {{ 22, 45 }, 20 }} }
-{}
+{
+   new Journal( horloge );
+}
 
 const json::CoDec & Arrosage::getCoDec( void ) const {
    return ArrosageCoDec::codec;
@@ -58,12 +60,26 @@ void Arrosage::demarrage_de_l_auto_test( void ) {
    auto_test_en_cours = true;
 }
 
+void Arrosage::arret_de_l_auto_test( void ) {
+   Log( "Arrosage::arret_de_l_auto_test" );
+   bool auto_test = auto_test_en_cours ;
+   auto_test_en_cours = false;
+   if( auto_test ) {
+      horloge.actualiserDepuisNTP();
+   }
+   evaluer();
+}
+
 bool Arrosage::est_en_auto_test( void ) const {
    return auto_test_en_cours;
 }
 
 void Arrosage::demarrer( bool demarrer ) {
    est_en_marche = demarrer;
+}
+
+bool Arrosage::vanne_est_ouverte( size_t pin ) const {
+   return vannes[pin].est_ouverte( pin );
 }
 
 void Arrosage::commander_une_vanne( uint8_t pin, Vanne::Etat etat ) {

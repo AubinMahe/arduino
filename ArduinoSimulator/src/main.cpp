@@ -18,8 +18,6 @@
 
 #define UI_PROXY_PORT 2416
 
-sim::IUI * proxy = 0;
-
 //-- Digital I/O -------------------------------------------------------------
 
 int digitalRead ( uint8_t pin ) {
@@ -235,7 +233,8 @@ bool Servo::attached() {
 //-- Main --------------------------------------------------------------------
 
 int main( int argc, char * argv[] ) {
-   for( int i = 1; ( ! proxy )&&( i < argc ); ++i ) {
+   sim::IUI::_theUI = 0;
+   for( int i = 1; ( sim::IUI::_theUI == 0 )&&( i < argc ); ++i ) {
       if(      0 == strcmp( argv[i], "--ui=ncurses" )) {
          new ncurses::UI();
       }

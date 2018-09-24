@@ -1,6 +1,7 @@
 #include "Serveur.h"
 #include "Commandes.h"
 #include "Log.h"
+#include "Journal.h"
 
 #ifndef ESP8266
 #  include <sys/types.h>
@@ -13,7 +14,9 @@
 
 #define DEMARRER_OU_ARRETER            "Démarrer ou arrêter"
 #define AUTO_TEST                      "Auto-test"
+#define LIRE_L_AUTO_TEST               "Lire l'auto-test"
 #define METTRE_A_L_HEURE               "Mettre à l'heure"
+#define LIRE_L_ETAT_DES_VANNES         "Lire l'état des vannes"
 #define OUVRIR_OU_FERMER_LES_VANNES    "Ouvrir ou fermer les vannes"
 #define CHARGER_UNE_CONFIGURATION      "Charger une configuration"
 #define LIRE_LA_CONFIGURATION          "Lire la configuration"
@@ -25,6 +28,8 @@ using namespace hpms;
 const uint8_t  Serveur::WIFI_CONNEXION_ESSAIS;
 const uint16_t Serveur::HTTP_PORT;
 bool           Serveur::DUMP = false;
+
+static char buffer[4000];
 
 Serveur::Serveur( void ) :
    serveur( HTTP_PORT )
@@ -55,12 +60,25 @@ json::Status Serveur::demarrer( bool demarrer ) {
    return json::SUCCESS;
 }
 
-json::Status Serveur::demarrer_l_auto_test( bool demarrer ) {
+json::Status Serveur::controler_l_auto_test( bool demarrer ) {
    Log( "Serveur::demarrer_l_auto_test( %s )", demarrer ? "true" : "false" );
    if( demarrer ) {
       arrosage.demarrage_de_l_auto_test();
    }
+   else {
+      arrosage.arret_de_l_auto_test();
+   }
    return json::SUCCESS;
+}
+
+json::Status Serveur::lire_l_auto_test( const char * & response ) {
+   Log( "Serveur::lire_l_auto_test" );
+   if( Journal::le_journal->encode( buffer, sizeof( buffer ), arrosage.est_en_auto_test())) {
+      response = buffer;
+      return json::SUCCESS;
+   }
+   response = 0;
+   return json::BUFFER_OVERFLOW;
 }
 
 json::Status Serveur::mettre_a_l_heure( json::Decoder & parser ) {
@@ -71,6 +89,20 @@ json::Status Serveur::mettre_a_l_heure( json::Decoder & parser ) {
       arrosage.actualiser(
          mettre_a_l_heure.argument.get_heure(),
          mettre_a_l_heure.argument.get_minute());
+   }
+   return status;
+}
+
+json::Status Serveur::lire_l_etat_des_vannes( const char * & response ) {
+   Log( "Serveur::lire_l_etat_des_vannes" );
+   json::Encoder encoder( buffer, sizeof( buffer ));
+   EtatDesVannes etat( arrosage );
+   json::Status  status( encoder.encode( etat ));
+   if( json::SUCCESS == status ) {
+      response = buffer;
+   }
+   else {
+      response = 0;
    }
    return status;
 }
@@ -94,7 +126,6 @@ json::Status Serveur::ouvrir_ou_fermer_les_vannes( json::Decoder & parser ) {
 
 json::Status Serveur::lire_la_configuration( const char * & response ) {
    Log( "Serveur::lire_la_configuration" );
-   static char buffer[1400];
    json::Encoder encoder( buffer, sizeof( buffer ));
    Configuration cfg    ( arrosage );
    json::Status  status ( encoder.encode( cfg ));
@@ -151,15 +182,36 @@ void Serveur::handle_json_commands( WiFiClient & client, json::Decoder & parser 
    json::Status              status   = parser.decode( commande );
    const char *              response = 0;
    if( commande.commande[0] ) {
+      if(  arrosage.est_en_auto_test()
+         &&((  ::strcasecmp( commande.commande, AUTO_TEST        )
+            && ::strcasecmp( commande.commande, LIRE_L_AUTO_TEST ))
+            || commande.argument.demarrer                          ))
+      {
+         send_json_response( client, json::UNEXPECTED,
+            "Commande non recevable: auto-test en cours" );
+         return;
+      }
       parser.reset();
       if(      0 == ::strcasecmp( commande.commande, DEMARRER_OU_ARRETER )) {
          status = demarrer( commande.argument.demarrer );
       }
       else if( 0 == ::strcasecmp( commande.commande, AUTO_TEST )) {
-         status = demarrer_l_auto_test( commande.argument.demarrer );
+         if( ! arrosage.est_en_auto_test() && ! commande.argument.demarrer ) {
+            send_json_response( client, json::UNEXPECTED,
+               "Commande non recevable: l'auto-test n'est pas en cours" );
+         }
+         else {
+            status = controler_l_auto_test( commande.argument.demarrer );
+         }
+      }
+      else if( 0 == ::strcasecmp( commande.commande, LIRE_L_AUTO_TEST )) {
+         status = lire_l_auto_test( response );
       }
       else if( 0 == ::strcasecmp( commande.commande, METTRE_A_L_HEURE )) {
          status = mettre_a_l_heure( parser );
+      }
+      else if( 0 == ::strcasecmp( commande.commande, LIRE_L_ETAT_DES_VANNES )) {
+         status = lire_l_etat_des_vannes( response );
       }
       else if( 0 == ::strcasecmp( commande.commande, OUVRIR_OU_FERMER_LES_VANNES )) {
          status = ouvrir_ou_fermer_les_vannes( parser );
@@ -171,9 +223,9 @@ void Serveur::handle_json_commands( WiFiClient & client, json::Decoder & parser 
          status = lire_la_configuration( response );
       }
       else {
-         Log( "Commande '%s' inattendue.", commande.commande );
          status   = json::UNEXPECTED;
          response = "Commande inattendue";
+         Log( "Commande '%s' inattendue.", commande.commande );
       }
       if( status == json::SUCCESS ) {
          Log( "Commande '%s' exécutée ou en cours d'exécution.", commande.commande );
@@ -198,7 +250,6 @@ void Serveur::send_index_html( WiFiClient & client ) const {
       ::fstat( page, &s );
       client.print( "Content-Length: " ); client.println( s.st_size );
       client.println();
-      char buffer[1000];
       int count = 0;
       while( 0 != ( count = read( page, buffer, sizeof( buffer ) - 1 ))) {
          buffer[count] = '\0';
@@ -233,7 +284,6 @@ const char * strcasestr( const char * haystack, const char * needle ) {
    return 0;
 }
 
-static char buffer[4000];
 // 0000: 50 4F 53 54 20 2F 31 39 32 2E 31 36 38 2E 31 2E - POST /192.168.1.
 // 1234112312312312312312312312312312312312312312312312312312345678901234561
 static char db[40*(4+1+16*3+3+16+1)];
@@ -274,14 +324,8 @@ void Serveur::loop() {
          }
          bool isJSon = type && ( 0 == ::strncasecmp( type, "application/json", 16 ));
          if( isPost && isJSon ) {
-            if( arrosage.est_en_auto_test()) {
-               send_json_response( client, json::UNEXPECTED,
-                  "Commande non recevable: auto-test en cours" );
-            }
-            else {
-               json::Decoder parser( content );
-               handle_json_commands( client, parser );
-            }
+            json::Decoder parser( content );
+            handle_json_commands( client, parser );
          }
          else {
             send_404( client );

@@ -1,5 +1,6 @@
 #include "Vanne.h"
 #include "Log.h"
+#include "Journal.h"
 
 #include <ESP8266WiFi.h>
 
@@ -34,6 +35,10 @@ Vanne::Vanne( const Activite & m, const Activite & s ) :
 
 const json::CoDec & Vanne::getCoDec( void ) const {
    return VanneCodec::codec;
+}
+
+bool Vanne::est_ouverte( uint8_t pin ) const {
+   return digitalRead( pin );
 }
 
 void Vanne::forcer_l_etat( uint8_t pin, const Instant & maintenant, Vanne::Etat nouvel_etat ) {
@@ -79,11 +84,13 @@ void Vanne::evaluer( uint8_t pin, const Instant & maintenant ) {
 }
 
 void Vanne::ouvrir( uint8_t pin, const Instant & maintenant ) {
-   Log( "Vanne::ouvrir( %d, %0d:%0d )", pin, maintenant.get_heure(), maintenant.get_minute());
    digitalWrite( pin, HIGH );
+   Journal::le_journal->vanne( pin, true );
+   Log( "Vanne::ouvrir( %d, %0d:%0d )", pin, maintenant.get_heure(), maintenant.get_minute());
 }
 
 void Vanne::fermer( uint8_t pin, const Instant & maintenant ) {
-   Log( "Vanne::fermer( %d, %0d:%0d )", pin, maintenant.get_heure(), maintenant.get_minute());
    digitalWrite( pin, LOW );
+   Journal::le_journal->vanne( pin, false );
+   Log( "Vanne::fermer( %d, %0d:%0d )", pin, maintenant.get_heure(), maintenant.get_minute());
 }

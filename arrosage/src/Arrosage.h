@@ -2,6 +2,7 @@
 
 #include "Horloge.h"
 #include "Vanne.h"
+#include "Journal.h"
 
 namespace hpms {
 
@@ -10,7 +11,7 @@ namespace hpms {
 
       static const uint8_t NBR_VANNES = 4;
 
-      Arrosage();
+      Arrosage( void );
 
    public:
 
@@ -26,13 +27,13 @@ namespace hpms {
 
    public:
 
-      void demarrage_de_l_auto_test( void );
+      void demarrer( bool demarrer );
 
+      void demarrage_de_l_auto_test( void );
+      void arret_de_l_auto_test( void );
       bool est_en_auto_test( void ) const;
 
-      void fin_de_l_auto_test( void );
-
-      void demarrer( bool demarrer );
+      bool vanne_est_ouverte( size_t pin ) const;
 
       void commander_une_vanne( uint8_t pin, Vanne::Etat etat );
 
@@ -40,10 +41,10 @@ namespace hpms {
 
    private:
 
-      bool    auto_test_en_cours;
-      bool    est_en_marche;
-      Horloge horloge;
-      Vanne   vannes[NBR_VANNES];
+      bool      auto_test_en_cours;
+      bool      est_en_marche;
+      Horloge   horloge;
+      Vanne     vannes[NBR_VANNES];
 
    friend struct ArrosageCoDec;
    };

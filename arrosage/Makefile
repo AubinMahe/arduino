@@ -12,6 +12,7 @@ SRCS     =\
  src/Commandes.cpp\
  src/Horloge.cpp\
  src/Instant.cpp\
+ src/Journal.cpp\
  src/Log.cpp\
  src/Serveur.cpp\
  src/Vanne.cpp

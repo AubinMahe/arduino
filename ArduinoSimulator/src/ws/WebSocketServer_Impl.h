@@ -145,6 +145,7 @@ namespace ws {
       }
 
       void digitalWrite( uint8_t pin, uint8_t hiOrLo ) {
+         _digital[pin] = hiOrLo;
          hpms::JSonObject msg = {
             { "verb"  , E_DIGITAL_WRITE },
             { "pin"   , (int)pin },
@@ -173,6 +174,7 @@ namespace ws {
       }
 
       void analogWrite( uint8_t pin, int value ) {
+         _analog[pin] = value;
          hpms::JSonObject msg = {
             { "verb" , E_ANALOG_WRITE },
             { "pin"  , (int)pin },
@@ -292,8 +294,10 @@ namespace ws {
       }
 
       void sendToUI( const hpms::JSonObject & json ) {
-         _msgQueue.push( json.serialize());
-         lws_callback_on_writable( _wsi );
+         if( _wsi ) {
+            _msgQueue.push( json.serialize());
+            lws_callback_on_writable( _wsi );
+         }
       }
 
       int send( lws * wsi ) {
@@ -378,13 +382,11 @@ namespace ws {
             _isRunning = true;
             while(( n >= 0 )&& _isRunning ) {
                n = ::lws_service( context, 20 );
-               if( _wsi ) {
-                  std::lock_guard<std::mutex> lock( _jobsLock );
-                  while( ! _jobs.empty()) {
-                     std::function<void(void)> job = _jobs.front();
-                     job();
-                     _jobs.pop();
-                  }
+               std::lock_guard<std::mutex> lock( _jobsLock );
+               while( ! _jobs.empty()) {
+                  std::function<void(void)> job = _jobs.front();
+                  job();
+                  _jobs.pop();
                }
             }
             ::lws_context_destroy( context );

@@ -25,6 +25,15 @@ namespace hpms {
       virtual const json::CoDec & getCoDec() const { return codec; }
    };
 
+   struct EtatDesVannes : public json::IJSonData {
+
+      EtatDesVannes( const Arrosage & arrosage );
+
+      virtual const json::CoDec & getCoDec() const;
+
+      bool etat_des_vannes[Arrosage::NBR_VANNES];
+   };
+
    struct Configuration : public json::IJSonData {
 
       Configuration( const Arrosage & a = Arrosage()) :

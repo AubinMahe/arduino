@@ -163,16 +163,10 @@ bool Decoder::dump( const char * buffer, size_t count, char * target, size_t tar
          }
          ::strcat( line, tmp );
       }
-      ::strncat( target, line , targetSize );
-      if( ::strlen( target ) < targetSize ) {
-         ::strncat( target, "- " , targetSize );
-      }
-      if( ::strlen( target ) < targetSize ) {
-         ::strncat( target, ascii, targetSize );
-      }
-      if( ::strlen( target ) < targetSize ) {
-         ::strncat( target, "\n" , targetSize );
-      }
+      ::strncat( target, line , targetSize - strlen( target ));
+      ::strncat( target, "- " , targetSize - strlen( target ));
+      ::strncat( target, ascii, targetSize - strlen( target ));
+      ::strncat( target, "\n" , targetSize - strlen( target ));
    }
    return ::strlen( target ) < targetSize;
 }

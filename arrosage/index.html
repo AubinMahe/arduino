@@ -131,8 +131,6 @@ function set_duree( duree, id ) {
 }
 
 function lire_la_configuration() {
-   var cmd = {commande: "Lire la configuration"};
-   console.log( "Commande : %o", cmd );
    http.onreadystatechange = function( event ) {
       if( this.readyState === XMLHttpRequest.DONE ) {
          if( this.status === 200 ) {
@@ -168,7 +166,7 @@ function lire_la_configuration() {
    };
    http.open( 'POST', location.host, true );
    http.setRequestHeader( "Content-type", "application/json" );
-   http.send( JSON.stringify( cmd ));
+   http.send( JSON.stringify({commande: "Lire la configuration"}));
 }
 
 function send( cmd ) {
@@ -206,12 +204,78 @@ function demarrer_ou_arreter() {
    send({commande: "Démarrer ou arrêter", argument: {demarrer: on_off }});   
 }
 
-function auto_test() {
-   send({commande: "Auto-test", argument: {demarrer: true }});   
+var auto_test_timer = 0;
+
+function lire_l_auto_test() {
+   http.onreadystatechange = function( event ) {
+      if( this.readyState === XMLHttpRequest.DONE ) {
+         if( this.status === 200 ) {
+            try {
+               console.log( this.responseText );
+               var at = JSON.parse( this.responseText );
+               if( at.code === 0 ) {
+                  if( ! at.data.autotest ) {
+                     clearInterval( auto_test_timer )
+                  }
+                  // at.data.heure
+                  // at.data.minute
+                  // at.data.events
+               }
+               else {
+                  document.getElementById( "status-line" ).innerText = configuration.msg; 
+               }
+            }
+            catch( x ) {
+               console.error( x );
+               document.getElementById( "status-line" ).innerText = "Erreur interne !";
+            }
+         }
+      }
+   };
+   http.open( 'POST', location.host, true );
+   http.setRequestHeader( "Content-type", "application/json" );
+   http.send( JSON.stringify({commande: "Lire l'auto-test"}));
+}
+
+function auto_test( on ) {
+   send({commande: "Auto-test", argument: {demarrer: on }});
+   if( on ) {
+      auto_test_timer = setInterval( lire_l_auto_test, 1000 );
+   }
 }
 
 function mettre_a_l_heure() {
    send({commande: "Mettre à l'heure", argument: hhmm_to_instant( "heure" )});   
+}
+
+function lire_l_etat_des_vannes() {
+   http.onreadystatechange = function( event ) {
+      if( this.readyState === XMLHttpRequest.DONE ) {
+         if( this.status === 200 ) {
+            try {
+               console.log( this.responseText );
+               var configuration = JSON.parse( this.responseText );
+               if( configuration.code === 0 ) {
+                  var etat_des_vannes = configuration.data.etat_des_vannes;
+                  for( var pin = 0; pin < etat_des_vannes.length; ++pin ) {
+                     document.getElementById( "pin-" + pin + "-state" ).innerText =
+                        etat_des_vannes[pin] ? "Ouverte" : "Fermée"; 
+                  }
+               }
+               else {
+                  document.getElementById( "status-line" ).innerText = configuration.msg; 
+               }
+            }
+            catch( x ) {
+               console.error( x );
+               document.getElementById( "status-line" ).innerText = "Erreur interne !";
+            }
+         }
+      }
+   };
+   http.open( 'POST', location.host, true );
+   http.setRequestHeader( "Content-type", "application/json" );
+   http.send( JSON.stringify({commande: "Lire l'état des vannes"}));
 }
 
 function ouvrir_ou_fermer_les_vannes() {
@@ -262,8 +326,8 @@ function expand_or_collapse( p ) {
    var div = p.nextElementSibling;
    if( div.style.display != 'block' ) {
       div.style.display = 'block';
-         var panes = document.getElementsByClassName( 'pane' );
-         for( var i = 0; i < panes.length; ++i ) {
+      var panes = document.getElementsByClassName( 'pane' );
+      for( var i = 0; i < panes.length; ++i ) {
          var pane = panes[i];
          if( pane.firstElementChild != p ) {
             pane.getElementsByTagName('div')[0].style.display = 'none';
@@ -285,14 +349,33 @@ function expand_or_collapse( p ) {
 <button onclick="demarrer_ou_arreter()">Commander</button>
 </div></div>
 <div class="pane"><p onclick="expand_or_collapse(this)">Auto-test</p><div>
-<label for="autotest">Auto-test : 24 h en 2 min, 24 sec :</label>
-<button onclick="auto_test()">Commander</button>
+<label>Auto-test : 24 h en 2 min, 24 sec.</label>
+<button onclick="auto_test( true )" >Démarrer</button>
+<button onclick="auto_test( false )">Arrêter</button>
 </div></div>
 <div class="pane"><p onclick="expand_or_collapse(this)">Mettre à l'heure</p><div>
 <label for="mettre_a_l_heure">Heure:minute :</label>
 <input id="heure" type="time" />
 <br/>
 <button onclick="mettre_a_l_heure()">Commander</button>
+</div></div>
+<div class="pane"><p onclick="expand_or_collapse(this)">Etat des vannes</p><div>
+<table>
+<thead>
+<tr>
+<th>Pin</th>
+<th>État</th>
+</tr>
+</thead>
+<tbody>
+<tr><td>0</td><td><p style="font-weight:bold;" id="pin-0-state">Inconnu</p></td></tr>
+<tr><td>1</td><td><p style="font-weight:bold;" id="pin-1-state">Inconnu</p></td></tr>
+<tr><td>2</td><td><p style="font-weight:bold;" id="pin-2-state">Inconnu</p></td></tr>
+<tr><td>3</td><td><p style="font-weight:bold;" id="pin-3-state">Inconnu</p></td></tr>
+</tbody>
+</table>
+<br/>
+<button onclick="lire_l_etat_des_vannes()">Lire</button>
 </div></div>
 <div class="pane"><p onclick="expand_or_collapse(this)">Commande manuelle des vannes</p><div>
 <table>
