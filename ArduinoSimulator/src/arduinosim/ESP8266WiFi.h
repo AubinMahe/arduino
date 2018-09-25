@@ -14,6 +14,11 @@ public:
 
    WiFiClient( int socket );
 
+   size_t write( const uint8_t * value, size_t count );
+   inline size_t write( const char * value, size_t count ) {
+      return write((const uint8_t *)value, count );
+   }
+
    size_t print( const char * value );
 
    size_t println( unsigned int value, int base = DEC );

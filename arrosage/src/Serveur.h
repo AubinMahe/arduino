@@ -9,6 +9,10 @@ namespace hpms {
    class Serveur {
    public:
 
+      static bool HTTP_DUMP;
+
+   public:
+
       Serveur( void );
 
       void loop( void );
@@ -26,9 +30,13 @@ namespace hpms {
 
       void send_json_response  ( WiFiClient & client, json::Status status, const char * buffer = 0 ) const;
       void handle_json_commands( WiFiClient & client, json::Decoder & parser );
-
-      void send_index_html( WiFiClient & client ) const;
-      void send_404       ( WiFiClient & client ) const;
+#ifndef ESP8266
+      void send_file( const char * path, WiFiClient & client ) const;
+#endif
+      void send_index_html  ( WiFiClient & client ) const;
+      void send_arrosage_css( WiFiClient & client ) const;
+      void send_arrosage_js ( WiFiClient & client ) const;
+      void send_404         ( WiFiClient & client ) const;
 
    private:
 
@@ -36,7 +44,6 @@ namespace hpms {
       static const char *   WIFI_PWD;
       static const uint8_t  WIFI_CONNEXION_ESSAIS = 10;
       static const uint16_t HTTP_PORT             = 8080;
-      static /* */ bool     DUMP;
 
       WiFiServer serveur;
       Arrosage   arrosage;

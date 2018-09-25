@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+   <meta charset="utf-8" />
+   <meta name="viewport" content="width=device-width" />
+   <title>Contrôle de l'arrosage</title>
+   <link rel="stylesheet" type="text/css" href="arrosage.css" />
+   <script src="arrosage.js"></script>
+</head>
+<body onload="lire_la_configuration()"><div class="content">
+
+<div class="pane"><p onclick="expand_or_collapse(this)">Démarrer ou arrêter</p><div>
+   <label for="on-off">En fonctionnement :</label>
+   <input id="on-off" type="checkbox" style="vertical-align: middle;" />
+   <br/>
+   <button onclick="demarrer_ou_arreter()">Commander</button>
+</div></div>
+
+<div class="pane"><p onclick="expand_or_collapse(this)">Auto-test</p><div>
+   <label>Auto-test : 24 h en 2 min, 24 sec.</label>
+   <button onclick="auto_test( true )" >Démarrer</button>
+   <button onclick="auto_test( false )">Arrêter</button>
+</div></div>
+
+<div class="pane"><p onclick="expand_or_collapse(this)">Mettre à l'heure</p><div>
+   <label for="mettre_a_l_heure">Heure:minute :</label>
+   <input id="heure" type="time" />
+   <br/>
+   <button onclick="mettre_a_l_heure()">Commander</button>
+</div></div>
+
+<div class="pane"><p onclick="expand_or_collapse(this)">Etat des vannes</p><div>
+   <table>
+      <thead>
+         <tr>
+         <th>Pin</th>
+         <th>État</th>
+         </tr>
+      </thead>
+         <tbody>
+         <tr><td>0</td><td><p style="font-weight:bold;" id="pin-0-state">Inconnu</p></td></tr>
+         <tr><td>1</td><td><p style="font-weight:bold;" id="pin-1-state">Inconnu</p></td></tr>
+         <tr><td>2</td><td><p style="font-weight:bold;" id="pin-2-state">Inconnu</p></td></tr>
+         <tr><td>3</td><td><p style="font-weight:bold;" id="pin-3-state">Inconnu</p></td></tr>
+      </tbody>
+   </table>
+   <br/>
+   <button onclick="lire_l_etat_des_vannes()">Lire</button>
+</div></div>
+
+<div class="pane"><p onclick="expand_or_collapse(this)">Commande manuelle des vannes</p><div>
+   <table>
+      <thead>
+         <tr>
+            <th>Pin</th>
+            <th>État</th>
+         </tr>
+      </thead>
+      <tbody>
+         <tr>
+            <td>0</td>
+            <td><select id="of-vanne-0-etat">
+            <option value="0" selected="selected">Ne pas commander</option>
+            <option value="1">Selon la configuration</option>
+            <option value="3">Ouverte</option>
+            <option value="4">Fermée</option>
+            </select></td>
+         </tr><tr>
+            <td>1</td>
+            <td><select id="of-vanne-1-etat">
+            <option value="0" selected="selected">Ne pas commander</option>
+            <option value="1">Selon la configuration</option>
+            <option value="3">Ouverte</option>
+            <option value="4">Fermée</option>
+            </select></td>
+         </tr><tr>
+            <td>2</td>
+            <td><select id="of-vanne-2-etat">
+            <option value="0" selected="selected">Ne pas commander</option>
+            <option value="1">Selon la configuration</option>
+            <option value="3">Ouverte</option>
+            <option value="4">Fermée</option>
+            </select></td>
+         </tr><tr>
+            <td>3</td>
+            <td><select id="of-vanne-3-etat">
+            <option value="0" selected="selected">Ne pas commander</option>
+            <option value="1">Selon la configuration</option>
+            <option value="3">Ouverte</option>
+            <option value="4">Fermée</option>
+            </select></td>
+         </tr>
+      </tbody>
+   </table>
+   <br/>
+   <button onclick="ouvrir_ou_fermer_les_vannes()">Commander</button>
+</div></div>
+
+<div class="pane"><p onclick="expand_or_collapse(this)">Lire ou charger une configuration</p><div>
+   <label for="heure_de_la_configuration">Heure:minute :</label>
+   <input id ="heure_de_la_configuration" type="time" />
+   <br/>
+   <label for="est_en_marche">En fonctionnement :</label>
+   <input id="est_en_marche" type="checkbox" style="vertical-align: middle;" />
+   <br/>
+   <table>
+      <thead>
+         <tr>
+            <th rowspan="2">Pin</th>
+            <th colspan="2">Matin</th>
+            <th colspan="2">Soir</th>
+         </tr><tr>
+            <th>Heure</th>
+            <th>Durée</th>
+            <th>Heure</th>
+            <th>Durée</th>
+         </tr>
+      </thead>
+      <tbody>
+         <tr>
+            <td>0</td>
+            <td><input id="vanne-0-matin-ouverture" type="time" /></td>
+            <td><input id="vanne-0-matin-duree"     type="number" min="5" max="90" /></td>
+            <td><input id="vanne-0-soir-ouverture"  type="time" /></td>
+            <td><input id="vanne-0-soir-duree"      type="number" min="5" max="90" /></td>
+         </tr><tr>
+            <td>1</td>
+            <td><input id="vanne-1-matin-ouverture" type="time" /></td>
+            <td><input id="vanne-1-matin-duree"     type="number" min="5" max="90" /></td>
+            <td><input id="vanne-1-soir-ouverture"  type="time" /></td>
+            <td><input id="vanne-1-soir-duree"      type="number" min="5" max="90" /></td>
+         </tr><tr>
+            <td>2</td>
+            <td><input id="vanne-2-matin-ouverture" type="time" /></td>
+            <td><input id="vanne-2-matin-duree"     type="number" min="5" max="90" /></td>
+            <td><input id="vanne-2-soir-ouverture"  type="time" /></td>
+            <td><input id="vanne-2-soir-duree"      type="number" min="5" max="90" /></td>
+         </tr><tr>
+            <td>3</td>
+            <td><input id="vanne-3-matin-ouverture" type="time" /></td>
+            <td><input id="vanne-3-matin-duree"     type="number" min="5" max="90" /></td>
+            <td><input id="vanne-3-soir-ouverture"  type="time" /></td>
+            <td><input id="vanne-3-soir-duree"      type="number" min="5" max="90" /></td>
+         </tr>
+      </tbody>
+   </table>
+   <br/>
+   <button onclick="lire_la_configuration()">Lire</button>
+   <button onclick="charger_une_configuration()">Charger</button>
+</div></div>
+
+<p id="status-line">Lecture de la configuration en cours...</p>
+
+</div></body></html>

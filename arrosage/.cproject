@@ -1342,6 +1342,8 @@
                                     <listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/esp8266/src"/>
                                     									
                                     <listOptionValue builtIn="false" value="${HOME}/.platformio/packages/tool-unity"/>
+                                    									
+                                    <listOptionValue builtIn="false" value="&quot;${workspace_loc:/ArduinoSimulator/src}&quot;"/>
                                     								
                                 </option>
                                 								

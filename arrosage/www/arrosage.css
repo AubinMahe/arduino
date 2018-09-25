@@ -1,0 +1,110 @@
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+	font: 14px Arial, sans-serif;
+}
+
+body {
+	margin: 2px;
+	text-align: center;
+}
+
+.content {
+	display: inline-block;
+	width: 316px;
+}
+
+#status-line {
+	font-size: 16px;
+	font-style: italic;
+}
+
+.pane {
+	border: 1px solid darkgray;
+	text-align: center;
+	margin: 4px;
+}
+
+.pane>p {
+	display: block;
+	background-color: lightgray;
+	padding: 4px;
+	font-size: 18px;
+	font-weight: bold;
+	cursor: pointer;
+}
+
+.pane>div {
+	display: none;
+	margin: 4px;
+}
+
+.pane div>input {
+	vertical-align: middle;
+}
+
+input[type=time] {
+	height: 30px;
+	width: 72px;
+}
+
+table {
+	display: inline-block;
+	border-collapse: collapse;
+}
+
+.pane>button {
+	margin: 4px;
+}
+
+th, td {
+	border: 1px solid #ddd;
+}
+
+tr:nth-child(even) {
+	background-color: #f2f2f2;
+}
+
+th {
+	padding: 2px;
+	font-weight: bold;
+}
+
+td {
+	text-align: center;
+}
+
+td>input {
+	width: 100%;
+	vertical-align: middle;
+}
+
+th:nth-child(1), td:nth-child(1) {
+	width: 48px;
+}
+
+th:nth-child(2), td:nth-child(2), th:nth-child(4), td:nth-child(4) {
+	width: 32px;
+}
+
+th:nth-child(3), td:nth-child(3), th:nth-child(5), td:nth-child(5) {
+	width: 42px;
+}
+
+td:nth-child(1)>input {
+	height: 24px;
+}
+
+td:nth-child(3)>input, td:nth-child(5)>input {
+	height: 24px;
+}
+
+td:nth-child(3)>input, td:nth-child(5)>input {
+	text-align: right;
+}
+
+td:nth-child(2)>select {
+	width: 180px;
+	vertical-align: middle;
+}

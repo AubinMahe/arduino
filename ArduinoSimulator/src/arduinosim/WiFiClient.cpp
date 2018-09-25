@@ -15,6 +15,10 @@ WiFiClient::WiFiClient( int socket ) :
    _timeout( 0 )
 {}
 
+size_t WiFiClient::write( const uint8_t * value, size_t count ) {
+   return ::write( _socket, value, count );
+}
+
 size_t WiFiClient::print( const char * value ) {
    return ::write( _socket, value, ::strlen( value ));
 }

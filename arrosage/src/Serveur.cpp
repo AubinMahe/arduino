@@ -8,6 +8,9 @@
 #  include <sys/stat.h>
 #  include <fcntl.h> // O_RDONLY
 #  include <unistd.h>
+#  include <vector>
+#  include <vector>
+#  include <IUI.h>
 #endif
 
 #include <strings.h>
@@ -21,13 +24,16 @@
 #define CHARGER_UNE_CONFIGURATION      "Charger une configuration"
 #define LIRE_LA_CONFIGURATION          "Lire la configuration"
 
-#include "index.html.h"
+#include "index-min.html.gz.h"
+#include "arrosage-min.css.gz.h"
+#include "arrosage-min.js.gz.h"
 
 using namespace hpms;
 
+bool Serveur::HTTP_DUMP = false;
+
 const uint8_t  Serveur::WIFI_CONNEXION_ESSAIS;
 const uint16_t Serveur::HTTP_PORT;
-bool           Serveur::DUMP = false;
 
 static char buffer[4000];
 
@@ -234,17 +240,9 @@ void Serveur::handle_json_commands( WiFiClient & client, json::Decoder & parser 
    send_json_response( client, status, response );
 }
 
-void Serveur::send_index_html( WiFiClient & client ) const {
-   Log( "Serveur::send_index_html" );
-   client.println( "HTTP/1.1 200 OK" );
-   client.println( "Connection: close" );
-   client.println( "Content-type: text/html" );
-#ifdef ESP8266
-   client.print  ( "Content-Length: " ); client.println( index_html_len );
-   client.println();
-   client.print((const char *)index_html );
-#else
-   int page = open( "index.html", O_RDONLY );
+#ifndef ESP8266
+void Serveur::send_file( const char * path, WiFiClient & client ) const {
+   int page = open( path, O_RDONLY );
    if( page ) {
       struct stat s;
       ::fstat( page, &s );
@@ -252,14 +250,58 @@ void Serveur::send_index_html( WiFiClient & client ) const {
       client.println();
       int count = 0;
       while( 0 != ( count = read( page, buffer, sizeof( buffer ) - 1 ))) {
-         buffer[count] = '\0';
-         client.print( buffer );
+         client.write( buffer, count );
       }
       close( page );
    }
    else {
-      perror( "index.html" );
+      perror( path );
    }
+}
+#endif
+
+void Serveur::send_index_html( WiFiClient & client ) const {
+   Log( "Serveur::send_index_html" );
+   client.println( "HTTP/1.1 200 OK" );
+   client.println( "Connection: close" );
+   client.println( "Content-type: text/html" );
+   client.println( "Content-Encoding: gzip" );
+#ifdef ESP8266
+   client.print  ( "Content-Length: " ); client.println( www_index_min_html_gz_len );
+   client.println();
+   client.write( www_index_min_html_gz, www_index_min_html_gz_len );
+#else
+   send_file( "www/index-min.html.gz", client );
+#endif
+}
+
+void Serveur::send_arrosage_css( WiFiClient & client ) const {
+   Log( "Serveur::send_arrosage_css" );
+   client.println( "HTTP/1.1 200 OK" );
+   client.println( "Connection: close" );
+   client.println( "Content-type: text/css" );
+   client.println( "Content-Encoding: gzip" );
+#ifdef ESP8266
+   client.print  ( "Content-Length: " ); client.println( www_arrosage_min_css_gz_len );
+   client.println();
+   client.write( www_arrosage_min_css_gz, www_arrosage_min_css_gz_len );
+#else
+   send_file( "www/arrosage-min.css.gz", client );
+#endif
+}
+
+void Serveur::send_arrosage_js( WiFiClient & client ) const {
+   Log( "Serveur::send_arrosage_js" );
+   client.println( "HTTP/1.1 200 OK" );
+   client.println( "Connection: close" );
+   client.println( "Content-type: text/javascript" );
+   client.println( "Content-Encoding: gzip" );
+#ifdef ESP8266
+   client.print  ( "Content-Length: " ); client.println( www_arrosage_min_js_gz_len );
+   client.println();
+   client.write( www_arrosage_min_js_gz, www_arrosage_min_js_gz_len );
+#else
+   send_file( "www/arrosage-min.js.gz", client );
 #endif
 }
 
@@ -298,7 +340,7 @@ void Serveur::loop() {
       memset( buffer, 0, sizeof( buffer ));
       size_t receivedBytesCount = client.readBytes( buffer, sizeof( buffer ));
       Log( "Serveur::loop|%d octets reçus.", receivedBytesCount );
-      if( DUMP ) {
+      if( HTTP_DUMP ) {
          json::Decoder::dump( buffer, receivedBytesCount, db, sizeof( db ));
          Serial.println( db );
       }
@@ -336,6 +378,12 @@ void Serveur::loop() {
       {
          send_index_html( client );
       }
+      else if( buffer == ::strstr( buffer, "GET /arrosage.css" )) {
+         send_arrosage_css( client );
+      }
+      else if( buffer == ::strstr( buffer, "GET /arrosage.js" )) {
+         send_arrosage_js( client );
+      }
       else {
          send_404( client );
       }
@@ -362,6 +410,14 @@ void executeAutoTestsIfAny( void );
 
 void setup( void ) {
    theServeur = new Serveur();
+#ifndef ESP8266
+   const std::vector<std::string> & args = sim::IUI::_theUI->getArguments();
+   for( size_t i = 0, count = args.size(); i < count; ++i ) {
+      if( args[i] == "--dump-http=true" ) {
+         Serveur::HTTP_DUMP = true;
+      }
+   }
+#endif
 #ifdef HPMS_TESTS
    executeAutoTestsIfAny();
 #endif
