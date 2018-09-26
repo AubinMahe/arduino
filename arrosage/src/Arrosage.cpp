@@ -96,7 +96,7 @@ void Arrosage::evaluer() {
    }
    if( est_en_marche || auto_test_en_cours ) {
       for( size_t pin = 0; pin < countof( vannes ); ++pin ) {
-         vannes[pin].evaluer( pin, horloge );
+         vannes[pin].evaluer( pin, horloge, auto_test_en_cours );
       }
    }
 }

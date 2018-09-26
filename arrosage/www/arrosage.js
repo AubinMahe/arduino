@@ -107,6 +107,20 @@ function demarrer_ou_arreter() {
    send({commande: "Démarrer ou arrêter", argument: {demarrer: on_off }});   
 }
 
+function ligne_de_journal( event ) {
+   var newRow = document.createElement('tr');
+   var newTs  = document.createElement('td');
+   var newPin = document.createElement('td');
+   var newEvt = document.createElement('td');
+   newTs .innerText = instant_to_hhmm( event.instant );
+   newPin.innerText = event.pin;
+   newEvt.innerText = event.etat ? "Ouverture" : "Fermeture";
+   newRow.appendChild( newTs  );
+   newRow.appendChild( newPin );
+   newRow.appendChild( newEvt );
+   return newRow;
+}
+
 var auto_test_timer = 0;
 
 function lire_l_auto_test() {
@@ -117,12 +131,21 @@ function lire_l_auto_test() {
                console.log( this.responseText );
                var at = JSON.parse( this.responseText );
                if( at.code === 0 ) {
+                  var minutes = 60.0*at.data.instant.heure + at.data.instant.minute;
+                  var percent = (100.0*( minutes / (24.0*60.0))).toFixed(0);
                   if( ! at.data.autotest ) {
                      clearInterval( auto_test_timer )
+                     percent = 100;
                   }
-                  // at.data.heure
-                  // at.data.minute
-                  // at.data.events
+                  var pWidget = document.getElementById('progress-widget');
+                  var spans   = pWidget.getElementsByTagName('span');
+                  spans[0].style.width = percent + "%";
+                  spans[1].innerText = percent + " %";
+                  var events = document.getElementById('auto-test-events');
+                  var trs    = events.getElementsByTagName('tr');
+                  for( var i = 0, count = at.data.events.length - trs.length; i < count; ++i ) {
+                     events.appendChild( ligne_de_journal( at.data.events[count-i-1] ));
+                  }
                }
                else {
                   document.getElementById( "status-line" ).innerText = configuration.msg; 

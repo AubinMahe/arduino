@@ -30,12 +30,12 @@ namespace hpms {
 
       bool est_ouverte  ( uint8_t pin ) const;
       void forcer_l_etat( uint8_t pin, const Instant & maintenant, Etat etat );
-      void evaluer      ( uint8_t pin, const Instant & maintenant );
+      void evaluer      ( uint8_t pin, const Instant & maintenant, bool auto_test_en_cours );
 
    private:
 
-      void ouvrir ( uint8_t pin, const Instant & maintenant );
-      void fermer ( uint8_t pin, const Instant & maintenant );
+      void ouvrir ( uint8_t pin, const Instant & maintenant, bool auto_test_en_cours );
+      void fermer ( uint8_t pin, const Instant & maintenant, bool auto_test_en_cours );
 
    private:
 

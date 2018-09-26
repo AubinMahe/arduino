@@ -20,7 +20,7 @@ namespace hpms {
 
       void arrosage( bool etat );
       void vanne( uint8_t pin, bool etat );
-      void efface( void );
+      void effacer( void );
 
    private:
 

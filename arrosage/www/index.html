@@ -18,6 +18,18 @@
 
 <div class="pane"><p onclick="expand_or_collapse(this)">Auto-test</p><div>
    <label>Auto-test : 24 h en 2 min, 24 sec.</label>
+   <div id="progress-widget"><span></span><span>0 %</span></div>
+   <table id="journal">
+      <thead>
+         <tr>
+            <th>Date-Heure</th>
+            <th>Pin</th>
+            <th>Événement</th>
+         </tr>
+      </thead>
+      <tbody id="auto-test-events"></tbody>
+   </table>
+   <br/>
    <button onclick="auto_test( true )" >Démarrer</button>
    <button onclick="auto_test( false )">Arrêter</button>
 </div></div>
@@ -33,11 +45,11 @@
    <table>
       <thead>
          <tr>
-         <th>Pin</th>
-         <th>État</th>
+            <th>Pin</th>
+            <th>État</th>
          </tr>
       </thead>
-         <tbody>
+      <tbody>
          <tr><td>0</td><td><p style="font-weight:bold;" id="pin-0-state">Inconnu</p></td></tr>
          <tr><td>1</td><td><p style="font-weight:bold;" id="pin-1-state">Inconnu</p></td></tr>
          <tr><td>2</td><td><p style="font-weight:bold;" id="pin-2-state">Inconnu</p></td></tr>

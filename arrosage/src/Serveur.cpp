@@ -67,8 +67,9 @@ json::Status Serveur::demarrer( bool demarrer ) {
 }
 
 json::Status Serveur::controler_l_auto_test( bool demarrer ) {
-   Log( "Serveur::demarrer_l_auto_test( %s )", demarrer ? "true" : "false" );
+   Log( "Serveur::controler_l_auto_test( %s )", demarrer ? "true" : "false" );
    if( demarrer ) {
+      Journal::le_journal->effacer();
       arrosage.demarrage_de_l_auto_test();
    }
    else {
@@ -265,13 +266,13 @@ void Serveur::send_index_html( WiFiClient & client ) const {
    client.println( "HTTP/1.1 200 OK" );
    client.println( "Connection: close" );
    client.println( "Content-type: text/html" );
-   client.println( "Content-Encoding: gzip" );
 #ifdef ESP8266
+   client.println( "Content-Encoding: gzip" );
    client.print  ( "Content-Length: " ); client.println( www_index_min_html_gz_len );
    client.println();
    client.write( www_index_min_html_gz, www_index_min_html_gz_len );
 #else
-   send_file( "www/index-min.html.gz", client );
+   send_file( "www/index.html", client );
 #endif
 }
 
@@ -280,13 +281,13 @@ void Serveur::send_arrosage_css( WiFiClient & client ) const {
    client.println( "HTTP/1.1 200 OK" );
    client.println( "Connection: close" );
    client.println( "Content-type: text/css" );
-   client.println( "Content-Encoding: gzip" );
 #ifdef ESP8266
+   client.println( "Content-Encoding: gzip" );
    client.print  ( "Content-Length: " ); client.println( www_arrosage_min_css_gz_len );
    client.println();
    client.write( www_arrosage_min_css_gz, www_arrosage_min_css_gz_len );
 #else
-   send_file( "www/arrosage-min.css.gz", client );
+   send_file( "www/arrosage.css", client );
 #endif
 }
 
@@ -295,13 +296,13 @@ void Serveur::send_arrosage_js( WiFiClient & client ) const {
    client.println( "HTTP/1.1 200 OK" );
    client.println( "Connection: close" );
    client.println( "Content-type: text/javascript" );
-   client.println( "Content-Encoding: gzip" );
 #ifdef ESP8266
+   client.println( "Content-Encoding: gzip" );
    client.print  ( "Content-Length: " ); client.println( www_arrosage_min_js_gz_len );
    client.println();
    client.write( www_arrosage_min_js_gz, www_arrosage_min_js_gz_len );
 #else
-   send_file( "www/arrosage-min.js.gz", client );
+   send_file( "www/arrosage.js", client );
 #endif
 }
 

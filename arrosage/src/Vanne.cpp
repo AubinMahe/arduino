@@ -46,11 +46,11 @@ void Vanne::forcer_l_etat( uint8_t pin, const Instant & maintenant, Vanne::Etat 
       pin, maintenant.get_heure(), maintenant.get_minute(), nouvel_etat );
    if( nouvel_etat == FORCEE_FERMEE ) {
       etat = FORCEE_FERMEE;
-      fermer( pin, maintenant );
+      fermer( pin, maintenant, false );
    }
    else if( nouvel_etat == FORCEE_OUVERTE ) {
       etat = FORCEE_OUVERTE;
-      ouvrir( pin, maintenant );
+      ouvrir( pin, maintenant, false );
    }
    else if(( nouvel_etat == CONFIGUREE_OUVERTE )||( nouvel_etat == CONFIGUREE_FERMEE )) {
       int r = digitalRead( pin );
@@ -60,37 +60,41 @@ void Vanne::forcer_l_etat( uint8_t pin, const Instant & maintenant, Vanne::Etat 
       else {
          etat = CONFIGUREE_OUVERTE;
       }
-      evaluer( pin, maintenant );
+      evaluer( pin, maintenant, false );
    }
 }
 
-void Vanne::evaluer( uint8_t pin, const Instant & maintenant ) {
+void Vanne::evaluer( uint8_t pin, const Instant & maintenant, bool auto_test_en_cours ) {
    if(( etat == CONFIGUREE_OUVERTE )||( etat == CONFIGUREE_FERMEE )) {
       if(   matin.doit_etre_ouverte( maintenant )
          || soir .doit_etre_ouverte( maintenant ))
       {
          if( etat == CONFIGUREE_FERMEE ) {
             etat = CONFIGUREE_OUVERTE;
-            ouvrir( pin, maintenant );
+            ouvrir( pin, maintenant, auto_test_en_cours );
          }
       }
       else {
          if( etat == CONFIGUREE_OUVERTE ) {
             etat = CONFIGUREE_FERMEE;
-            fermer( pin, maintenant );
+            fermer( pin, maintenant, auto_test_en_cours );
          }
       }
    }
 }
 
-void Vanne::ouvrir( uint8_t pin, const Instant & maintenant ) {
-   digitalWrite( pin, HIGH );
+void Vanne::ouvrir( uint8_t pin, const Instant & maintenant, bool auto_test_en_cours ) {
+   if( ! auto_test_en_cours ) {
+      digitalWrite( pin, HIGH );
+   }
    Journal::le_journal->vanne( pin, true );
    Log( "Vanne::ouvrir( %d, %0d:%0d )", pin, maintenant.get_heure(), maintenant.get_minute());
 }
 
-void Vanne::fermer( uint8_t pin, const Instant & maintenant ) {
-   digitalWrite( pin, LOW );
+void Vanne::fermer( uint8_t pin, const Instant & maintenant, bool auto_test_en_cours ) {
+   if( ! auto_test_en_cours ) {
+      digitalWrite( pin, LOW );
+   }
    Journal::le_journal->vanne( pin, false );
    Log( "Vanne::fermer( %d, %0d:%0d )", pin, maintenant.get_heure(), maintenant.get_minute());
 }
