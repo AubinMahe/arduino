@@ -15,6 +15,10 @@ body {
 	width  : 316px;
 }
 
+#on-off {
+	vertical-align: middle;
+}
+
 #status-line {
 	font-size : 16px;
 	font-style: italic;
@@ -63,7 +67,7 @@ th, td {
 }
 
 tr:nth-child(even) {
-	background-color: #f2f2f2;
+	background-color: #ddd;
 }
 
 th {

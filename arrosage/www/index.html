@@ -4,20 +4,21 @@
    <meta charset="utf-8" />
    <meta name="viewport" content="width=device-width" />
    <title>Contrôle de l'arrosage</title>
-   <link rel="stylesheet" type="text/css" href="arrosage.css" />
-   <script src="arrosage.js"></script>
+   <link rel="stylesheet" type="text/css"     href="arrosage.css" />
+   <link rel="icon"       type="image/x-icon" href="favicon.ico" />
+   <script                                     src="arrosage.js"></script>
 </head>
 <body onload="lire_la_configuration()"><div class="content">
 
 <div class="pane"><p onclick="expand_or_collapse(this)">Démarrer ou arrêter</p><div>
    <label for="on-off">En fonctionnement :</label>
-   <input id="on-off" type="checkbox" style="vertical-align: middle;" />
+   <input id="on-off" type="checkbox" />
    <br/>
    <button onclick="demarrer_ou_arreter()">Commander</button>
 </div></div>
 
 <div class="pane"><p onclick="expand_or_collapse(this)">Auto-test</p><div>
-   <label>Auto-test : 24 h en 2 min, 24 sec.</label>
+   <label>Auto-test : <span id="auto-test-time">24 h en 2 min, 24 sec.</span></label>
    <div id="progress-widget"><span></span><span>0 %</span></div>
    <table id="journal">
       <thead>

@@ -306,8 +306,11 @@ void Serveur::send_arrosage_js( WiFiClient & client ) const {
 #endif
 }
 
-void Serveur::send_404( WiFiClient & client ) const {
-   Log( ": Serveur::send_404" );
+void Serveur::send_favicon_ico( WiFiClient & client ) const {
+}
+
+void Serveur::send_404( WiFiClient & client, const char * request ) const {
+   Log( "Serveur::send_404 en réponse à '%s'.", request );
    client.println( "HTTP/1.1 404 Not Found" );
    client.println( "Connection: close" );
 }
@@ -371,7 +374,7 @@ void Serveur::loop() {
             handle_json_commands( client, parser );
          }
          else {
-            send_404( client );
+            send_404( client, strtok( buffer, "\r\n" ));
          }
       }
       else if(( buffer == ::strstr( buffer, "GET / "           ))
@@ -385,8 +388,12 @@ void Serveur::loop() {
       else if( buffer == ::strstr( buffer, "GET /arrosage.js" )) {
          send_arrosage_js( client );
       }
+      else if( buffer == ::strstr( buffer, "GET /favicon.ico" )) {
+         send_404( client, strtok( buffer,  "\r\n" ));
+         //send_favicon_ico( client );
+      }
       else {
-         send_404( client );
+         send_404( client, strtok( buffer,  "\r\n" ));
       }
       client.flush();
       client.stop();

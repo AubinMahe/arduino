@@ -133,9 +133,14 @@ function lire_l_auto_test() {
                if( at.code === 0 ) {
                   var minutes = 60.0*at.data.instant.heure + at.data.instant.minute;
                   var percent = (100.0*( minutes / (24.0*60.0))).toFixed(0);
+                  var legende = document.getElementById('auto-test-time'); 
                   if( ! at.data.autotest ) {
                      clearInterval( auto_test_timer )
                      percent = 100;
+                     legende.innerText = '24 h en 2 min, 24 sec.';
+                  }
+                  else {
+                     legende.innerText = instant_to_hhmm( at.data.instant );
                   }
                   var pWidget = document.getElementById('progress-widget');
                   var spans   = pWidget.getElementsByTagName('span');

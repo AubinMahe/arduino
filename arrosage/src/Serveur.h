@@ -36,7 +36,8 @@ namespace hpms {
       void send_index_html  ( WiFiClient & client ) const;
       void send_arrosage_css( WiFiClient & client ) const;
       void send_arrosage_js ( WiFiClient & client ) const;
-      void send_404         ( WiFiClient & client ) const;
+      void send_favicon_ico ( WiFiClient & client ) const;
+      void send_404         ( WiFiClient & client, const char * request ) const;
 
    private:
 
