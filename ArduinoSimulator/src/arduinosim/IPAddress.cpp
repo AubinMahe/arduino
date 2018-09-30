@@ -1,12 +1,13 @@
 #include "ESP8266WiFi.h"
+#include "IPAddressValue.h"
 
 #include <string.h>
 
 IPAddress::IPAddress() {
-   _address.bytes[0] = 192;
-   _address.bytes[1] = 168;
-   _address.bytes[2] =   1;
-   _address.bytes[3] =   3;
+   _address.bytes[0] = LOCAL_IP_ADDRESS[0];
+   _address.bytes[1] = LOCAL_IP_ADDRESS[1];
+   _address.bytes[2] = LOCAL_IP_ADDRESS[2];
+   _address.bytes[3] = LOCAL_IP_ADDRESS[3];
 }
 
 size_t IPAddress::printTo( Print & p ) const {

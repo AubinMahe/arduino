@@ -4,6 +4,26 @@
 #include <ctype.h>
 #include <stdlib.h>
 
+#undef min
+#undef max
+#include <string>
+
+class String {
+public:
+
+   String( const char * s );
+
+public:
+
+   const char * c_str() const;
+
+   String operator + ( const String & s ) const;
+
+private:
+
+   std::string _string;
+};
+
 //-- Digital I/O -------------------------------------------------------------
 
 #define HIGH   0x1
@@ -62,8 +82,6 @@ unsigned long millis           ( void );
 inline long map(long x, long in_min, long in_max, long out_min, long out_max) {
   return out_min + (x - in_min) * (out_max - out_min) / (in_max - in_min);
 }
-#define max(a,b) ((a)>(b)?(a):(b))
-#define min(a,b) ((a)<(b)?(a):(b))
 #define round(x) ((x)>=0?(long)((x)+0.5):(long)((x)-0.5))
 //pow()
 #define sq(x) ((x)*(x))
@@ -168,6 +186,7 @@ public:
    size_t print( unsigned long     value, int base = DEC );
    size_t print( double            value, int prec = 2   );
    size_t print( const Printable & value );
+   size_t print( const String    & value );
 
    size_t println( const char        value[] );
    size_t println( char              value );
@@ -178,6 +197,7 @@ public:
    size_t println( unsigned long     value, int base = DEC );
    size_t println( double            value, int prec = 2   );
    size_t println( const Printable & value );
+   size_t println( const String    & value );
    size_t println( void );
 
    virtual void flush() { /* Empty implementation for backward compatibility */ }

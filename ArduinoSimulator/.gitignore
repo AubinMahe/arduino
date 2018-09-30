@@ -19,3 +19,4 @@ src/Makefile.in
 /config.log
 /config.status
 /stamp-h1
+/Makefile.deps

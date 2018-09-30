@@ -3,6 +3,7 @@
 #include "Arrosage.h"
 
 #include <ESP8266WiFi.h>
+#include <FS.h>
 
 namespace hpms {
 
@@ -28,16 +29,10 @@ namespace hpms {
       json::Status lire_la_configuration      ( const char * &  response );
       json::Status charger_une_configuration  ( json::Decoder & parser   );
 
-      void send_json_response  ( WiFiClient & client, json::Status status, const char * buffer = 0 ) const;
+      void send_json_response( WiFiClient & client, json::Status status, const char * buffer = 0 ) const;
       void handle_json_commands( WiFiClient & client, json::Decoder & parser );
-#ifndef ESP8266
-      void send_file( const char * path, WiFiClient & client ) const;
-#endif
-      void send_index_html  ( WiFiClient & client ) const;
-      void send_arrosage_css( WiFiClient & client ) const;
-      void send_arrosage_js ( WiFiClient & client ) const;
-      void send_favicon_ico ( WiFiClient & client ) const;
-      void send_404         ( WiFiClient & client, const char * request ) const;
+      void send_file( const char * path, const char * contentType, WiFiClient & client ) const;
+      void send_404( WiFiClient & client, const String & request ) const;
 
    private:
 

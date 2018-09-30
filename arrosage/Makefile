@@ -1,10 +1,14 @@
-CXX      = g++
-LINK.o   = $(LINK.cc)
+CXX = g++
+
+LINK.o = $(LINK.cc)
+
 CXXFLAGS = -std=c++11 -pedantic -W -Wall -g3 -O0\
  -I lib/json\
  -I ../ArduinoSimulator/src\
  -I ../ArduinoSimulator/src/arduinosim
-LDFLAGS  = -L ../ArduinoSimulator/BUILD -lsim -lwebsockets -lpthread -lncursesw -lefence
+
+LDFLAGS = -L ../ArduinoSimulator/BUILD -lsim -lwebsockets -lpthread -lncursesw -lefence
+
 MINIFIER_FLAGS =\
  --collapse-whitespace\
  --remove-comments\
@@ -14,6 +18,7 @@ MINIFIER_FLAGS =\
  --use-short-doctype\
  --minify-css true\
  --minify-js true
+
 SRCS =\
  lib/json/IJSonData.cpp\
  lib/json/Attributes.cpp\
@@ -42,6 +47,8 @@ clean:
 	rm -fr ../ArduinoSimulator/BUILD
 	rm -fr ../ArduinoSimulator/build
 	rm -f  www/*.gz
+	rm -f  Makefile.deps
+	make Makefile.deps
 
 valgrind: arrosage
 	valgrind --leak-check=full --show-leak-kinds=all BUILD/arrosage --ui=ws --serial-to-stderr
@@ -60,22 +67,13 @@ BUILD/%.o: %.cpp
 	@mkdir -p $$(dirname $@)
 	$(CXX) $(CXXFLAGS) -c -o $@ $<
 
-www/index-min.html.gz: www/index.html
+data/index-min.html.gz: www/index.html
 	html-minifier $(MINIFIER_FLAGS) $< | gzip >$@
 
-www/arrosage-min.css.gz: www/arrosage.css
+data/arrosage-min.css.gz data/arrosage-min.js.gz: www/arrosage.css www/arrosage.js
 	php minify.php
 
-www/arrosage-min.js.gz: www/arrosage.js
-	php minify.php
+Makefile.deps: $(SRCS)
+	$(CXX) $(CXXFLAGS) -MM $(SRCS) |	gawk -v PREFIX=BUILD -f Makefile.gawk > Makefile.deps
 
-src/%.gz.h: www/%.gz
-	xxd -i $<                                                   $@
-	sed 's/unsigned char/static const unsigned char/g' $@     > $@.tmp
-	sed 's/unsigned int/static const unsigned int/g'   $@.tmp > $@
-	rm -f $@.tmp
-
-src/index-min.html.gz.h: www/index-min.html.gz
-src/arrosage-min.css.gz.h: www/arrosage-min.css.gz
-src/arrosage-min.js.gz.h: www/arrosage-min.js.gz
-BUILD/src/Serveur.o: src/index-min.html.gz.h src/arrosage-min.css.gz.h src/arrosage-min.js.gz.h src/Serveur.h src/Serveur.cpp
+-include Makefile.deps

@@ -23,6 +23,10 @@ size_t WiFiClient::print( const char * value ) {
    return ::write( _socket, value, ::strlen( value ));
 }
 
+size_t WiFiClient::print( const String & value ) {
+   return print( value.c_str());
+}
+
 size_t WiFiClient::println( unsigned int value, int base /* = DEC */) {
    char tmp[40];
    if( base == DEC ) {
@@ -40,6 +44,10 @@ size_t WiFiClient::println( unsigned int value, int base /* = DEC */) {
 size_t WiFiClient::println( const char * value ) {
    ssize_t length = ::write( _socket, value, ::strlen( value ));
    return length + ::write( _socket, "\n", 1 );
+}
+
+size_t WiFiClient::println( const String & value ) {
+   return println( value.c_str());
 }
 
 size_t WiFiClient::println( void ) {

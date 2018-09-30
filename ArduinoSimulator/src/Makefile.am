@@ -4,11 +4,27 @@ pkginclude_HEADERS = \
  arduinosim/Arduino.h \
  arduinosim/Servo.h 
 
+BUILT_SOURCES = arduinosim/IPAddressValue.h
+
+CLEANFILES = arduinosim/IPAddressValue.h
+
+arduinosim/IPAddressValue.h:
+	ifconfig | grep -w inet | grep broadcast | awk ' {print $2}' > $@
+
 lib_LIBRARIES = libarduinosim.a
 libarduinosim_a_SOURCES = \
  main.cpp \
  IUI.h \
  IUI.cpp \
+ arduinosim/ESP8266WiFiClass.cpp \
+ arduinosim/EspClass.cpp \
+ arduinosim/FS.cpp \
+ arduinosim/IPAddress.cpp \
+ arduinosim/NTPClient.cpp \
+ arduinosim/Print.cpp \
+ arduinosim/String.cpp \
+ arduinosim/WiFiClient.cpp \
+ arduinosim/WiFiServer.cpp \
  java/UIProxy.h \
  java/UIProxy.cpp \
  ncurses/UI.cpp \

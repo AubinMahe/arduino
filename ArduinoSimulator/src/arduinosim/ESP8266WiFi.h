@@ -19,10 +19,12 @@ public:
       return write((const uint8_t *)value, count );
    }
 
-   size_t print( const char * value );
+   size_t print( const char *   value );
+   size_t print( const String & value );
 
-   size_t println( unsigned int value, int base = DEC );
-   size_t println( const char * value );
+   size_t println( unsigned int   value, int base = DEC );
+   size_t println( const char *   value );
+   size_t println( const String & value );
    size_t println( void );
 
    operator bool();

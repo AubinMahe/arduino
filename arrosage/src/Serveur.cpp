@@ -24,10 +24,6 @@
 #define CHARGER_UNE_CONFIGURATION      "Charger une configuration"
 #define LIRE_LA_CONFIGURATION          "Lire la configuration"
 
-#include "index-min.html.gz.h"
-#include "arrosage-min.css.gz.h"
-#include "arrosage-min.js.gz.h"
-
 using namespace hpms;
 
 bool Serveur::HTTP_DUMP = false;
@@ -45,6 +41,7 @@ Serveur::Serveur( void ) :
    pinMode( 2, OUTPUT );
    pinMode( 3, OUTPUT );
    Serial.begin( 115200 );
+   SPIFFS.begin();
    Log( "Serveur::Serveur|Connexion à %s", SSID );
    WiFi.begin( SSID, WIFI_PWD );
    unsigned essai = 0;
@@ -57,7 +54,8 @@ Serveur::Serveur( void ) :
       }
    }
    serveur.begin();
-   Log( "Serveur::Serveur|http://%s:8080 est à l'écoute", WiFi.localIP().toString().c_str());
+   Log( "Serveur::Serveur|http://%s:%d est à l'écoute",
+      WiFi.localIP().toString().c_str(), HTTP_PORT );
 }
 
 json::Status Serveur::demarrer( bool demarrer ) {
@@ -241,76 +239,32 @@ void Serveur::handle_json_commands( WiFiClient & client, json::Decoder & parser 
    send_json_response( client, status, response );
 }
 
-#ifndef ESP8266
-void Serveur::send_file( const char * path, WiFiClient & client ) const {
-   int page = open( path, O_RDONLY );
-   if( page ) {
-      struct stat s;
-      ::fstat( page, &s );
-      client.print( "Content-Length: " ); client.println( s.st_size );
-      client.println();
-      int count = 0;
-      while( 0 != ( count = read( page, buffer, sizeof( buffer ) - 1 ))) {
-         client.write( buffer, count );
+void Serveur::send_file( const char * path, const char * contentType, WiFiClient & out ) const {
+   Log( "Serveur::send_file( '%s' )", path );
+   File in = SPIFFS.open( path, "r" );
+   if( in ) {
+      out.println( "HTTP/1.1 200 OK" );
+      out.println( "Connection: close" );
+      out.println( String( "Content-type: " ) + contentType );
+      if( strstr( path, ".gz" )) {
+         out.println( "Content-Encoding: gzip" );
       }
-      close( page );
+      out.print  ( "Content-Length: " ); out.println( in.size());
+      out.println();
+      int count = 0;
+      while( 0 != ( count = in.read((uint8_t *)buffer, sizeof( buffer ) - 1 ))) {
+         out.write( buffer, count );
+      }
+      in.close();
    }
    else {
-      perror( path );
+      Serial.println( String( "SPIFFS.open('" ) + path + "') failed." );
+      send_404( out, String( "GET /" ) + path );
    }
 }
-#endif
 
-void Serveur::send_index_html( WiFiClient & client ) const {
-   Log( "Serveur::send_index_html" );
-   client.println( "HTTP/1.1 200 OK" );
-   client.println( "Connection: close" );
-   client.println( "Content-type: text/html" );
-#ifdef ESP8266
-   client.println( "Content-Encoding: gzip" );
-   client.print  ( "Content-Length: " ); client.println( www_index_min_html_gz_len );
-   client.println();
-   client.write( www_index_min_html_gz, www_index_min_html_gz_len );
-#else
-   send_file( "www/index.html", client );
-#endif
-}
-
-void Serveur::send_arrosage_css( WiFiClient & client ) const {
-   Log( "Serveur::send_arrosage_css" );
-   client.println( "HTTP/1.1 200 OK" );
-   client.println( "Connection: close" );
-   client.println( "Content-type: text/css" );
-#ifdef ESP8266
-   client.println( "Content-Encoding: gzip" );
-   client.print  ( "Content-Length: " ); client.println( www_arrosage_min_css_gz_len );
-   client.println();
-   client.write( www_arrosage_min_css_gz, www_arrosage_min_css_gz_len );
-#else
-   send_file( "www/arrosage.css", client );
-#endif
-}
-
-void Serveur::send_arrosage_js( WiFiClient & client ) const {
-   Log( "Serveur::send_arrosage_js" );
-   client.println( "HTTP/1.1 200 OK" );
-   client.println( "Connection: close" );
-   client.println( "Content-type: text/javascript" );
-#ifdef ESP8266
-   client.println( "Content-Encoding: gzip" );
-   client.print  ( "Content-Length: " ); client.println( www_arrosage_min_js_gz_len );
-   client.println();
-   client.write( www_arrosage_min_js_gz, www_arrosage_min_js_gz_len );
-#else
-   send_file( "www/arrosage.js", client );
-#endif
-}
-
-void Serveur::send_favicon_ico( WiFiClient & client ) const {
-}
-
-void Serveur::send_404( WiFiClient & client, const char * request ) const {
-   Log( "Serveur::send_404 en réponse à '%s'.", request );
+void Serveur::send_404( WiFiClient & client, const String & request ) const {
+   Log( "Serveur::send_404 en réponse à '%s'.", request.c_str());
    client.println( "HTTP/1.1 404 Not Found" );
    client.println( "Connection: close" );
 }
@@ -380,17 +334,32 @@ void Serveur::loop() {
       else if(( buffer == ::strstr( buffer, "GET / "           ))
          ||   ( buffer == ::strstr( buffer, "GET /index.html " )))
       {
-         send_index_html( client );
+#ifdef ESP8266
+         send_file( "index-min.html.gz"  , "text/html"      , client );
+#else
+         send_file( "www/index.html"     , "text/html"      , client );
+#endif
       }
       else if( buffer == ::strstr( buffer, "GET /arrosage.css" )) {
-         send_arrosage_css( client );
+#ifdef ESP8266
+         send_file( "arrosage-min.css.gz", "text/css"       , client );
+#else
+         send_file( "www/arrosage.css"   , "text/css"       , client );
+#endif
       }
       else if( buffer == ::strstr( buffer, "GET /arrosage.js" )) {
-         send_arrosage_js( client );
+#ifdef ESP8266
+         send_file( "arrosage-min.js.gz" , "text/javascript", client );
+#else
+         send_file( "www/arrosage.js"    , "text/javascript", client );
+#endif
       }
       else if( buffer == ::strstr( buffer, "GET /favicon.ico" )) {
-         send_404( client, strtok( buffer,  "\r\n" ));
-         //send_favicon_ico( client );
+#ifdef ESP8266
+         send_file( "favicon.ico"        , "image/x-icon"   , client );
+#else
+         send_file( "data/favicon.ico"   , "image/x-icon"   , client );
+#endif
       }
       else {
          send_404( client, strtok( buffer,  "\r\n" ));
